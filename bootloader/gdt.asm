@@ -19,7 +19,7 @@ gdt_code:
 gdt_data:
     dw 0xffff ; Limit
     dw 0x0 ; Base
-    dd 0x0 ; Base (0-23 bits)
+    db 0x0 ; Base (0-23 bits)
     db 10010010b ; Type flags
     db 11001111b ; Type flags
     db 0x0 ; Base
