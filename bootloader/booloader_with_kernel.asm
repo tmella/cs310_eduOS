@@ -15,11 +15,11 @@ call switch_to_protected
 jmp $
 
 
-%include "disk_load.asm"
-%include "gdt.asm"
-%include "protected-switch.asm"
-%include "print_string.asm"
-%include "print_string_pm.asm"
+%include "bootloader/disk_load.asm"
+%include "bootloader/gdt.asm"
+%include "bootloader/protected-switch.asm"
+%include "bootloader/print_string.asm"
+%include "bootloader/print_string_pm.asm"
 
 
 bits 16

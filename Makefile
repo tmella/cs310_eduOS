@@ -9,17 +9,17 @@ all: run
 kernel.bin: kernel-ep.o kernel.o
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
-kernel-ep.o: kernel-ep.asm
+kernel-ep.o: kernel/kernel-ep.asm
 	nasm $< -f elf -o $@
 
-kernel.o: kernel.c
+kernel.o: kernel/kernel.c
 	x86_64-elf-gcc -m32 -ffreestanding -c $< -o $@
 
 # Disassemble
 kernel.dis: kernel.bin
 	ndisasm -b 32 $< > $@
 
-booloader_with_kernel.bin: booloader_with_kernel.asm
+booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 	nasm $< -f bin -o $@
 
 os-image.bin: booloader_with_kernel.bin kernel.bin
