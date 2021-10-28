@@ -2,17 +2,28 @@
 # $< = first dependency
 # $^ = all dependencies
 
+SRC = $(wildcard kernel/*.c drivers/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h)
+
+OBJ = ${SRC:.c=.o}
+
 # First rule is the one executed when no parameters are fed to the Makefile
 all: run
 
+run: os-image.bin
+	qemu-system-i386 -fda $<
+
+os-image.bin: booloader_with_kernel.bin kernel.bin
+	cat $^ > $@
+
 # Notice how dependencies are built as needed
-kernel.bin: kernel-ep.o kernel.o
+kernel.bin: ${OBJ}
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
-kernel-ep.o: kernel/kernel-ep.asm
+%.o: %.asm
 	nasm $< -f elf -o $@
 
-kernel.o: kernel/kernel.c
+%.o: %.c
 	x86_64-elf-gcc -m32 -ffreestanding -c $< -o $@
 
 # Disassemble
@@ -22,11 +33,6 @@ kernel.dis: kernel.bin
 booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 	nasm $< -f bin -o $@
 
-os-image.bin: booloader_with_kernel.bin kernel.bin
-	cat $^ > $@
-
-run: os-image.bin
-	qemu-system-i386 -fda $<
 
 echo: os-image.bin
 	xxd $<
