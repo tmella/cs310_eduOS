@@ -4,6 +4,9 @@
 
 #include "../drivers/screen.h"
 #include "low_level.h"
+#include "util.h"
+
+int scroll(int currentOffset);
 
 void setCursor(int offset) {
     offset = offset / 2;
@@ -14,7 +17,6 @@ void setCursor(int offset) {
 }
 
 int getCursor() {
-
     port_byte_out(REG_SCREEN_CTRL , 14);
     int offset = port_byte_in(REG_SCREEN_DATA) << 8;
 
@@ -45,6 +47,7 @@ int print_chat_at_offset(char charac, char attribute_type, int offset) {
         offset += 2;
     }
 
+//    offset = scroll(offset);
 
     // Set cursor for next time
     setCursor(offset);
@@ -81,6 +84,27 @@ void print_string(char * str, char attribute_type) {
         // Returns off set in case of offset shift due to \n
         offset = print_chat_at_offset(str[i], attribute_type, offset);
     }
+}
+
+int scroll(int currentOffset) {
+    // Do nothing if not necessary
+    if(currentOffset < MAX_COLS*MAX_ROWS*2) {
+        return currentOffset;
+    }
+
+    for(int i = 0; i < MAX_ROWS; i++) {
+        memory_copy((getOffset(i, 0) + VIDEO_ADDRESS),
+                    (getOffset(i-1, 0) + VIDEO_ADDRESS),
+                    MAX_COLS*2);
+    }
+
+    // Make last line blank
+    char* last_line = (char *) (getOffset(MAX_ROWS-1,0) + VIDEO_ADDRESS);
+    for(int i = 0; i < MAX_COLS*2; i++){
+        last_line[i] = 0;
+    }
+
+    return currentOffset - 2* MAX_ROWS;
 }
 
 

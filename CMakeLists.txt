@@ -3,4 +3,4 @@ project(cswk C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(cswk main.c)
+add_executable(cswk main.c kernel/util.c kernel/util.h kernel/idt.h kernel/idt.c)

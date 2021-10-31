@@ -1,6 +1,3 @@
-//
-// Created by University  on 28/10/21.
-//
 
 #include "low_level.h"
 

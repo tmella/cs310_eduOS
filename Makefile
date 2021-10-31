@@ -37,5 +37,6 @@ booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 echo: os-image.bin
 	xxd $<
 
+# Clear away all generated files.
 clean:
-	$(RM) *.bin *.o *.dis
+	rm -fr *.bin *.dis *.o os-image *.map ${OBJ}
