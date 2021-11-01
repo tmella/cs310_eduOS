@@ -16,8 +16,7 @@ run: os-image.bin
 os-image.bin: booloader_with_kernel.bin kernel.bin
 	cat $^ > $@
 
-# Notice how dependencies are built as needed
-kernel.bin: ${OBJ}
+kernel.bin: ${OBJ} kernel/xidt_asm.o
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
 %.o: %.asm
@@ -33,9 +32,8 @@ kernel.dis: kernel.bin
 booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 	nasm $< -f bin -o $@
 
-
 echo: os-image.bin
 	xxd $<
 
 clean:
-	$(RM) *.bin *.o *.dis
+	$(RM) *.bin *.o *.dis ${OBJ}

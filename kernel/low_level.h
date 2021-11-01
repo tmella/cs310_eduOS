@@ -1,6 +1,4 @@
-//
-// Created by University  on 28/10/21.
-//
+
 
 #ifndef CSWK_LOW_LEVEL_H
 #define CSWK_LOW_LEVEL_H
