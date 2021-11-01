@@ -2,8 +2,8 @@
 // Created by University  on 28/10/21.
 //
 
-#include "../drivers/screen.h"
-#include "low_level.h"
+#include "screen.h"
+#include "../kernel/low_level.h"
 
 void setCursor(int offset) {
     offset = offset / 2;
@@ -45,7 +45,6 @@ int print_chat_at_offset(char charac, char attribute_type, int offset) {
         offset += 2;
     }
 
-
     // Set cursor for next time
     setCursor(offset);
 
@@ -81,6 +80,16 @@ void print_string(char * str, char attribute_type) {
         // Returns off set in case of offset shift due to \n
         offset = print_chat_at_offset(str[i], attribute_type, offset);
     }
+}
+
+void printBackspace() {
+    int backOffset = getCursor() - 2;
+    print_chat_at_offset(' ', WHITE_ON_BLACK, backOffset);
+    setCursor(backOffset);
+}
+
+void printNewLine() {
+    print_string("\n", WHITE_ON_BLACK);
 }
 
 

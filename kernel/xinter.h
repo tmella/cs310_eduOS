@@ -64,8 +64,11 @@ typedef struct {
     uint32_t base; // Address of the first entry in the table
 }__attribute__((packed)) idt_ptr;
 
+typedef void (*handler)(i_registers_t *);
 
 void install_interrupt_service_routine();
-void isr_handler(i_registers_t registers);
+void isr_handler(i_registers_t *registers);
+
+void add_handler(int num, handler handlerFunc);
 
 #endif //CSWK_XINTER_H

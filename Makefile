@@ -16,7 +16,7 @@ run: os-image.bin
 os-image.bin: booloader_with_kernel.bin kernel.bin
 	cat $^ > $@
 
-kernel.bin: ${OBJ} kernel/xidt_asm.o
+kernel.bin: ${OBJ} kernel/xidt_asm.o kernel/xirq_asm.o
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
 %.o: %.asm

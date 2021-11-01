@@ -18,9 +18,14 @@
 #define VGA_OFFSET_LOW 0x0f
 #define VGA_OFFSET_HIGH 0x0e
 
-void print_char(char charac, int col, int row, char attribute_type);
+void clearScreen();
+
+void printNewLine();
+
+void printBackspace();
+
 void print_string(char * str, char attribute_type);
 
-void clearScreen();
+void print_char(char charac, int col, int row, char attribute_type);
 
 #endif //CSWK_SCREEN_H
