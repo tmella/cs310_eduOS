@@ -20,11 +20,12 @@
 
 void clearScreen();
 
-void printNewLine();
+void print_new_line();
 
 void printBackspace();
 
-void print_string(char * str, char attribute_type);
+void print_string(char * str);
+void print_string_with_attribute(char * str, char attribute_type);
 
 void print_char(char charac, int col, int row, char attribute_type);
 

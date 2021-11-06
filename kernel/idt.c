@@ -1,7 +1,7 @@
 
-#include "xinter.h"
-#include "low_level.h"
-#include "xirq.h"
+#include "inter.h"
+#include "irq.h"
+#include "syscalls.h"
 
 idt_ptr interrupt_descriptor_table_ptr;
 idt_entry interrupt_descriptor_table[256];
@@ -81,6 +81,9 @@ void install_interrupt_service_routine() {
     set_idt_gate(46, (uint32_t) irq14);
     set_idt_gate(47, (uint32_t) irq15);
 
+    // This is for system calls
+    set_idt_gate(128, (uint32_t) isr80);
+
     reprogram_pic();
 
     load_idt();
@@ -100,103 +103,106 @@ void irq_handler(i_registers_t *reg) {
 }
 
 void isr_handler(i_registers_t *registers) {
-    print_string("Received interrupt: ", 0x0f);
+    print_string("Received interrupt: ");
     switch (registers->int_no) {
         case 1:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 2:
-            print_string("Single step interrupt",0x0f);
+            print_string("Single step interrupt");
             break;
         case 3:
-            print_string("Non maskable interrupt",0x0f);
+            print_string("Non maskable interrupt");
             break;
         case 4:
-            print_string("Breakpoint",0x0f);
+            print_string("Breakpoint");
             break;
         case 5:
-            print_string("Overflow",0x0f);
+            print_string("Overflow");
             break;
         case 6:
-            print_string("Bound range exceeded",0x0f);
+            print_string("Bound range exceeded");
             break;
         case 7:
-            print_string("Invalid op code",0x0f);
+            print_string("Invalid op code");
             break;
         case 8:
-            print_string("Division by 0",0x0f);
+            print_string("8");
             break;
         case 9:
-            print_string("Division by 0",0x0f);
+            print_string("9");
             break;
         case 10:
-            print_string("Division by 0",0x0f);
+            print_string("10");
             break;
         case 11:
-            print_string("Division by 0",0x0f);
+            print_string("11");
             break;
         case 12:
-            print_string("Division by 0",0x0f);
+            print_string("12");
             break;
         case 13:
-            print_string("Division by 0",0x0f);
+            print_string("General protection fault");
             break;
         case 14:
-            print_string("Division by 0",0x0f);
+            print_string("14");
             break;
         case 15:
-            print_string("Division by 0",0x0f);
+            print_string("15");
             break;
         case 16:
-            print_string("Division by 0",0x0f);
+            print_string("16");
             break;
         case 17:
-            print_string("Division by 0",0x0f);
+            print_string("17");
             break;
         case 18:
-            print_string("Division by 0",0x0f);
+            print_string("18");
             break;
         case 19:
-            print_string("Division by 0",0x0f);
+            print_string("19");
             break;
         case 20:
-            print_string("Division by 0",0x0f);
+            print_string("20");
             break;
         case 21:
-            print_string("Division by 0",0x0f);
+            print_string("21");
             break;
         case 22:
-            print_string("Division by 0",0x0f);
+            print_string("22");
             break;
         case 23:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 24:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 25:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 26:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 27:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 28:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 29:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 30:
-            print_string("Division by 0",0x0f);
+            print_string("Division by 0");
             break;
         case 31:
-            print_string("Reserved",0x0f);
+            print_string("Reserved");
+            break;
+        case 80:
+            sys_call_handler(registers);
             break;
         
     }
 
-    printNewLine();
+    print_new_line();
 }

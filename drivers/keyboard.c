@@ -2,7 +2,7 @@
 
 #include "../kernel/low_level.h"
 #include "keyboard.h"
-#include "../kernel/xinter.h"
+#include "../kernel/inter.h"
 
 /* Characters taken from my US Laptop keyboard layout. Should be standard */
 const char ascii_map[] = {'?', '?',
@@ -24,18 +24,18 @@ static void keyboard_handler(i_registers_t *registers) {
     if (key_code > 57) return;
     switch (key_code) {
         case SPACE:
-            print_string(" ", WHITE_ON_BLACK);
+            print_string(" ");
             break;
         case BACKSPACE: // Backspace
             printBackspace();
             break;
         case ENTER:
-            printNewLine();
+            print_new_line();
             break;
         default:
             char letter = ascii_map[key_code];
             char str[2] = {letter, '\0'};
-            print_string(str, WHITE_ON_BLACK);
+            print_string(str);
     }
 }
 

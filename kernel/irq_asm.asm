@@ -132,7 +132,6 @@ irq12:
     push byte 44
     jmp irq_common_handler
 
-
 irq13:
     cli
     push byte 0

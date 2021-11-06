@@ -35,6 +35,7 @@ global isr28
 global isr29
 global isr30
 global isr31
+global isr80
 
 ; Each "section" pushes the interrupt number and the error code onto the stack
 
@@ -234,6 +235,11 @@ isr31:
     push byte 31
     jmp isr_common_handler
 
+isr80:
+    cli
+    push byte 0
+    push byte 80
+    jmp isr_common_handler
 
 
 

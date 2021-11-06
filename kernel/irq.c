@@ -1,5 +1,5 @@
 
-#include "xirq.h"
+#include "irq.h"
 
 // TODO need to add comment per ICW
 void reprogram_pic() {

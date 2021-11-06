@@ -74,12 +74,16 @@ void clearScreen() {
     setCursor(0);
 }
 
-void print_string(char * str, char attribute_type) {
+void print_string_with_attribute(char * str, char attribute_type) {
     int offset = getCursor();
     for(int i = 0; str[i] != 0 ; i++) {
         // Returns off set in case of offset shift due to \n
         offset = print_chat_at_offset(str[i], attribute_type, offset);
     }
+}
+
+void print_string(char * str) {
+    print_string_with_attribute(str, WHITE_ON_BLACK);
 }
 
 void printBackspace() {
@@ -88,8 +92,8 @@ void printBackspace() {
     setCursor(backOffset);
 }
 
-void printNewLine() {
-    print_string("\n", WHITE_ON_BLACK);
+void print_new_line() {
+    print_string("\n");
 }
 
 
