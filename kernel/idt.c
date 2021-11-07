@@ -103,7 +103,6 @@ void irq_handler(i_registers_t *reg) {
 }
 
 void isr_handler(i_registers_t *registers) {
-    print_string("Received interrupt: ");
     switch (registers->int_no) {
         case 1:
             print_string("Division by 0");

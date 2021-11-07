@@ -12,6 +12,10 @@ void this_does_nothign() {
     k_exit();
 }
 
+void this_is_the_idle_process() {
+    print_string("Running the idle process\n" );
+}
+
 void main () {
     clearScreen();
     print_string("Ole que funciona!!! \n"
@@ -29,11 +33,13 @@ void main () {
 
     print_new_line();
 
+//    createProcess(this_is_the_idle_process);
     createProcess(this_does_nothign);
 
     print_string("\nThis is post process creation \n");
 
-    runNextProcess();
+    start_processes();
+
 
 }
 

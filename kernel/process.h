@@ -2,7 +2,7 @@
 #ifndef CSWK_KERNEL_PROCESS_H
 #define CSWK_KERNEL_PROCESS_H
 
-#include "inter.h"
+#include <stdint.h>
 
 #define NEW_STATE 0 // The process is being created
 #define READY_STATE 1 // The processor is waiting to be assinged to a processor
@@ -12,12 +12,19 @@
 
 typedef void (*process_text)();
 
-enum state {
-  _new,
-  running,
-  waiting,
-  ready,
-  terminated
+/* These registers are architecture specific */
+struct x86_registers {
+  // General purpose registers
+  uint32_t edi, esi, ebx, edx, ecx, eax;
+  // Segment registers
+  uint32_t ds, cs, ss, es, fs, gs;
+  // Stack registers
+  uint32_t esp, ebp;
+
+  uint32_t eflags; // TODO: perhaps should be its own struct
+
+  uint32_t eip; // Extended instruction pointer
+
 };
 
 // Process Control Block
@@ -26,7 +33,7 @@ typedef struct PCB {
   int pid;
   int state;
   int program_counter;
-  i_registers_t registers;
+  struct x86_registers registers;
   unsigned int limit;
   // List of open files
 

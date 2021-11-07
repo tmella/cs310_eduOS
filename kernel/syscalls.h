@@ -13,9 +13,7 @@ void sys_call_handler(i_registers_t* registers) {
     switch (registers->eax) {
 
         case SYSCALL_EXIT:
-            print_string("This is a one");
-
-
+            kill_current_process();
             break;
         default:
             print_string("ActuallY I dont know");
