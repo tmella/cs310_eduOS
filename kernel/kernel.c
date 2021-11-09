@@ -4,6 +4,8 @@
 #include "inter.h"
 #include "exit.h"
 
+#include "memory/heap.h"
+
 #include "process_scheduler.h"
 
 void this_does_nothign() {
@@ -29,17 +31,32 @@ void main () {
     initialise_keyboard();
 
     print_string("Initialising process scheduler ... \n");
-    init_process_scheduler();
+//    init_process_scheduler();
 
     print_new_line();
 
 //    createProcess(this_is_the_idle_process);
-    createProcess(this_does_nothign);
+//    createProcess(this_does_nothign);
 
-    print_string("\nThis is post process creation \n");
+//    start_processes();
 
-    start_processes();
+    print_string("Initializing heap ... ");
+    init_heap();
+    print_string( "Done successfully \n\n");
 
+    uint32_t n =  10;
+    char *ptr = (char *) kmalloc(n * sizeof(int));
+//    for (int i = 0; i < n; ++i) {
+//        ptr[i] = 'a' + i; // shorthand for *(ptr + i)
+//    }
+
+    char *pt = (char *) kmalloc(n * sizeof(long long));
+
+    print_string(ptr);
+
+    kfree(ptr);
+
+    kmalloc(12);
 
 }
 
