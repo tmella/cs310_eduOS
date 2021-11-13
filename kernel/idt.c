@@ -200,7 +200,8 @@ void isr_handler(i_registers_t *registers) {
         case 80:
             sys_call_handler(registers);
             break;
-        
+        default:
+            print_string("I havent got a clue");
     }
 
     print_new_line();

@@ -5,28 +5,37 @@
 
 #include "../stdlib/stdlib.h"
 
+#include "memory/heap.h"
+
 unsigned int processId = 0;
 
-ProcessQueue jobQueue;
 ProcessQueue readyQueue;
-ProcessQueue deviceQueue;
+ProcessQueue waitingQueue;
 
 PCB *currentProcess;
-
-void init_process_scheduler(){
-    init_queue(&readyQueue, 256);
-
-//    currentProcess =
-}
 
 unsigned int next_pid(){
     return ++processId;
 }
 
-PCB *create_idle_process() {
 
+// TODO need to finish
+PCB *create_idle_process() {
+    PCB *newProcess;
+
+    newProcess = kmalloc(sizeof(PCB));
+
+    newProcess->pid = next_pid();
+
+    return newProcess;
 }
 
+void init_process_scheduler(){
+    init_queue(&readyQueue, 256);
+    init_queue(&waitingQueue, 256);
+
+//    currentProcess = create_idle_process();
+}
 
 void initialize_registers(struct x86_registers *reg) {
     // Initialize general purpose registers
@@ -85,4 +94,8 @@ void start_processes() {
 
     void (*fghj)() = nextProcess->text;
     fghj();
+}
+
+void sleep_current_process() {
+    print_string("I should really sleep the current process");
 }

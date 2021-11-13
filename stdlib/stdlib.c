@@ -69,4 +69,9 @@ char* itoa(int value, char* buffer, int base)
 }
 
 
+unsigned int sleep(unsigned int ms) {
+
+}
+
+
 

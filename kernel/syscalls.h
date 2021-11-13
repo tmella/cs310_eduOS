@@ -3,15 +3,14 @@
 #include "process_scheduler.h"
 #include "../stdlib/stdlib.h"
 
-#ifndef CSWK_KERNEL_SYSCALLS_H
-#define CSWK_KERNEL_SYSCALLS_H
+#ifndef KERNEL_SYSCALLS_H
+#define KERNEL_SYSCALLS_H
 
 
 #define SYSCALL_EXIT 1
 
 void sys_call_handler(i_registers_t* registers) {
     switch (registers->eax) {
-
         case SYSCALL_EXIT:
             kill_current_process();
             break;
@@ -22,4 +21,4 @@ void sys_call_handler(i_registers_t* registers) {
     }
 }
 
-#endif //CSWK_KERNEL_SYSCALLS_H
+#endif //KERNEL_SYSCALLS_H

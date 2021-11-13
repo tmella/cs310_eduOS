@@ -3,7 +3,7 @@
 #include "../drivers/screen.h"
 #include "inter.h"
 #include "exit.h"
-
+#include "interrupts/timer.h"
 #include "memory/heap.h"
 
 #include "process_scheduler.h"
@@ -20,8 +20,6 @@ void this_is_the_idle_process() {
 
 void main () {
     clearScreen();
-    print_string("Ole que funciona!!! \n"
-                 "This also works\n");
 
     install_interrupt_service_routine();
 
@@ -44,19 +42,10 @@ void main () {
     init_heap();
     print_string( "Done successfully \n\n");
 
-    uint32_t n =  10;
-    char *ptr = (char *) kmalloc(n * sizeof(int));
-//    for (int i = 0; i < n; ++i) {
-//        ptr[i] = 'a' + i; // shorthand for *(ptr + i)
-//    }
+    print_string("Initializing timer ... ");
+    init_timer();
+    print_string( "Done successfully \n\n");
 
-    char *pt = (char *) kmalloc(n * sizeof(long long));
-
-    print_string(ptr);
-
-    kfree(ptr);
-
-    kmalloc(12);
 
 }
 

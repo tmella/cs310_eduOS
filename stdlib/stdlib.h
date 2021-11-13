@@ -4,6 +4,8 @@
 
 /* THe bellow has been coppied from https://www.techiedelight.com/implement-itoa-function-in-c/ for debugging ints*/
 
+void sleep(unsigned int ms);
+
 int abs(int value);
 
 // Function to swap two numbers

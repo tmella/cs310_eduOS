@@ -21,6 +21,7 @@ void context_switch(uint32_t newPid);
 
 void kill_current_process();
 
+void sleep_current_process();
 
 
 #endif //CSWK_KERNEL_PROCESS_SCHEDULER_H
