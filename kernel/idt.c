@@ -120,7 +120,7 @@ void isr_handler(i_registers_t *registers) {
             print_string("Overflow");
             break;
         case 6:
-            print_string("Bound range exceeded");
+//            print_string("Bound range exceeded");
             break;
         case 7:
             print_string("Invalid op code");
@@ -204,5 +204,5 @@ void isr_handler(i_registers_t *registers) {
             print_string("I havent got a clue");
     }
 
-    print_new_line();
+//    print_new_line();
 }

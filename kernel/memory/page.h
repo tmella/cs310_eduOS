@@ -1,6 +1,0 @@
-
-
-#ifndef KERNEL_MEMORY_PAGE_H
-#define KERNEL_MEMORY_PAGE_H
-
-#endif //KERNEL_MEMORY_PAGE_H

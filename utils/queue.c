@@ -10,16 +10,8 @@ void init_queue(ProcessQueue *queue, int length) {
 }
 
 PCB *enqueue(ProcessQueue *queue, PCB newProcess) {
-
-    print_string("Enqueueing element \n");
-
-    if(queue->headIndex == -1) {
-        print_string("Have initialized the head\n");
+    if(queue->headIndex == -1)
         queue->headIndex++;
-    } else {
-        char who[10];
-        print_string(itoa(queue->headIndex, who, 10));
-    }
 
     struct QueueElem *oldTail;
 
@@ -45,8 +37,8 @@ PCB *dequeue(ProcessQueue *queue) {
 
     int readlIndex = queue->headIndex;
 
-    // Reduce the index
-    queue->headIndex--;
+    // Increase the index
+    queue->headIndex++;
 
     // Update the pointer to the new head
     if(queue->headIndex != -1) {

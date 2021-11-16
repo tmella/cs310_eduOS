@@ -17,4 +17,8 @@ char* reverse(char *buffer, int i, int j);
 // Iterative function to implement `itoa()` function in C
 char* itoa(int value, char* buffer, int base);
 
+
+// TODO: should this be here
+void *memset(void *s, int c, int n);
+
 #endif //CSWK_STDLIB_STDLIB_H

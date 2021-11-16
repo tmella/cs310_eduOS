@@ -37,6 +37,7 @@ typedef struct PCB {
   unsigned int limit;
   // List of open files
 
+  // Program text
   void (*text)();
 
 } PCB;

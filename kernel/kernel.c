@@ -5,6 +5,7 @@
 #include "exit.h"
 #include "interrupts/timer.h"
 #include "memory/heap.h"
+#include "memory/page_frames.h"
 
 #include "process_scheduler.h"
 
@@ -15,7 +16,7 @@ void this_does_nothign() {
 }
 
 void this_is_the_idle_process() {
-    print_string("Running the idle process\n" );
+    print_string("\nRunning the idle process\n" );
 }
 
 void main () {
@@ -29,14 +30,8 @@ void main () {
     initialise_keyboard();
 
     print_string("Initialising process scheduler ... \n");
-//    init_process_scheduler();
-
-    print_new_line();
-
-//    createProcess(this_is_the_idle_process);
-//    createProcess(this_does_nothign);
-
-//    start_processes();
+    init_process_scheduler();
+    print_string( "Done successfully \n\n");
 
     print_string("Initializing heap ... ");
     init_heap();
@@ -46,6 +41,13 @@ void main () {
     init_timer();
     print_string( "Done successfully \n\n");
 
+    createProcess(this_does_nothign);
+    createProcess(this_is_the_idle_process);
 
+    print_string("\n\nInitializing paging ... ");
+    init_mem();
+    print_string( "Done successfully \n\n");
+
+    start_processes();
 }
 
