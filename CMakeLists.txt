@@ -3,4 +3,4 @@ project(cswk C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(cswk main.c kernel/irq.h kernel/irq.c drivers/keyboard.h drivers/keyboard.c kernel/process.h kernel/process_scheduler.h utils/queue.h utils/Memory.h kernel/process_scheduler.c utils/queue.c kernel/syscalls.h kernel/exit.c kernel/exit.h stdlib/stdlib.h stdlib/stdlib.c kernel/memory/page_frames.h kernel/memory/heap.h kernel/interrupts/timer.h kernel/interrupts/timer.c kernel/sleep.h kernel/sleep.c kernel/idle.h kernel/memory/mem_common.h kernel/memory/paging.h)
+add_executable(cswk main.c kernel/irq.h kernel/irq.c drivers/keyboard.h drivers/keyboard.c kernel/process.h kernel/process_scheduler.h utils/queue.h kernel/process_scheduler.c utils/queue.c kernel/syscalls.h kernel/exit.c kernel/exit.h stdlib/stdlib.h stdlib/stdlib.c kernel/memory/page_frames.h kernel/memory/heap.h kernel/interrupts/timer.h kernel/interrupts/timer.c kernel/sleep.h kernel/sleep.c kernel/idle.h kernel/memory/mem_common.h kernel/memory/paging.h kernel/memory/paging.c kernel/memory/page_frames.c)

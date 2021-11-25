@@ -14,7 +14,6 @@ void setCursor(int offset) {
 }
 
 int getCursor() {
-
     port_byte_out(REG_SCREEN_CTRL , 14);
     int offset = port_byte_in(REG_SCREEN_DATA) << 8;
 

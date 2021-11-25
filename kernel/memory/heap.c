@@ -9,9 +9,6 @@ static heap_segment_t *head_start;
 
 void debug_all_segments();
 
-// TODO: fix this, you are currently messing with the head and causing errors
-// For some reason any allocation changes the size field.
-// Perhaps you need to take into account the size of the struct
 void *kmalloc(uint32_t no_bytes) {
     heap_segment_t *chosen_segment = null_ptr;
     heap_segment_t *optimal_search = head_start;
