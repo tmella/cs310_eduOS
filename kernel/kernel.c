@@ -1,7 +1,7 @@
 
 #include "../drivers/keyboard.h"
 #include "../drivers/screen.h"
-#include "xinter.h"
+#include "interrupt.h"
 
 void main () {
     clearScreen();

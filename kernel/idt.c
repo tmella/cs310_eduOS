@@ -1,7 +1,7 @@
 
-#include "xinter.h"
+#include "interrupt.h"
 #include "low_level.h"
-#include "xirq.h"
+#include "irq.h"
 
 idt_ptr interrupt_descriptor_table_ptr;
 idt_entry interrupt_descriptor_table[256];
