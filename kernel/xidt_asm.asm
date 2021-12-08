@@ -37,7 +37,7 @@ global isr30
 global isr31
 
 ; Each "section" pushes the interrupt number and the error code onto the stack
-
+; A list of all exceptions can be found here: https://wiki.osdev.org/Exceptions
 isr0:
     cli
     push byte 0
@@ -123,13 +123,12 @@ isr13:
     push byte 13
     jmp isr_common_handler
 
-
+; Page fault (needs checking)
 isr14:
     cli
     push byte 0
     push byte 14
     jmp isr_common_handler
-
 
 isr15:
     cli

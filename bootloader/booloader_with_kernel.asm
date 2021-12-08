@@ -6,6 +6,7 @@ org 0x7c00
 ; If memory issues occur remember that the Kernel is loaded at 0x10000.
 ; If its too large could it potentially write over any needed addresses?
 ; Consider the need to relocate the kernel (os dev forum) investigate rep movsb
+; https://wiki.osdev.org/Higher_Half_Kernel
 
 ; This will lead to the kernel being loaded into 0x10000 (check why?)
 ; A full explanation can be found at https://wiki.osdev.org/Rolling_Your_Own_Bootloader
