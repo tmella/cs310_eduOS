@@ -8,8 +8,8 @@
 const char ascii_map[] = {'?', '?',
                           '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '?', '?',
                           'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
-                          '?', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '?',
-                          '?', 'z', 'x', 'c', 'v', 'b', 'n', 'b', 'n', 'm', ',', '.', '/', '?'};
+                          '?', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '?', '?',
+                          '?', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '?'};
 
 #define SPACE 0x39
 #define BACKSPACE 0x0E
@@ -21,21 +21,19 @@ const char ascii_map[] = {'?', '?',
 static void keyboard_handler(i_registers_t *registers) {
     uint8_t key_code = port_byte_in(0x60);
 
-    if (key_code > 57) return;
+    if (key_code > 57)
+        return;
     switch (key_code) {
-        case SPACE:
-            print_string(" ");
-            break;
-        case BACKSPACE: // Backspace
-            printBackspace();
-            break;
-        case ENTER:
-            print_new_line();
-            break;
-        default:
-            char letter = ascii_map[key_code];
-            char str[2] = {letter, '\0'};
-            print_string(str);
+    case SPACE:print_string(" ");
+        break;
+    case BACKSPACE: // Backspace
+        printBackspace();
+        break;
+    case ENTER:print_new_line();
+        break;
+    default:char letter = ascii_map[key_code];
+        char str[2] = {letter, '\0'};
+        print_string(str);
     }
 }
 
