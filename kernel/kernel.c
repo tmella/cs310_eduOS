@@ -1,11 +1,10 @@
 
 #include "../drivers/keyboard.h"
 #include "../drivers/screen.h"
-#include "interrupt.h"
-#include "../stdlib/stdlib.h"
+#include "interrupt/idt.h"
 
-#include "memory/frame_allocator.h"
 #include "memory/paging.h"
+#include "memory/frame_allocator.h"
 
 void main () {
     clearScreen();

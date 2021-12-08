@@ -1,11 +1,8 @@
-//
-// Created by University  on 1/11/21.
-//
 
 #ifndef CSWK_XIRQ_H
 #define CSWK_XIRQ_H
 
-#include "low_level.h"
+#include "../low_level.h"
 
 #define PIC_MATER_PORT 0x20 // Command port
 #define PIC_SLAVE_PORT 0xA0 // Slave port

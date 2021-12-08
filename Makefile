@@ -2,8 +2,8 @@
 # $< = first dependency
 # $^ = all dependencies
 
-SRC = $(wildcard kernel/*.c drivers/*.c kernel/memory/*.c stdlib/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h kernel/memory/*.h stdlib/*.h)
+SRC = $(wildcard kernel/*.c drivers/*.c kernel/memory/*.c kernel/interrupt/*.c stdlib/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h kernel/memory/*.h kernel/interrupt/*.h stdlib/*.h)
 
 OBJ = ${SRC:.c=.o}
 
@@ -16,7 +16,7 @@ run: os-image.bin
 os-image.bin: booloader_with_kernel.bin kernel.bin
 	cat $^ > $@
 
-kernel.bin:  kernel/kernel-ep.o ${OBJ} kernel/xidt_asm.o kernel/xirq_asm.o
+kernel.bin:  kernel/kernel-ep.o ${OBJ} kernel/interrupt/idt_asm.o kernel/interrupt/irq_asm.o
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
 
 %.o: %.asm
@@ -35,5 +35,8 @@ booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 echo: os-image.bin
 	xxd $<
 
+SRC_ASM = $(wildcard kernel/*.asm drivers/*.asm kernel/memory/*.asm kernel/interrupt/*.asm stdlib/*.asm)
+CLEAN_ASM = ${SRC_ASM:.asm=.o}
+
 clean:
-	$(RM) *.bin *.o *.dis ${OBJ} kernel/kernel-ep.o
+	$(RM) *.bin *.o *.dis ${OBJ} ${CLEAN_ASM}

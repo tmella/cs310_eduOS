@@ -1,9 +1,9 @@
 
-#ifndef CSWK_XINTER_H
-#define CSWK_XINTER_H
+#ifndef CSWK_INTERRUPT_H
+#define CSWK_INTERRUPT_H
 
 #include <stdint.h>
-#include "../drivers/screen.h"
+#include "../../drivers/screen.h"
 
 extern void isr0();
 extern void isr1();
@@ -71,4 +71,4 @@ void isr_handler(i_registers_t *registers);
 
 void add_handler(int num, handler handlerFunc);
 
-#endif //CSWK_XINTER_H
+#endif //CSWK_INTERRUPT_H

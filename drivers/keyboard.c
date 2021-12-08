@@ -2,7 +2,7 @@
 
 #include "../kernel/low_level.h"
 #include "keyboard.h"
-#include "../kernel/interrupt.h"
+#include "../kernel/interrupt/idt.h"
 
 /* Characters taken from my US Laptop keyboard layout. Should be standard */
 const char ascii_map[] = {'?', '?',

@@ -1,6 +1,5 @@
 
-#include "interrupt.h"
-#include "low_level.h"
+#include "idt.h"
 #include "irq.h"
 
 idt_ptr interrupt_descriptor_table_ptr;
