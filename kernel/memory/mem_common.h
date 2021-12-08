@@ -8,11 +8,16 @@
 // QEMU by default sets memory to 128
 #define TOTAL_MEMORY 1024 * 1024 * 128
 
-#define FRAMES_START 0x100000
+// TODO: check if too much memory
+#define KERNEL_HEAP_START 0x200000
+#define KERNEL_HEAP_SIZE 0x100000
+
+#define FRAMES_START 0x300000
 #define FRAME_SIZE 4096 // In bytes
 #define FRAME_SIZE_HEX 0x1000
 
 #define FRAMES_NO (MEMORY_END-FRAMES_START)/FRAME_SIZE_HEX
+
 
 
 // TODO need to decide the heap start address and size

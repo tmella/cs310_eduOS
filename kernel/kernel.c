@@ -4,6 +4,7 @@
 #include "interrupt/idt.h"
 
 #include "memory/paging.h"
+#include "memory/heap.h"
 #include "memory/frame_allocator.h"
 
 void main () {
@@ -20,6 +21,7 @@ void main () {
 
     print_string("\nInitialising memory... ");
     init_mem();
+    init_heap();
     init_paging();
     print_string("Done successfully\n");
 
