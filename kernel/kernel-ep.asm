@@ -2,7 +2,8 @@ global _start
 
 bits 32
 
-[extern main]
-call main
+_start:
+    [extern main]
+    call main
 
-jmp $
+    jmp $
