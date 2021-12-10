@@ -23,6 +23,9 @@ static void keyboard_handler(i_registers_t *registers) {
 
     if (key_code > 57)
         return;
+
+    char letter = ascii_map[key_code];
+    char str[2] = {letter, '\0'};
     switch (key_code) {
     case SPACE:print_string(" ");
         break;
@@ -31,8 +34,8 @@ static void keyboard_handler(i_registers_t *registers) {
         break;
     case ENTER:print_new_line();
         break;
-    default:char letter = ascii_map[key_code];
-        char str[2] = {letter, '\0'};
+    default:
+
         print_string(str);
     }
 }
