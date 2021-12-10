@@ -17,13 +17,13 @@ os-image.bin: booloader_with_kernel.bin kernel.bin
 	cat $^ > $@
 
 kernel.bin:  kernel/kernel-ep.o ${OBJ} kernel/interrupt/idt_asm.o kernel/interrupt/irq_asm.o
-	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
+	ld -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
 
 %.o: %.asm
 	nasm $< -f elf -o $@
 
 %.o: %.c
-	x86_64-elf-gcc -m32 -ffreestanding -c $< -o $@
+	gcc -m32 -ffreestanding -c $< -o $@
 
 # Disassemble
 kernel.dis: kernel.bin
