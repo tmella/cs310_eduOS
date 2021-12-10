@@ -73,10 +73,10 @@ unsigned int sleep(unsigned int ms) {
 
 }
 
-void *memset(void *s, int c, int n) {
-    unsigned char *p = s;
-    for(int i = 0 ; i<n ; i++) {
-        p[i] = c;
-    }
-    return s;
+void *memset(void *src, void *dest, int n) {
+    char *d = dest;
+    const char *s = src;
+    for(int i = 0 ; i<n ; i++)
+        d[i] = s[i];
+    return dest;
 }

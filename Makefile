@@ -2,8 +2,8 @@
 # $< = first dependency
 # $^ = all dependencies
 
-SRC = $(wildcard kernel/*.c drivers/*.c kernel/memory/*.c kernel/interrupt/*.c stdlib/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h kernel/memory/*.h kernel/interrupt/*.h stdlib/*.h)
+SRC = $(wildcard kernel/*.c drivers/*.c kernel/memory/*.c kernel/process/.c kernel/interrupt/*.c stdlib/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h kernel/memory/*.h kernel/process/.h kernel/interrupt/*.h stdlib/*.h)
 
 OBJ = ${SRC:.c=.o}
 
