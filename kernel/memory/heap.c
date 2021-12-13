@@ -1,6 +1,8 @@
 
 #include "heap.h"
 #include "mem_common.h"
+#include "../../drivers/screen.h"
+#include "../../stdlib/stdlib.h"
 
 #define null_ptr ((void*)0)
 
@@ -104,3 +106,40 @@ void k_free(void *ptr) {
 }
 
 
+void print_seg(heap_segment_t *seg) {
+    char val[10];
+    print_string("Allocated with size ");
+    print_string(itoa(seg->size, val, 10));
+
+    if(seg->is_allocated) {
+        print_string(" it is allocated ");
+    } else {
+        print_string(" it is not allocated ");
+    }
+    print_string("at address ");
+    print_string(itoa((void *) seg + sizeof(heap_segment_t), val, 16));
+}
+
+void debug() {
+    heap_segment_t *elem = heap_start;
+    while (elem != null_ptr) {
+        print_new_line();
+        print_seg(elem);
+        elem = elem->next;
+    }
+}
+
+void debugt() {
+    heap_segment_t *elem = heap_start;
+    char val[10];
+    while (elem != null_ptr) {
+        print_string("\nDoing this ");
+        print_string("at address ");
+        print_string(itoa(elem, val, 16));
+//        print_new_line();
+//        print_seg(elem);
+        elem = elem->next;
+//        elem = null_ptr;
+    }
+
+}
