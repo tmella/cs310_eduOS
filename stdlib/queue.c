@@ -2,7 +2,6 @@
 #include "../kernel/memory/heap.h"
 #include "queue.h"
 #include "stdlib.h"
-#include "../drivers/screen.h"
 
 #define null_ptr ((void *)0)
 
@@ -22,8 +21,7 @@ void enqueue(Queue *queue, void *add) {
 
     // Create space on heap for element
     // Copy the data over
-    new_elem->value = k_malloc(sizeof(queue->alloc_size));
-    memset(add, new_elem->value, queue->alloc_size);
+    new_elem->value = k_malloc(queue->alloc_size);
 
     new_elem->next = null_ptr;
 
