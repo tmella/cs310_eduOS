@@ -3,6 +3,11 @@
 #include "queue.h"
 #include "stdlib.h"
 
+#include "../drivers/screen.h"
+#include "../stdlib/stdlib.h"
+
+#include "../kernel/process/process.h"
+
 #define null_ptr ((void *)0)
 
 Queue *init_queue(uint32_t elemSize) {
@@ -11,6 +16,7 @@ Queue *init_queue(uint32_t elemSize) {
     queue->size = 0;
     queue->alloc_size = elemSize;
     queue->head = null_ptr;
+    queue->tail = null_ptr;
 
     return queue;
 }
@@ -22,19 +28,29 @@ void enqueue(Queue *queue, void *add) {
     // Create space on heap for element
     // Copy the data over
     new_elem->value = k_malloc(queue->alloc_size);
-
+    memset(add, new_elem->value, queue->alloc_size);
     new_elem->next = null_ptr;
 
     if (queue->size == 0) {
         queue->head = new_elem;
         queue->tail = new_elem;
-        queue->head->next = queue->tail;
     } else {
         queue->tail->next = new_elem;
+        queue->tail = new_elem;
     }
 
     queue->size++;
 }
+
+void print_pcbs(Queue *queue) {
+    queue_elem *elem = queue->head;
+    while (elem != null_ptr) {
+        print_string("\nDoing this");
+        elem = elem->next;
+    }
+
+}
+
 void dequeue(Queue *queue, void *data) {
     if (queue->size == 0)
         return;
@@ -55,3 +71,5 @@ void dequeue(Queue *queue, void *data) {
 int8_t is_empty(Queue *queue) {
     return queue->size;
 }
+
+
