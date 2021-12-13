@@ -2,8 +2,6 @@
 cmake-build-debug/
 CMakeLists.txt
 
-kernel/process/
-
 *.o
 kernel.bin
 os-image.bin
