@@ -37,6 +37,7 @@ extern void isr28();
 extern void isr29();
 extern void isr30();
 extern void isr31();
+extern void isr80();
 
 // Revisar si es valido, different resources use different registers
 // This is the one with the most, check if we need them all

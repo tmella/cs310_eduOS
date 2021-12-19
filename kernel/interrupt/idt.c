@@ -1,6 +1,7 @@
 
 #include "idt.h"
 #include "irq.h"
+#include "../syscalls.h"
 
 idt_ptr interrupt_descriptor_table_ptr;
 idt_entry interrupt_descriptor_table[256];
@@ -80,6 +81,9 @@ void install_interrupt_service_routine() {
     set_idt_gate(46, (uint32_t) irq14);
     set_idt_gate(47, (uint32_t) irq15);
 
+    // Set gate for system calls
+    set_idt_gate(128, (uint32_t) isr80);
+
     reprogram_pic();
 
     load_idt();
@@ -100,7 +104,8 @@ void irq_handler(i_registers_t *reg) {
 }
 
 void isr_handler(i_registers_t *registers) {
-    print_string("Received interrupt: ");
+//    print_string("Received interrupt: ");
+    // Switch statement
     switch (registers->int_no) {
         case 1:
             print_string("Division by 0");
@@ -118,7 +123,7 @@ void isr_handler(i_registers_t *registers) {
             print_string("Overflow");
             break;
         case 6:
-            print_string("Bound range exceeded");
+//            print_string("Bound range exceeded");
             break;
         case 7:
             print_string("Invalid op code");
@@ -195,7 +200,10 @@ void isr_handler(i_registers_t *registers) {
         case 31:
             print_string("Reserved");
             break;
-        
+        // System calls
+        case 80:
+            handle_syscall(registers);
+            break;
     }
 
     print_new_line();
