@@ -1,6 +1,3 @@
-//
-// Created by University  on 28/10/21.
-//
 
 #ifndef CSWK_SCREEN_H
 #define CSWK_SCREEN_H
@@ -24,9 +21,10 @@ void print_new_line();
 
 void printBackspace();
 
+void print_char(char chr);
 void print_string(char * str);
 void print_string_colour(char * str, char attribute_type);
 
-void print_char(char charac, int col, int row, char attribute_type);
+void print_char_at(char charac, int col, int row, char attribute_type);
 
 #endif //CSWK_SCREEN_H

@@ -23,4 +23,6 @@ char* itoa(int value, char* buffer, int base);
 // TODO: should this be here (check if I should add it to a memory based file)
 void *memset(void *src, const void *dest, int n);
 
+void printf(const char *format, ...);
+
 #endif //CSWK_STDLIB_STDLIB_H

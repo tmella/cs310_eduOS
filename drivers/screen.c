@@ -51,7 +51,7 @@ int print_chat_at_offset(char charac, char attribute_type, int offset) {
     return offset;
 }
 
-void print_char(char charac, int col, int row, char attribute_type) {
+void print_char_at(char charac, int col, int row, char attribute_type) {
     if (!attribute_type)
         attribute_type = WHITE_ON_BLACK;
 
@@ -68,7 +68,7 @@ void print_char(char charac, int col, int row, char attribute_type) {
 void clearScreen() {
     for (int row = 0; row < MAX_ROWS; row++) {
         for (int col = 0; col < MAX_COLS; col++) {
-            print_char(' ', col, row, WHITE_ON_BLACK);
+            print_char_at(' ', col, row, WHITE_ON_BLACK);
         }
     }
     setCursor(0);
@@ -76,6 +76,10 @@ void clearScreen() {
 
 void print_string(char *str) {
     print_string_colour(str, WHITE_ON_BLACK);
+}
+
+void print_char(char chr) {
+    print_chat_at_offset(chr, WHITE_ON_BLACK, getCursor());
 }
 
 void print_string_colour(char *str, char attribute_type) {

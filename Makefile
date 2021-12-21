@@ -35,7 +35,7 @@ booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 echo: os-image.bin
 	xxd $<
 
-SRC_ASM = $(wildcard kernel/*.asm drivers/*.asm kernel/memory/*.asm kernel/interrupt/*.asm stdlib/*.asm)
+SRC_ASM = $(wildcard kernel/*.asm drivers/*.asm kernel/memory/*.asm kernel/interrupt/*.asm stdlib/*.asm kernel/process/*.asm)
 CLEAN_ASM = ${SRC_ASM:.asm=.o}
 
 clean:
