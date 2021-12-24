@@ -16,7 +16,7 @@ run: os-image.bin
 os-image.bin: booloader_with_kernel.bin kernel.bin
 	cat $^ > $@
 
-kernel.bin:  kernel/kernel-ep.o ${OBJ} kernel/interrupt/idt_asm.o kernel/interrupt/irq_asm.o
+kernel.bin:  kernel/kernel-ep.o ${OBJ} kernel/interrupt/idt_asm.o kernel/interrupt/irq_asm.o kernel/process/context_switch.o
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
 
 %.o: %.asm

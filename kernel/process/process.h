@@ -27,14 +27,10 @@ struct x86_registers {
 };
 
 typedef struct {
-    uint32_t pid;
-    uint8_t state;
-    uint32_t program_counter;
-
-    struct x86_registers reg;
-
-    // Program text
-    void (*text)();
+  unsigned int esp;
+  // Not used anymore as paging has been disabled for debugging
+  unsigned int cr3;
+  // TODO need to add more fields (state, )
 } process_control_block;
 
 
