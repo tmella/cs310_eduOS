@@ -26,6 +26,11 @@ struct x86_registers {
   uint32_t eip; // Extended instruction pointer
 };
 
+
+/* Warning:
+ *    If ANYTHING is modified in this struct, make sure that the current offsets are set
+ *    in the context_switch.asm (these values are not retrieved dynamically)
+ * */
 typedef struct {
   unsigned int esp;
   // Not used anymore as paging has been disabled for debugging
