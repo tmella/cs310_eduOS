@@ -12,6 +12,7 @@
 #define TIMER_CMD_PORT 0x43 // Write only (read will be ignored)
 
 void init_timer(void);
+void set_periodic_func(unsigned int millis, void (*function)());
 
 
 #endif //CSWK_KERNEL_INTERRUPT_TIMER_H

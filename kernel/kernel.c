@@ -1,6 +1,7 @@
 
 #include "../drivers/keyboard.h"
 #include "../drivers/screen.h"
+#include "interrupt/timer.h"
 #include "interrupt/idt.h"
 
 #include "memory/paging.h"
@@ -29,6 +30,10 @@ void second_process() {
     exit(0);
 }
 
+void periodic_test() {
+    print_string("Periodic test");
+}
+
 void main () {
     clearScreen();
     print_new_line();
@@ -47,14 +52,20 @@ void main () {
 //    init_paging();
     print_string("Done successfully\n");
 
+    init_timer();
+
     print_string("\nInitialising processes ...");
     init_process_scheduler();
     print_string("Done successfully\n");
+
+    set_periodic_func(1000, periodic_test);
 
     create_process(first_process);
     create_process(second_process);
 
     reschedule();
+
+
 
     // Should be unreachable but if reached will stop an uncontrolled crash
     while(1){
