@@ -7,13 +7,27 @@
 #include "memory/heap.h"
 #include "memory/frame_allocator.h"
 
+#include "process/process.h"
 #include "process/process_scheduler.h"
 
+#include "../stdlib/exit.h"
 #include "../stdlib/stdlib.h"
-#include "../stdlib/queue.h"
 
-#include "process/process.h"
+// FIXME: adding initial switch logic in this file
+extern context_switch(process_control_block *pcb);
 
+process_control_block *first;
+process_control_block *second;
+
+void first_process() {
+    printf("\nThis is the first process\n");
+    exit(0);
+}
+
+void second_process() {
+    printf("\nThis is the second process\n");
+    exit(0);
+}
 
 void main () {
     clearScreen();
@@ -37,5 +51,13 @@ void main () {
     init_process_scheduler();
     print_string("Done successfully\n");
 
-    while(1){}
+    create_process(first_process);
+    create_process(second_process);
+
+    reschedule();
+
+    // Should be unreachable but if reached will stop an uncontrolled crash
+    while(1){
+        // TODO add a debug dump
+    }
 }

@@ -36,6 +36,7 @@ typedef struct {
   // Not used anymore as paging has been disabled for debugging
   unsigned int cr3;
   // TODO need to add more fields (state, )
+  uint8_t status;
 } process_control_block;
 
 

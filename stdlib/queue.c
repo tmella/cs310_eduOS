@@ -27,8 +27,7 @@ void enqueue(Queue *queue, void *add) {
 
     // Create space on heap for element
     // Copy the data over
-    new_elem->value = k_malloc(queue->alloc_size);
-    memset(add, new_elem->value, queue->alloc_size);
+    new_elem->value = add;
     new_elem->next = null_ptr;
 
     if (queue->size == 0) {
@@ -51,21 +50,23 @@ void print_pcbs(Queue *queue) {
 
 }
 
-void dequeue(Queue *queue, void *data) {
+void *dequeue(Queue *queue) {
     if (queue->size == 0)
         return;
 
     queue_elem *old_head = queue->head;
-    memset(old_head->value, data, queue->alloc_size);
+    // This should work as k_free does not 0 mem
+    void *elem = old_head->value;
     if (queue->size == 1) {
         queue->head = queue->tail = null_ptr;
     } else {
         queue->head = queue->head->next;
     }
-    k_free(old_head->value);
     k_free(old_head);
 
     queue->size--;
+
+    return elem;
 }
 
 int8_t is_empty(Queue *queue) {

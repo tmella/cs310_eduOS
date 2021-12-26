@@ -5,6 +5,7 @@ global context_switch
 ; Current PCB defined in kernel/process/
 extern current
 extern save_current_process
+extern set_process_running
 
 ; Offset from the process_control_block struct
 ; The value can be retrieved by calling offsetof(type, member);
@@ -34,6 +35,7 @@ context_switch:
         mov [current], esi
 
         ; Add the top of stack value and cr3 value from PCB struct
+        call set_process_running
         mov esp,[esi+ESP_OFFSET]
         mov eax,[esi+PD_OFFSET]
 

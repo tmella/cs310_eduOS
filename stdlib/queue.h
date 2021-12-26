@@ -20,7 +20,7 @@ typedef struct {
 Queue *init_queue(uint32_t elemSize);
 
 void enqueue(Queue *queue, void *add);
-void dequeue(Queue *queue, void *data);
+void *dequeue(Queue *queue);
 
 int8_t is_empty(Queue *queue);
 
