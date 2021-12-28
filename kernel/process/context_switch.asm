@@ -48,9 +48,9 @@ context_switch:
 
 .sameVAS:
         ; Restore the state
-        pop  ebx
-        pop  esi
-        pop  edi
-        pop  ebp
+        pop ebp
+        pop edi
+        pop esi
+        pop ebx
 
         ret
