@@ -3,6 +3,8 @@
 #include "../low_level.h"
 #include "idt.h"
 
+#include "../process/process_scheduler.h"
+
 /*
  *  Timer & Counter: this implementation acts as both
  *
@@ -39,6 +41,7 @@ unsigned int seconds_to_tick(unsigned int seconds) {
 // TODO: check what will happen when count reaches the int limit
 void timer_handler() {
     count++;
+    unblock_waiting();
     for (int i = 0; i < index; i++) {
         if (functions[i].remaining) {
             functions[i].remaining--;

@@ -5,6 +5,9 @@
 #include "../memory/frame_allocator.h"
 #include "../../stdlib/stdlib.h"
 #include "../../stdlib/queue.h"
+#include "../../stdlib/list.h"
+
+#include "../interrupt/timer.h"
 
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
@@ -17,15 +20,18 @@ unsigned int process_id;
 
 typedef Queue ProcessQueue;
 
+List *waiting_list;
+
+struct waiting_pcb {
+  uint32_t ticks;
+  process_control_block *pcb;
+};
+
 process_control_block *current;
 
 ProcessQueue *ready_queue;
 // Keep the Idle process separate from queueing logic (avoid push/pull)
 process_control_block *idle_process;
-
-unsigned int counter;
-process_control_block *primero;
-process_control_block *segundo;
 
 process_control_block *idle_pcb;
 
@@ -38,14 +44,13 @@ process_control_block *init_pcb() {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 void idle_process_m() {
-    printf("\nRunning the idle process");
+    printf("\nRunning the idle process\n");
     while (1) {
         // WHY DO WE NEED TO DISABLE AND ENABLE HTL
         asm volatile("sti");
         asm volatile("hlt");
         asm volatile("cli");
     }
-
 }
 #pragma clang diagnostic pop
 
@@ -64,6 +69,7 @@ void init_idle_process() {
 void init_process_scheduler() {
     // Init a queue that stores PCBs
     ready_queue = init_queue(sizeof(process_control_block));
+    waiting_list = init_list(sizeof(struct waiting_pcb));
 
     // TODO todo need to initialise the init process
     init_idle_process();
@@ -138,4 +144,42 @@ void kill_current_process() {
     current->status = TERMINATED_STATE;
 }
 
+void unblock_waiting() {
+    if (waiting_list->size == 0) {
+        return;
+    }
+
+    int index = 0;
+    list_elem *iter = waiting_list->head;
+    while (iter) {
+        struct waiting_pcb *value = (struct waiting_pcb *) iter->value;
+        value->ticks--;
+        if (!value->ticks) {
+            printf("The number of queued elements is %d", waiting_list->size);
+            printf("This has been reached!!");
+            enqueue(ready_queue, value->pcb);
+            remove_at(waiting_list, index);
+            reschedule();
+            break;
+        }
+        index++;
+        iter = iter->next;
+    }
+}
+
+void sleep_current_process(uint32_t millis) {
+    current->status = WAITING_STATE;
+
+    struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));
+    waiting->pcb = current;
+    waiting->ticks = millis_to_ticks(millis);
+
+    add_back(waiting_list, waiting);
+}
+
+void add_current_back() {
+    if(current) {
+        enqueue(ready_queue, current);
+    }
+}
 

@@ -21,20 +21,31 @@ process_control_block *first;
 process_control_block *second;
 
 void first_process() {
-    printf("\nThis is the first process\n");
+//    int i = 0;
+//    while(i < 3) {
+//        printf("First pre sleep %d", i++);
+//        sleep(10000);
+//    }
+//    printf("This is post sleep %d", i);
+
+    printf("\nPre sleep");
+    sleep(10000);
+    printf("\n Post sleep");
     exit(0);
 }
 
 void second_process() {
-    printf("\nThis is the second process\n");
-    exit(0);
+    printf("\nThis is the second");
+    sleep(50000);
+    printf("Second post sleep");
+    while (1);
 }
 
 void periodic_test() {
     print_string("Periodic test");
 }
 
-void main () {
+void main() {
     clearScreen();
     print_new_line();
     print_string("Enabling service routine... ");
@@ -58,17 +69,15 @@ void main () {
     init_process_scheduler();
     print_string("Done successfully\n");
 
-    set_periodic_func(1000, periodic_test);
-
-    create_process(first_process);
-    create_process(second_process);
+    first = create_process(first_process);
+    second = create_process(second_process);
 
     reschedule();
 
 
 
     // Should be unreachable but if reached will stop an uncontrolled crash
-    while(1){
+    while (1) {
         // TODO add a debug dump
     }
 }

@@ -4,4 +4,6 @@
 
 void exit(int reason);
 
+void sleep(unsigned int ms);
+
 #endif //CSWK_STDLIB_EXIT_H
