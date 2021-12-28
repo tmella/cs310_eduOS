@@ -73,10 +73,6 @@ char *itoa(int value, char *buffer, int base) {
     return reverse(buffer, 0, i - 1);
 }
 
-unsigned int sleep(unsigned int ms) {
-
-}
-
 void strcpy(const char *src, void *dest) {
     char *d = dest;
     const char *s = src;
@@ -119,6 +115,10 @@ void printf(const char *format, ...) {
                 case 'x':
                     break;
                 case '%':
+                    break;
+                case 'p':
+                    itoa(va_arg(args,int), var_temp, HEXADECIMAL);
+                    print_string(var_temp);
                     break;
             }
         } else {

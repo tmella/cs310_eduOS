@@ -1,13 +1,8 @@
-//
-// Created by University  on 26/11/21.
-//
 
 #ifndef CSWK_STDLIB_STDLIB_H
 #define CSWK_STDLIB_STDLIB_H
 
 /* THe bellow has been coppied from https://www.techiedelight.com/implement-itoa-function-in-c/ for debugging ints*/
-
-void sleep(unsigned int ms);
 
 int abs(int value);
 
