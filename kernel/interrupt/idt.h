@@ -3,7 +3,6 @@
 #define CSWK_INTERRUPT_H
 
 #include <stdint.h>
-#include "../../drivers/screen.h"
 
 extern void isr0();
 extern void isr1();

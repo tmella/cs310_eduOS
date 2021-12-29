@@ -2,6 +2,7 @@
 #include "idt.h"
 #include "irq.h"
 #include "../syscalls.h"
+#include "../../stdlib/stdlib.h"
 
 idt_ptr interrupt_descriptor_table_ptr;
 idt_entry interrupt_descriptor_table[256];
@@ -103,108 +104,101 @@ void irq_handler(i_registers_t *reg) {
     end_of_interrupt_pic();
 }
 
+/*
+ * For a detailed explanation of each type of exception (interrupt from 1-30)
+ *  please refer to the following page:  https://wiki.osdev.org/Exceptions
+ */
 void isr_handler(i_registers_t *registers) {
-//    print_string("Received interrupt: ");
     // Switch statement
     switch (registers->int_no) {
         case 1:
-            print_string("Division by 0");
+            printf("Division by 0");
             break;
         case 2:
-            print_string("Single step interrupt");
+            printf("Single step interrupt");
             break;
         case 3:
-            print_string("Non maskable interrupt");
+            printf("Non maskable interrupt");
             break;
         case 4:
-            print_string("Breakpoint");
+            printf("Breakpoint");
             break;
         case 5:
-            print_string("Overflow");
+            printf("Overflow");
             break;
         case 6:
-//            print_string("Bound range exceeded");
+            printf("Bound range exceeded");
             break;
         case 7:
-            print_string("Invalid op code");
+            printf("Invalid op code");
             break;
         case 8:
-            print_string("Double fault");
+            printf("Double fault");
             break;
         case 9:
-            print_string("Division by 0");
+            printf("Coprocessor Segment Overrun");
             break;
         case 10:
-            print_string("Division by 0");
+            printf("Invalid TSS");
             break;
         case 11:
-            print_string("Division by 0");
+            printf("Segment Not Present");
             break;
         case 12:
-            print_string("Division by 0");
+            printf("Stack-Segment Fault");
             break;
         case 13:
-            print_string("Division by 0");
+            printf("General Protection Fault");
             break;
         case 14:
-            print_string("Page fault");
+            printf("Page fault");
             break;
         case 15:
-            print_string("Division by 0");
+            printf("Reserved 15");
             break;
         case 16:
-            print_string("Division by 0");
+            // Is this possible on i386 arch? check
+            printf("x87 Floating Point Exception");
             break;
         case 17:
-            print_string("Division by 0");
+            printf("Alignment Check");
             break;
         case 18:
-            print_string("Division by 0");
+            printf("Machine Check");
             break;
         case 19:
-            print_string("Division by 0");
+            printf("SIMD Floating-Point Exception");
             break;
         case 20:
-            print_string("Division by 0");
+            printf("Virtualization Exception");
             break;
         case 21:
-            print_string("Division by 0");
+            printf("Control Protection Exception");
             break;
         case 22:
-            print_string("Division by 0");
-            break;
         case 23:
-            print_string("Division by 0");
-            break;
         case 24:
-            print_string("Division by 0");
-            break;
         case 25:
-            print_string("Division by 0");
-            break;
         case 26:
-            print_string("Division by 0");
-            break;
         case 27:
-            print_string("Division by 0");
+             printf("Reserved %d", registers->int_no);
             break;
         case 28:
-            print_string("Division by 0");
+            printf("Hypervisor Injection Exception")
             break;
         case 29:
-            print_string("Division by 0");
+            printf("VMM Communication Exception");
             break;
         case 30:
-            print_string("Division by 0");
+            printf("Security Exception");
             break;
         case 31:
-            print_string("Reserved");
+            printf("Reserved");
             break;
         // System calls
         case 80:
             handle_syscall(registers);
             break;
     }
-
-    print_new_line();
+    println();
 }
