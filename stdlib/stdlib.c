@@ -12,7 +12,6 @@
 
 int abs(int value) {
     return value * ((value > 0) - (value < 0));
-
 }
 
 // Function to swap two numbers
@@ -102,8 +101,7 @@ void printf(const char *format, ...) {
             i++;
             switch (format[i]) {
                 case 'd':
-                    itoa(va_arg(args,
-                    int), var_temp, DECIMAL);
+                    itoa(va_arg(args,int), var_temp, DECIMAL);
                     print_string(var_temp);
                     break;
                 case 's':
@@ -111,15 +109,20 @@ void printf(const char *format, ...) {
                     char*));
                     break;
                 case 'o':
-                    break;
-                case 'x':
+                    itoa(va_arg(args,int), var_temp, OCTAL);
+                    print_string(var_temp);
                     break;
                 case '%':
+                    print_char('%');
                     break;
+                case 'x':
                 case 'p':
                     itoa(va_arg(args,int), var_temp, HEXADECIMAL);
                     print_string(var_temp);
                     break;
+                case 'f':
+                default:
+                    print_string("UNKNOWN VALUE");
             }
         } else {
             print_char(format[i]);
@@ -128,4 +131,10 @@ void printf(const char *format, ...) {
 
     va_end(args);
 }
+
+void println(void) {
+    printf("\n");
+}
+
+
 #pragma clang diagnostic pop
