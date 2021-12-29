@@ -184,7 +184,7 @@ void isr_handler(i_registers_t *registers) {
              printf("Reserved %d", registers->int_no);
             break;
         case 28:
-            printf("Hypervisor Injection Exception")
+            printf("Hypervisor Injection Exception");
             break;
         case 29:
             printf("VMM Communication Exception");
