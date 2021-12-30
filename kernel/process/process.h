@@ -3,6 +3,7 @@
 #define CSWK_KERNEL_PROCESS_PROCESS_H
 
 #include "stdint.h"
+#include "../memory/paging.h"
 
 // States of a process
 #define NEW_STATE 0 // The process is being created
@@ -34,9 +35,9 @@ struct x86_registers {
 typedef struct {
   unsigned int esp;
   // Not used anymore as paging has been disabled for debugging
-  unsigned int cr3;
+  page_directory_t *cr3;
   // TODO need to add more fields (state, )
-  uint8_t status;
+  uint8_t state;
 } process_control_block;
 
 

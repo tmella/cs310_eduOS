@@ -17,9 +17,6 @@
 // FIXME: adding initial switch logic in this file
 extern context_switch(process_control_block *pcb);
 
-process_control_block *first;
-process_control_block *second;
-
 void first_process() {
 //    int i = 0;
 //    while(i < 3) {
@@ -51,17 +48,17 @@ void main() {
     print_string("Enabling service routine... ");
     install_interrupt_service_routine();
     asm volatile("sti");
-    print_string("Done successfully\n");
+    print_string("Done successfully");
 
     print_string("\nInitialising keyboard ... ");
     initialise_keyboard();
-    print_string("Done successfully\n");
+    print_string("Done successfully");
 
     print_string("\nInitialising memory... ");
     init_mem();
     init_heap();
-//    init_paging();
-    print_string("Done successfully\n");
+    init_paging();
+    print_string("Done successfully");
 
     init_timer();
 
@@ -69,11 +66,10 @@ void main() {
     init_process_scheduler();
     print_string("Done successfully\n");
 
-    first = create_process(first_process);
-    second = create_process(second_process);
+    create_process(first_process);
+    create_process(second_process);
 
     reschedule();
-
 
 
     // Should be unreachable but if reached will stop an uncontrolled crash

@@ -1,11 +1,15 @@
 
-// TODO need to add a standard header to all files with a detailed explanation of funcitonality
+// TODO need to add a standard header to all files with a detailed explanation of functionality
 // Also need to explain some impl details/choices taken
 
 #ifndef CSWK_KERNEL_MEMORY_PAGING_H
 #define CSWK_KERNEL_MEMORY_PAGING_H
 
 #include "stdint.h"
+// Needed to add a page fault handler
+#include "../interrupt/idt.h"
+
+#define PAGE_DIR_COUNT 1024
 
 /*
  * Properties described in the following page:
@@ -31,11 +35,11 @@ typedef struct {
 } page_t;
 
 typedef struct {
-  page_t entry[1024];
+  page_t entry[PAGE_DIR_COUNT];
 } page_directory_t;
 
 typedef struct {
-  page_t entry[1024];
+  page_t entry[PAGE_DIR_COUNT];
 } page_table_t;
 
 void print_if_set(unsigned int flag);
@@ -64,6 +68,8 @@ void set_page_dir(page_directory_t *dir);
 
 void init_paging();
 
-void create_kmapped_table();
+page_directory_t *create_kmapped_table();
+
+void page_fault_handler(i_registers_t *regs);
 
 #endif //CSWK_KERNEL_MEMORY_PAGING_H

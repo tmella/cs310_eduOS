@@ -125,7 +125,7 @@ void init_paging() {
         set_page(&page_directory->entry[i], 0, 0, 0, 0);
 
     // IDENTITY MAP EVERYTHING (as a starting point)
-    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE){
+    for (int i = 0; i < 0x400000; i += FRAME_SIZE){
         map_page(page_directory, i, i, 1, 1, 0);
     }
 
@@ -134,14 +134,31 @@ void init_paging() {
     enable_paging();
 }
 
-void create_kmapped_table() {
+/* At the moment there is no user space therefore there is no distinction
+ * between user and kernel stack */
+page_directory_t *create_kmapped_table() {
     page_directory_t *directory = (page_directory_t *) alloc_frame_addr();
     for (int i = 0; i < 1024; i++)
         set_page(&directory->entry[i], 0, 0, 0, 0);
 
-    // IDENTITY MAP EVERYTHING (as a starting point)
-    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE){
-        map_page(directory, i, i, 1, 1, 0);
-    }
+    // Identity map everything from kernel to FRAMES MEMORY
+    // Ideally we could get the size of the kernel from a linker
+    // and we can map more accurately
+    // This includes kernel code/heap
+//    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE)
+//        map_page(directory, i, i, 1, 1, 0);
+
+//     TODO check if the permissions are correct
+//    map_page(directory, directory, directory, 1, 1, 0 );
+//    for(int i= 1; i<=3; i++)
+//        map_page(directory, (directory) + (i * FRAME_SIZE), (directory) + (i * FRAME_SIZE), 1, 1, 0);
+
+}
+
+
+void page_fault_handler(i_registers_t *regs) {
+    asm volatile("sti");
+    printf("A page fault has occurred with the following address %p", regs->eax);
+    while(1);
 }
 

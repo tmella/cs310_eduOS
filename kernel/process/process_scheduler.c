@@ -40,11 +40,22 @@ process_control_block *init_pcb() {
     return (process_control_block *) k_malloc(sizeof(process_control_block));
 }
 
+void draw_green_square() {
+    // Prints a small green block
+    print_free_char(' ', 76, 1, GREEN_ON_BLACK);
+    print_free_char(' ', 77, 1, GREEN_ON_BLACK);
+}
+
+void clear_green_square() {
+    // Prints a small green block
+    clear_at(76, 1);
+    clear_at(77, 1);
+}
+
 /* Idle process which puts the processor to sleep */
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 void idle_process_m() {
-    printf("\nRunning the idle process\n");
     while (1) {
         // WHY DO WE NEED TO DISABLE AND ENABLE HTL
         asm volatile("sti");
@@ -99,7 +110,7 @@ process_control_block *create_process(void (*text)()) {
         push_to_stack(esp, 0);
 
     pcb->esp = esp;
-    pcb->cr3 = get_current_pd();
+    pcb->cr3 = create_kmapped_table();
 
     enqueue(ready_queue, pcb);
 
@@ -113,11 +124,12 @@ void save_current_process(unsigned int esp) {
     }
 }
 
-// NOT USING FOR NOW AS TESTING WITHOUT LIST FOR DEBUGGING
 void reschedule() {
     if (ready_queue->size == 0) {
+        draw_green_square();
         context_switch(idle_pcb);
     } else {
+        clear_green_square();
         process_control_block * new_process =
             (process_control_block *) dequeue(ready_queue);
 
@@ -137,11 +149,11 @@ void start_scheduler() {
 }
 
 void set_process_running() {
-    current->status = RUNNING_STATE;
+    current->state = RUNNING_STATE;
 }
 
 void kill_current_process() {
-    current->status = TERMINATED_STATE;
+    current->state = TERMINATED_STATE;
 }
 
 void unblock_waiting() {
@@ -155,8 +167,6 @@ void unblock_waiting() {
         struct waiting_pcb *value = (struct waiting_pcb *) iter->value;
         value->ticks--;
         if (!value->ticks) {
-            printf("The number of queued elements is %d", waiting_list->size);
-            printf("This has been reached!!");
             enqueue(ready_queue, value->pcb);
             remove_at(waiting_list, index);
             reschedule();
@@ -168,7 +178,7 @@ void unblock_waiting() {
 }
 
 void sleep_current_process(uint32_t millis) {
-    current->status = WAITING_STATE;
+    current->state = WAITING_STATE;
 
     struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));
     waiting->pcb = current;

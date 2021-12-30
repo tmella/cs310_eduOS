@@ -1,6 +1,7 @@
 
 #include "idt.h"
 #include "irq.h"
+#include "../memory/paging.h"
 #include "../syscalls.h"
 #include "../../stdlib/stdlib.h"
 
@@ -151,7 +152,7 @@ void isr_handler(i_registers_t *registers) {
             printf("General Protection Fault");
             break;
         case 14:
-            printf("Page fault");
+            page_fault_handler(registers);
             break;
         case 15:
             printf("Reserved 15");
