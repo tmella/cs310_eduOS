@@ -1,6 +1,3 @@
-//
-// Created by University  on 28/10/21.
-//
 
 #include "screen.h"
 #include "../kernel/low_level.h"
@@ -34,21 +31,25 @@ int newLineOffset(int offset) {
     return getOffset(row + 1, 0);
 }
 
-int print_chat_at_offset(char charac, char attribute_type, int offset) {
+int print_char_at_offset_free(char ch, char attribute_type, int offset) {
     unsigned char *vidmem = (unsigned char *) VIDEO_ADDRESS;
-    if (charac == '\n') {
+    if (ch == '\n') {
         offset = newLineOffset(offset);
     } else {
-        vidmem[offset] = charac;
+        vidmem[offset] = ch;
         vidmem[offset + 1] = attribute_type;
 
         offset += 2;
     }
 
-    // Set cursor for next time
-    setCursor(offset);
-
     return offset;
+}
+
+int print_chat_at_offset(char charac, char attribute_type, int offset) {
+    int cursor_offset = print_char_at_offset_free(charac, attribute_type, offset);
+    setCursor(cursor_offset);
+
+    return cursor_offset;
 }
 
 void print_char_at(char charac, int col, int row, char attribute_type) {
@@ -63,6 +64,25 @@ void print_char_at(char charac, int col, int row, char attribute_type) {
         offset = getCursor();
 
     print_chat_at_offset(charac, attribute_type, offset);
+}
+
+void print_free_char(char charac, int col, int row, char attribute_type) {
+    if (!attribute_type)
+        attribute_type = WHITE_ON_BLACK;
+
+    int offset;
+
+    if (col >= 0 && row >= 0)
+        offset = ((row * MAX_COLS) + col) * 2;
+    else
+        offset = getCursor();
+
+    print_char_at_offset_free(charac, attribute_type, offset);
+}
+
+/* Blanks out the section indicated */
+void clear_at(int col, int row) {
+    print_free_char(' ', col, row, WHITE_ON_BLACK);
 }
 
 void clearScreen() {

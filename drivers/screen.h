@@ -7,6 +7,7 @@
 #define MAX_COLS 80
 // Attribute byte for our default colour scheme.
 #define WHITE_ON_BLACK 0x0f
+#define GREEN_ON_BLACK 0x2f
 // Screen device I/O ports
 #define REG_SCREEN_CTRL 0x3D4
 #define REG_SCREEN_DATA 0x3D5
@@ -16,6 +17,8 @@
 #define VGA_OFFSET_HIGH 0x0e
 
 void clearScreen();
+// Blanks the section specified with black background
+void clear_at(int col, int row);
 
 void print_new_line();
 
@@ -26,5 +29,8 @@ void print_string(char * str);
 void print_string_colour(char * str, char attribute_type);
 
 void print_char_at(char charac, int col, int row, char attribute_type);
+
+/* Allows printing without modifying the cursor */
+void print_free_char(char charac, int col, int row, char attribute_type);
 
 #endif //CSWK_SCREEN_H
