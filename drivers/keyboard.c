@@ -24,22 +24,33 @@ static void keyboard_handler(i_registers_t *registers) {
     if (key_code > 57)
         return;
 
-    char letter = ascii_map[key_code];
+    letter = ascii_map[key_code];
     char str[2] = {letter, '\0'};
     switch (key_code) {
-    case SPACE:print_string(" ");
-        break;
-    case BACKSPACE: // Backspace
-        printBackspace();
-        break;
-    case ENTER:print_new_line();
-        break;
-    default:
+        case SPACE:
+            print_string(" ");
+            break;
+        case BACKSPACE: // Backspace
+            printBackspace();
+            break;
+        case ENTER:
+            print_new_line();
+            break;
+        default:
 
-        print_string(str);
+            print_string(str);
     }
 }
 
 void initialise_keyboard() {
     add_handler(33, keyboard_handler);
+}
+
+char blocking_wait_for_char(char ch) {
+    while (letter != ch);
+    return ch;
+}
+
+char get_current_letter() {
+    return letter;
 }

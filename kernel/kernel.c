@@ -10,6 +10,7 @@
 
 #include "process/process.h"
 #include "process/process_scheduler.h"
+#include "process/example_processes.h"
 
 #include "../stdlib/exit.h"
 #include "../stdlib/stdlib.h"
@@ -42,6 +43,15 @@ void periodic_test() {
     print_string("Periodic test");
 }
 
+void wait_for_understanding() {
+    printf("\n\nTake a minute to understand what is happening on startup!!\n");
+    printf("\nPress 'y' to continue: ");
+
+    blocking_wait_for_char('y');
+    clearScreen();
+    print_new_line();
+}
+
 void main() {
     clearScreen();
     print_new_line();
@@ -65,6 +75,10 @@ void main() {
     print_string("\nInitialising processes ...");
     init_process_scheduler();
     print_string("Done successfully\n");
+
+    wait_for_understanding();
+
+    create_process(welcome_process);
 
     create_process(first_process);
     create_process(second_process);

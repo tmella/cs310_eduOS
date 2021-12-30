@@ -16,6 +16,9 @@
 #define VGA_OFFSET_LOW 0x0f
 #define VGA_OFFSET_HIGH 0x0e
 
+static int side_margins = 1;
+static int top_margin = 4;
+
 void clearScreen();
 // Blanks the section specified with black background
 void clear_at(int col, int row);

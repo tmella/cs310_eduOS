@@ -11,7 +11,6 @@ void setCursor(int offset) {
 }
 
 int getCursor() {
-
     port_byte_out(REG_SCREEN_CTRL, 14);
     int offset = port_byte_in(REG_SCREEN_DATA) << 8;
 
@@ -28,7 +27,15 @@ int getOffset(int row, int col) {
 // TODO simplify
 int newLineOffset(int offset) {
     int row = offset / (2 * MAX_COLS);
-    return getOffset(row + 1, 0);
+    return getOffset(row + 1, side_margins);
+}
+
+int get_next_offset(int currentOffset) {
+    // Checks if the offset at a final column
+    if(((currentOffset/2)-((MAX_COLS-side_margins-1))) % MAX_COLS) {
+        return currentOffset + 2;
+    }
+    return newLineOffset(currentOffset);
 }
 
 int print_char_at_offset_free(char ch, char attribute_type, int offset) {
@@ -39,7 +46,7 @@ int print_char_at_offset_free(char ch, char attribute_type, int offset) {
         vidmem[offset] = ch;
         vidmem[offset + 1] = attribute_type;
 
-        offset += 2;
+        offset = get_next_offset(offset);
     }
 
     return offset;
