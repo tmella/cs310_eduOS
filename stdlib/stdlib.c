@@ -2,13 +2,16 @@
 #include <stdarg.h>
 #include "../drivers/screen.h"
 
-// Disable stdlib C redefinitions
+// Disable stdlib C redefinitions warnings
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincompatible-library-redeclaration"
 
+#define BINARY 2
 #define OCTAL 8
 #define DECIMAL 10
 #define HEXADECIMAL 16
+
+static char printf_color = WHITE_ON_BLACK;
 
 int abs(int value) {
     return value * ((value > 0) - (value < 0));
@@ -89,52 +92,65 @@ void *memset(void *src, void *dest, int n) {
     return dest;
 }
 
-void printf(const char *format, ...) {
+void internal_printf(char colour, const char *format, va_list args) {
     // Size is max INT
-    char var_temp[12];
+    char var_temp[20];
     char string_buff[100];
-    va_list args;
-    va_start(args, format);
-
     for (int i = 0; format[i]; i++) {
         if (format[i] == '%') {
             i++;
             switch (format[i]) {
                 case 'd':
-                    itoa(va_arg(args,int), var_temp, DECIMAL);
-                    print_string(var_temp);
+                    char *p = itoa(va_arg(args,int), var_temp, DECIMAL);
+                    print_string_colour(var_temp, colour);
                     break;
                 case 's':
-                    print_string(va_arg(args,
-                    char*));
+                    print_string_colour(va_arg(args,char*), colour);
                     break;
                 case 'o':
                     itoa(va_arg(args,int), var_temp, OCTAL);
-                    print_string(var_temp);
+                    print_string_colour(var_temp, colour);
                     break;
                 case '%':
-                    print_char('%');
+                    print_char_colour('%', colour);
                     break;
                 case 'x':
                 case 'p':
                     itoa(va_arg(args,int), var_temp, HEXADECIMAL);
-                    print_string(var_temp);
+                    print_string_colour(var_temp, colour);
+                    break;
+                case 'b':
+                    itoa(va_arg(args,int), var_temp, BINARY);
+                    print_string_colour(var_temp, colour);
                     break;
                 case 'f':
                 default:
-                    print_string("UNKNOWN VALUE");
+                    print_string_colour("UNKNOWN VALUE", colour);
             }
         } else {
-            print_char(format[i]);
+            print_char_colour(format[i], colour);
         }
     }
+}
 
+void printf_c(char colour, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    internal_printf(colour, format, args);
+    va_end(args);
+}
+
+void printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    internal_printf(WHITE_ON_BLACK, format, args);
     va_end(args);
 }
 
 void println(void) {
     printf("\n");
 }
-
 
 #pragma clang diagnostic pop

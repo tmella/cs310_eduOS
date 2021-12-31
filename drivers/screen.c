@@ -105,8 +105,12 @@ void print_string(char *str) {
     print_string_colour(str, WHITE_ON_BLACK);
 }
 
+void print_char_colour(char chr, char colour) {
+    print_chat_at_offset(chr, colour, getCursor());
+}
+
 void print_char(char chr) {
-    print_chat_at_offset(chr, WHITE_ON_BLACK, getCursor());
+    print_char_colour(chr, WHITE_ON_BLACK);
 }
 
 void print_string_colour(char *str, char attribute_type) {

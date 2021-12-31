@@ -20,5 +20,7 @@ void *memset(void *src, const void *dest, int n);
 
 void println(void);
 void printf(const char *format, ...);
+void printf_c(char colour, const char *format, ...);
+void set_print_color(char color);
 
 #endif //CSWK_STDLIB_STDLIB_H
