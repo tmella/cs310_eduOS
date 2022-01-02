@@ -1,0 +1,7 @@
+
+#ifndef CSWK_KERNEL_PROCESS_TASKS_TASK1_H
+#define CSWK_KERNEL_PROCESS_TASKS_TASK1_H
+
+void welcome_process();
+
+#endif //CSWK_KERNEL_PROCESS_TASKS_TASK1_H

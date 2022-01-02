@@ -58,6 +58,7 @@ void clear_green_square() {
 void idle_process_m() {
     while (1) {
         // WHY DO WE NEED TO DISABLE AND ENABLE HTL
+        draw_green_square();
         asm volatile("sti");
         asm volatile("hlt");
         asm volatile("cli");
@@ -126,7 +127,6 @@ void save_current_process(unsigned int esp) {
 
 void reschedule() {
     if (ready_queue->size == 0) {
-        draw_green_square();
         context_switch(idle_pcb);
     } else {
         clear_green_square();

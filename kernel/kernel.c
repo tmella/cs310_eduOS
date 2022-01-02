@@ -8,49 +8,14 @@
 #include "memory/heap.h"
 #include "memory/frame_allocator.h"
 
-#include "process/process.h"
 #include "process/process_scheduler.h"
-#include "process/example_processes.h"
 
-#include "../stdlib/exit.h"
+#include "process/tasks/include/task1.h"
+#include "process/tasks/include/task2.h"
+
 #include "../stdlib/stdlib.h"
 
-// FIXME: adding initial switch logic in this file
-extern context_switch(process_control_block *pcb);
-
-void first_process() {
-//    int i = 0;
-//    while(i < 3) {
-//        printf("First pre sleep %d", i++);
-//        sleep(10000);
-//    }
-//    printf("This is post sleep %d", i);
-
-    printf("\nPre sleep");
-    sleep(10000);
-    printf("\n Post sleep");
-    exit(0);
-}
-
-void second_process() {
-    printf("\nThis is the second");
-    sleep(50000);
-    printf("Second post sleep");
-    while (1);
-}
-
-void periodic_test() {
-    print_string("Periodic test");
-}
-
-void wait_for_understanding() {
-    printf("\n\nTake a minute to understand what is happening on startup!!\n");
-    printf("\nPress 'y' to continue: ");
-
-    blocking_wait_for_char('y');
-    clearScreen();
-    print_new_line();
-}
+void wait_for_understanding();
 
 void main() {
     clearScreen();
@@ -80,14 +45,24 @@ void main() {
 
     create_process(welcome_process);
 
-    create_process(first_process);
-    create_process(second_process);
+    process_one = create_process(process_one_text);
+    process_two = create_process(process_two_text);
 
-    reschedule();
+    start_scheduler();
 
 
     // Should be unreachable but if reached will stop an uncontrolled crash
     while (1) {
         // TODO add a debug dump
     }
+}
+
+
+void wait_for_understanding() {
+    printf("\n\nTake a minute to understand what is happening on startup!!\n");
+    printf("\nPress 'y' to continue: ");
+
+    blocking_wait_for_char('y');
+    clearScreen();
+    print_new_line();
 }
