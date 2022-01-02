@@ -1,2 +1,2 @@
 
-### Pedagolofical Operating System
+### Pedagological Operating System
