@@ -114,6 +114,9 @@ void internal_printf(char colour, const char *format, va_list args) {
                 case '%':
                     print_char_colour('%', colour);
                     break;
+                case 'c':
+                    print_char_colour(va_arg(args,int), colour);
+                    break;
                 case 'x':
                 case 'p':
                     itoa(va_arg(args,int), var_temp, HEXADECIMAL);
