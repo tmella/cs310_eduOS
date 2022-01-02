@@ -67,6 +67,8 @@ void *remove_at(List *lst, int index) {
         return;
     }
 
+    lst->size--;
+
     if(index == 0) {
         list_elem *actual_elem = lst->head;
         void *val_to_free = actual_elem->value;
@@ -74,7 +76,6 @@ void *remove_at(List *lst, int index) {
         k_free(actual_elem);
         return val_to_free;
     }
-    lst->size--;
 
     list_elem *prev_elem = get_at_index(lst, index-1);
     list_elem *actual_elem = prev_elem->next;
