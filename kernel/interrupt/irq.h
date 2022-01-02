@@ -1,6 +1,6 @@
 
-#ifndef CSWK_XIRQ_H
-#define CSWK_XIRQ_H
+#ifndef CSWK_IRQ_H
+#define CSWK_IRQ_H
 
 #include "../low_level.h"
 
@@ -27,4 +27,4 @@ extern void irq15();
 void reprogram_pic();
 void end_of_interrupt_pic();
 
-#endif //CSWK_XIRQ_H
+#endif //CSWK_IRQ_H

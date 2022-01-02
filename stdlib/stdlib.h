@@ -1,13 +1,8 @@
-//
-// Created by University  on 26/11/21.
-//
 
 #ifndef CSWK_STDLIB_STDLIB_H
 #define CSWK_STDLIB_STDLIB_H
 
 /* THe bellow has been coppied from https://www.techiedelight.com/implement-itoa-function-in-c/ for debugging ints*/
-
-void sleep(unsigned int ms);
 
 int abs(int value);
 
@@ -20,7 +15,12 @@ char* reverse(char *buffer, int i, int j);
 // Iterative function to implement `itoa()` function in C
 char* itoa(int value, char* buffer, int base);
 
-// TODO: should this be here
-void *memset(void *s, int c, int n);
+// TODO: should this be here (check if I should add it to a memory based file)
+void *memset(void *src, const void *dest, int n);
+
+void println(void);
+void printf(const char *format, ...);
+void printf_c(char colour, const char *format, ...);
+void set_print_color(char color);
 
 #endif //CSWK_STDLIB_STDLIB_H

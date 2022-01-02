@@ -1,6 +1,3 @@
-//
-// Created by University  on 28/10/21.
-//
 
 #include "screen.h"
 #include "../kernel/low_level.h"
@@ -14,7 +11,6 @@ void setCursor(int offset) {
 }
 
 int getCursor() {
-
     port_byte_out(REG_SCREEN_CTRL, 14);
     int offset = port_byte_in(REG_SCREEN_DATA) << 8;
 
@@ -31,27 +27,39 @@ int getOffset(int row, int col) {
 // TODO simplify
 int newLineOffset(int offset) {
     int row = offset / (2 * MAX_COLS);
-    return getOffset(row + 1, 0);
+    return getOffset(row + 1, side_margins);
 }
 
-int print_chat_at_offset(char charac, char attribute_type, int offset) {
+int get_next_offset(int currentOffset) {
+    // Checks if the offset at a final column
+    if(((currentOffset/2)-((MAX_COLS-side_margins-1))) % MAX_COLS) {
+        return currentOffset + 2;
+    }
+    return newLineOffset(currentOffset);
+}
+
+int print_char_at_offset_free(char ch, char attribute_type, int offset) {
     unsigned char *vidmem = (unsigned char *) VIDEO_ADDRESS;
-    if (charac == '\n') {
+    if (ch == '\n') {
         offset = newLineOffset(offset);
     } else {
-        vidmem[offset] = charac;
+        vidmem[offset] = ch;
         vidmem[offset + 1] = attribute_type;
 
-        offset += 2;
+        offset = get_next_offset(offset);
     }
-
-    // Set cursor for next time
-    setCursor(offset);
 
     return offset;
 }
 
-void print_char(char charac, int col, int row, char attribute_type) {
+int print_chat_at_offset(char charac, char attribute_type, int offset) {
+    int cursor_offset = print_char_at_offset_free(charac, attribute_type, offset);
+    setCursor(cursor_offset);
+
+    return cursor_offset;
+}
+
+void print_char_at(char charac, int col, int row, char attribute_type) {
     if (!attribute_type)
         attribute_type = WHITE_ON_BLACK;
 
@@ -65,10 +73,29 @@ void print_char(char charac, int col, int row, char attribute_type) {
     print_chat_at_offset(charac, attribute_type, offset);
 }
 
+void print_free_char(char charac, int col, int row, char attribute_type) {
+    if (!attribute_type)
+        attribute_type = WHITE_ON_BLACK;
+
+    int offset;
+
+    if (col >= 0 && row >= 0)
+        offset = ((row * MAX_COLS) + col) * 2;
+    else
+        offset = getCursor();
+
+    print_char_at_offset_free(charac, attribute_type, offset);
+}
+
+/* Blanks out the section indicated */
+void clear_at(int col, int row) {
+    print_free_char(' ', col, row, WHITE_ON_BLACK);
+}
+
 void clearScreen() {
     for (int row = 0; row < MAX_ROWS; row++) {
         for (int col = 0; col < MAX_COLS; col++) {
-            print_char(' ', col, row, WHITE_ON_BLACK);
+            print_char_at(' ', col, row, WHITE_ON_BLACK);
         }
     }
     setCursor(0);
@@ -76,6 +103,14 @@ void clearScreen() {
 
 void print_string(char *str) {
     print_string_colour(str, WHITE_ON_BLACK);
+}
+
+void print_char_colour(char chr, char colour) {
+    print_chat_at_offset(chr, colour, getCursor());
+}
+
+void print_char(char chr) {
+    print_char_colour(chr, WHITE_ON_BLACK);
 }
 
 void print_string_colour(char *str, char attribute_type) {

@@ -54,12 +54,14 @@ global irq13
 global irq14
 global irq15
 
+; Used for PIT timer interrupts
 irq0:
     cli
     push byte 0
     push byte 32
     jmp irq_common_handler
 
+; Used for the Keyboard
 irq1:
     cli
     push byte 0
