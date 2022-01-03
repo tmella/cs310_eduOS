@@ -13,7 +13,7 @@ process_control_block *create_process(void (*text)());
 void kill_current_process();
 void set_process_running();
 
-void unblock_waiting();
+void scheduler_timer_handler();
 
 void sleep_current_process(uint32_t millis);
 

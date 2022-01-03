@@ -13,14 +13,15 @@
 
 // TODO: remember for now no processes are deleted
 
-extern context_switch(process_control_block
-*pcb);
+extern context_switch(process_control_block *pcb);
 
 unsigned int process_id;
 
+typedef List ProcessList;
 typedef Queue ProcessQueue;
 
-List *waiting_list;
+ProcessQueue *ready_queue;
+ProcessList *waiting_list;
 
 struct waiting_pcb {
   uint32_t ticks;
@@ -29,10 +30,7 @@ struct waiting_pcb {
 
 process_control_block *current;
 
-ProcessQueue *ready_queue;
 // Keep the Idle process separate from queueing logic (avoid push/pull)
-process_control_block *idle_process;
-
 process_control_block *idle_pcb;
 
 /* Simple helper method */
@@ -75,7 +73,8 @@ void init_idle_process() {
         push_to_stack(esp, 0);
 
     idle_pcb->esp = esp;
-    idle_pcb->cr3 = 0; // TODO this could be wrong
+    // TODO this could be wrong as we need to access mem (check)
+    idle_pcb->cr3 = 0;
 }
 
 void init_process_scheduler() {
@@ -83,19 +82,11 @@ void init_process_scheduler() {
     ready_queue = init_queue(sizeof(process_control_block));
     waiting_list = init_list(sizeof(struct waiting_pcb));
 
-    // TODO todo need to initialise the init process
     init_idle_process();
 }
 
 uint32_t next_pid() {
     return ++process_id;
-}
-
-/* Extract the current value of CR3 */
-uint32_t get_current_pd() {
-    int cr3_value;
-    asm volatile("mov %%cr3, %0" : "=r" (cr3_value));
-    return cr3_value;
 }
 
 /* What does create process do:
@@ -164,7 +155,7 @@ void requeue_current() {
     }
 }
 
-void unblock_waiting() {
+void scheduler_timer_handler() {
     if (waiting_list->size == 0) {
         return;
     }
