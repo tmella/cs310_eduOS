@@ -138,7 +138,6 @@ void save_current_process(unsigned int esp) {
 }
 
 void reschedule() {
-    printf("Scheduling");
     // Avoid any unnecessary context switching
     if (ready_queue->size == 0) {
         if(current->state == RUNNING_STATE) {
