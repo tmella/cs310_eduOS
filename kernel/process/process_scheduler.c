@@ -8,6 +8,7 @@
 #include "../../stdlib/list.h"
 
 #include "../interrupt/timer.h"
+#include "../interrupt/irq.h"
 
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
@@ -137,6 +138,7 @@ void save_current_process(unsigned int esp) {
 }
 
 void reschedule() {
+    printf("Scheduling");
     // Avoid any unnecessary context switching
     if (ready_queue->size == 0) {
         if(current->state == RUNNING_STATE) {
@@ -186,6 +188,7 @@ void wake_up_process() {
     if(current != idle_pcb && current->state == RUNNING_STATE) {
         enqueue(ready_queue, current);
     }
+    end_of_interrupt_pic();
     reschedule();
     unlock_scheduler();
 }
@@ -209,18 +212,23 @@ void process_waiting() {
         index++;
         iter = iter->next;
     }
-
 }
+
+uint64_t timer_counter;
 
 void preempt_processes() {
 
 }
 
 void scheduler_timer_handler() {
+    lock_scheduler();
+
     process_waiting();
 
     // TODO: need to ads skeleton for RR scheduler
     preempt_processes();
+
+    unlock_scheduler();
 }
 
 void sleep_current_process(uint32_t millis) {
