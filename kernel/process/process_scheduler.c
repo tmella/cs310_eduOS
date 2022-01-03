@@ -8,6 +8,7 @@
 #include "../../stdlib/list.h"
 
 #include "../interrupt/timer.h"
+#include "../interrupt/irq.h"
 
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
@@ -18,9 +19,11 @@ extern context_switch(process_control_block
 
 unsigned int process_id;
 
+typedef List ProcessList;
 typedef Queue ProcessQueue;
 
-List *waiting_list;
+ProcessQueue *ready_queue;
+ProcessList *waiting_list;
 
 struct waiting_pcb {
   uint32_t ticks;
@@ -29,10 +32,7 @@ struct waiting_pcb {
 
 process_control_block *current;
 
-ProcessQueue *ready_queue;
 // Keep the Idle process separate from queueing logic (avoid push/pull)
-process_control_block *idle_process;
-
 process_control_block *idle_pcb;
 
 /* Simple helper method */
@@ -75,7 +75,8 @@ void init_idle_process() {
         push_to_stack(esp, 0);
 
     idle_pcb->esp = esp;
-    idle_pcb->cr3 = 0; // TODO this could be wrong
+    // TODO this could be wrong as we need to access mem (check)
+    idle_pcb->cr3 = 0;
 }
 
 void init_process_scheduler() {
@@ -83,7 +84,6 @@ void init_process_scheduler() {
     ready_queue = init_queue(sizeof(process_control_block));
     waiting_list = init_list(sizeof(struct waiting_pcb));
 
-    // TODO todo need to initialise the init process
     init_idle_process();
 }
 
@@ -91,11 +91,22 @@ uint32_t next_pid() {
     return ++process_id;
 }
 
-/* Extract the current value of CR3 */
-uint32_t get_current_pd() {
-    int cr3_value;
-    asm volatile("mov %%cr3, %0" : "=r" (cr3_value));
-    return cr3_value;
+int IRQ_disable_counter = 0;
+
+void lock_scheduler(void) {
+    asm volatile("cli");
+    IRQ_disable_counter++;
+}
+
+void unlock_scheduler(void) {
+    IRQ_disable_counter--;
+    if (IRQ_disable_counter == 0) {
+        asm volatile("sti");
+    }
+}
+
+void start_up_process() {
+    unlock_scheduler();
 }
 
 /* What does create process do:
@@ -107,6 +118,7 @@ process_control_block *create_process(void (*text)()) {
 
     unsigned int *esp = alloc_frame_addr();
     push_to_stack(esp, (unsigned int) text);
+    push_to_stack(esp, (unsigned int) start_up_process);
     for (int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
@@ -126,18 +138,26 @@ void save_current_process(unsigned int esp) {
 }
 
 void reschedule() {
+    // Avoid any unnecessary context switching
     if (ready_queue->size == 0) {
+        if(current->state == RUNNING_STATE) {
+            return;
+        }
         context_switch(idle_pcb);
     } else {
         clear_green_square();
         process_control_block * new_process =
             (process_control_block *) dequeue(ready_queue);
 
+        if (current == new_process) {
+            return;
+        }
+
         if (new_process) {
             context_switch(new_process);
         } else {
             printf("PANIC: SHIT ITS NULL");
-            context_switch(idle_process);
+            context_switch(idle_pcb);
             // FIXME
         }
     }
@@ -149,14 +169,30 @@ void start_scheduler() {
 }
 
 void set_process_running() {
+    lock_scheduler();
     current->state = RUNNING_STATE;
+    unlock_scheduler();
 }
 
-void kill_current_process() {
+
+void kill_current_process(void) {
+    lock_scheduler();
     current->state = TERMINATED_STATE;
+    reschedule();
+    unlock_scheduler();
 }
 
-void unblock_waiting() {
+void wake_up_process() {
+    lock_scheduler();
+    if(current != idle_pcb && current->state == RUNNING_STATE) {
+        enqueue(ready_queue, current);
+    }
+    end_of_interrupt_pic();
+    reschedule();
+    unlock_scheduler();
+}
+
+void process_waiting() {
     if (waiting_list->size == 0) {
         return;
     }
@@ -169,7 +205,7 @@ void unblock_waiting() {
         if (!value->ticks) {
             enqueue(ready_queue, value->pcb);
             remove_at(waiting_list, index);
-            reschedule();
+            wake_up_process();
             break;
         }
         index++;
@@ -177,7 +213,25 @@ void unblock_waiting() {
     }
 }
 
+uint64_t timer_counter;
+
+void preempt_processes() {
+
+}
+
+void scheduler_timer_handler() {
+    lock_scheduler();
+
+    process_waiting();
+
+    // TODO: need to ads skeleton for RR scheduler
+    preempt_processes();
+
+    unlock_scheduler();
+}
+
 void sleep_current_process(uint32_t millis) {
+    lock_scheduler();
     current->state = WAITING_STATE;
 
     struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));
@@ -185,11 +239,7 @@ void sleep_current_process(uint32_t millis) {
     waiting->ticks = millis_to_ticks(millis);
 
     add_back(waiting_list, waiting);
-}
 
-void add_current_back() {
-    if(current) {
-        enqueue(ready_queue, current);
-    }
+    reschedule();
+    unlock_scheduler();
 }
-

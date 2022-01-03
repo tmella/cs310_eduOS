@@ -1,12 +1,8 @@
-//
-// Created by University  on 26/11/21.
-//
 
 #include <stdint.h>
 #include "mem_common.h"
 #include "frame_allocator.h"
 
-#include "../../stdlib/stdlib.h"
 
 // Bitmap to keep track of frames
 uint8_t frames[BITMAP_SIZE];

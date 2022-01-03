@@ -41,7 +41,7 @@ unsigned int seconds_to_tick(unsigned int seconds) {
 // TODO: check what will happen when count reaches the int limit
 void timer_handler() {
     count++;
-    unblock_waiting();
+    scheduler_timer_handler();
     for (int i = 0; i < index; i++) {
         if (functions[i].remaining) {
             functions[i].remaining--;
