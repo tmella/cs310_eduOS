@@ -13,7 +13,8 @@
 
 // TODO: remember for now no processes are deleted
 
-extern context_switch(process_control_block *pcb);
+extern context_switch(process_control_block
+*pcb);
 
 unsigned int process_id;
 
@@ -89,6 +90,24 @@ uint32_t next_pid() {
     return ++process_id;
 }
 
+int IRQ_disable_counter = 0;
+
+void lock_scheduler(void) {
+    asm volatile("cli");
+    IRQ_disable_counter++;
+}
+
+void unlock_scheduler(void) {
+    IRQ_disable_counter--;
+    if (IRQ_disable_counter == 0) {
+        asm volatile("sti");
+    }
+}
+
+void start_up_process() {
+    unlock_scheduler();
+}
+
 /* What does create process do:
  *      1. Will assign the next PID
  *      2. Will add the PCB to the Process queue
@@ -98,6 +117,7 @@ process_control_block *create_process(void (*text)()) {
 
     unsigned int *esp = alloc_frame_addr();
     push_to_stack(esp, (unsigned int) text);
+    push_to_stack(esp, (unsigned int) start_up_process);
     for (int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
@@ -117,18 +137,26 @@ void save_current_process(unsigned int esp) {
 }
 
 void reschedule() {
+    // Avoid any unnecessary context switching
     if (ready_queue->size == 0) {
+        if(current->state == RUNNING_STATE) {
+            return;
+        }
         context_switch(idle_pcb);
     } else {
         clear_green_square();
         process_control_block * new_process =
             (process_control_block *) dequeue(ready_queue);
 
+        if (current == new_process) {
+            return;
+        }
+
         if (new_process) {
             context_switch(new_process);
         } else {
             printf("PANIC: SHIT ITS NULL");
-            context_switch(idle_process);
+            context_switch(idle_pcb);
             // FIXME
         }
     }
@@ -140,22 +168,29 @@ void start_scheduler() {
 }
 
 void set_process_running() {
+    lock_scheduler();
     current->state = RUNNING_STATE;
+    unlock_scheduler();
 }
 
-void kill_current_process() {
+
+void kill_current_process(void) {
+    lock_scheduler();
     current->state = TERMINATED_STATE;
+    reschedule();
+    unlock_scheduler();
 }
 
-void requeue_current() {
-    if(current && current->state == RUNNING_STATE) {
-        if(current != idle_pcb) {
-            enqueue(ready_queue, current);
-        }
+void wake_up_process() {
+    lock_scheduler();
+    if(current != idle_pcb && current->state == RUNNING_STATE) {
+        enqueue(ready_queue, current);
     }
+    reschedule();
+    unlock_scheduler();
 }
 
-void scheduler_timer_handler() {
+void process_waiting() {
     if (waiting_list->size == 0) {
         return;
     }
@@ -168,16 +203,28 @@ void scheduler_timer_handler() {
         if (!value->ticks) {
             enqueue(ready_queue, value->pcb);
             remove_at(waiting_list, index);
-            requeue_current();
-            reschedule();
+            wake_up_process();
             break;
         }
         index++;
         iter = iter->next;
     }
+
+}
+
+void preempt_processes() {
+
+}
+
+void scheduler_timer_handler() {
+    process_waiting();
+
+    // TODO: need to ads skeleton for RR scheduler
+    preempt_processes();
 }
 
 void sleep_current_process(uint32_t millis) {
+    lock_scheduler();
     current->state = WAITING_STATE;
 
     struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));
@@ -185,11 +232,7 @@ void sleep_current_process(uint32_t millis) {
     waiting->ticks = millis_to_ticks(millis);
 
     add_back(waiting_list, waiting);
-}
 
-void add_current_back() {
-    if(current) {
-        enqueue(ready_queue, current);
-    }
+    reschedule();
+    unlock_scheduler();
 }
-
