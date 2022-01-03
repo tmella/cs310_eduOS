@@ -156,6 +156,14 @@ void kill_current_process() {
     current->state = TERMINATED_STATE;
 }
 
+void requeue_current() {
+    if(current && current->state == RUNNING_STATE) {
+        if(current != idle_pcb) {
+            enqueue(ready_queue, current);
+        }
+    }
+}
+
 void unblock_waiting() {
     if (waiting_list->size == 0) {
         return;
@@ -169,6 +177,7 @@ void unblock_waiting() {
         if (!value->ticks) {
             enqueue(ready_queue, value->pcb);
             remove_at(waiting_list, index);
+            requeue_current();
             reschedule();
             break;
         }
