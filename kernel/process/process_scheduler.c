@@ -217,6 +217,16 @@ uint64_t timer_counter;
 
 void preempt_processes() {
 
+    if(timer_counter == millis_to_ticks(10000)) {
+        timer_counter = 0;
+        if(current != idle_pcb && current->state == RUNNING_STATE) {
+            enqueue(ready_queue, current);
+        }
+        end_of_interrupt_pic();
+        reschedule();
+    } else {
+        timer_counter++;
+    }
 }
 
 void scheduler_timer_handler() {
