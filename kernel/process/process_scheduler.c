@@ -242,7 +242,8 @@ void process_waiting() {
 uint64_t timer_counter;
 
 void preempt_processes() {
-
+    // TODO: implement logic for RR scheduler
+    // should safely call reschedule() every 2s
 }
 
 void scheduler_timer_handler() {
