@@ -39,6 +39,8 @@ typedef struct {
   page_directory_t *cr3;
   // TODO need to add more fields (state, )
   uint8_t state;
+  uint32_t process_id;
+  uint64_t waiting_ticks;
   uint64_t cpu_ticks;
 } process_control_block;
 

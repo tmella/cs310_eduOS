@@ -5,6 +5,8 @@
 #include "../low_level.h"
 #include "../process/process_scheduler.h"
 
+#include "../../stdlib/stdlib.h"
+
 /*
  *  Timer & Counter: this implementation acts as both
  *
@@ -28,12 +30,16 @@ struct periodic_functions functions[MAX_FUNCTIONS];
 
 static unsigned long count;
 
+unsigned int ticks_to_seconds(unsigned long ticks) {
+    return ticks/TIMER_FREQUENCY;
+}
+
 unsigned int seconds_to_tick(unsigned int seconds) {
     return seconds * TIMER_FREQUENCY;
 }
 
 void timer_handler() {
-    // No issue with counter as it should take ~7 years to overflos
+    // No issue with counter as it should take ~7 years to overflow
     count++;
     scheduler_timer_handler();
 

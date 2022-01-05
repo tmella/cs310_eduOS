@@ -16,6 +16,8 @@
 void init_timer(void);
 void set_periodic_func(unsigned int millis, void (*function)());
 
+unsigned int ticks_to_seconds(unsigned long ticks);
+
 unsigned long get_current_count();
 
 #endif //CSWK_KERNEL_INTERRUPT_TIMER_H
