@@ -30,6 +30,7 @@ struct waiting_pcb {
   process_control_block *pcb;
 };
 
+uint64_t current_running_count;
 process_control_block *current;
 
 // Keep the Idle process separate from queueing logic (avoid push/pull)
@@ -124,6 +125,7 @@ process_control_block *create_process(void (*text)()) {
 
     pcb->esp = esp;
     pcb->cr3 = create_kmapped_table();
+    pcb->cpu_ticks = 0;
 
     enqueue(ready_queue, pcb);
 
@@ -172,6 +174,7 @@ void start_scheduler() {
 void set_process_running() {
     lock_scheduler();
     current->state = RUNNING_STATE;
+    current_running_count = get_current_count();
     unlock_scheduler();
 }
 
@@ -231,6 +234,7 @@ void scheduler_timer_handler() {
 
 void sleep_current_process(uint32_t millis) {
     lock_scheduler();
+    current->cpu_ticks = get_current_count() - current_running_count;
     current->state = WAITING_STATE;
 
     struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));
