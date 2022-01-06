@@ -15,10 +15,6 @@
  *
  * */
 
-// TODO deletec
-unsigned int iiiiiiiii = 0;
-unsigned int kkkkkkkkk = 0;
-
 typedef struct heap_segment {
   struct heap_segment *next;
   struct heap_segment *previous;
@@ -55,8 +51,6 @@ uint8_t validate_seg(heap_segment_t * segment) {
 }
 
 void *k_malloc(uint32_t no_bytes) {
-    iiiiiiiii++;
-
     heap_segment_t *chosen_segment = null_ptr;
     heap_segment_t *optimal_search = heap_start;
 
@@ -78,9 +72,8 @@ void *k_malloc(uint32_t no_bytes) {
 
     // No memory. Should I add a debug error message. Is that possible in a Kernel
     if (chosen_segment == null_ptr) {
-        printf("\nBOLLOCKS for iteration %d \n", iiiiiiiii);
+        printf("PANIC kmalloc failed to allocate memory");
         while(1);
-//        return null_ptr;
     }
 
     if (chosen_segment->size - (no_bytes + sizeof(heap_segment_t)) > 0) {
@@ -103,38 +96,10 @@ void *k_malloc(uint32_t no_bytes) {
         // next and prev remain the same
     }
 
-    // TODO: what if the other segment isnt worth it?
-//    heap_segment_t *next_elem;
-
-
-    // FIXME: this causes a fragmentation issue
-    // Solution allocate the rest of the memory as padding
-//    if (chosen_segment->size - no_bytes - sizeof(heap_segment_t) > sizeof(heap_segment_t)) {
-//        next_elem = (heap_segment_t *) (((void *) chosen_segment) + no_bytes + sizeof(heap_segment_t));
-//        next_elem->previous = chosen_segment;
-//        // FIXME cannot be null
-//        next_elem->next = chosen_segment->next;
-//        next_elem->size = chosen_segment->size - no_bytes - sizeof(heap_segment_t);
-//        next_elem->is_allocated = 0;
-//    } else {
-//        next_elem = chosen_segment->next;
-//    }
-
-//    // Only take the amount we need
-//    chosen_segment->size = no_bytes; // TODO: do I need to subtract sizeOf(SEGMENT)
-//    chosen_segment->is_allocated = 1;
-//    chosen_segment->next = next_elem;
-//
-//
-//    if(iiiiiiiii == val){
-//        printf("\nThis is post fuck up\n");
-//        debug();
-//    }
-
     // Validation
     if(!validate_seg(chosen_segment)) {
-        printf("Not valid %p when next is at %p \n", (void *)chosen_segment + sizeof(heap_segment_t), chosen_segment->next);
-        printf("Not valid at itteration %d", iiiiiiiii);
+        printf("PANIC, Kmalloc failed the sanity check");
+        while(1);
     }
 
     return data_start(chosen_segment);
