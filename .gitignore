@@ -3,6 +3,7 @@ cmake-build-debug/
 CMakeLists.txt
 
 build-tools/
+bin/
 
 *.o
 kernel.bin
