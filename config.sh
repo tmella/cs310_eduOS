@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# THIS FILE WILL STORE ALL THE NEEDED CONFIGS AND ENV VARIALES
+# THIS FILE WILL STORE ALL THE NEEDED CONFIGS AND ENV VARIABLES
 
 ORIGINAL_DIR=$(pwd)
 
@@ -26,12 +26,13 @@ if ! command -v hub &>/dev/null; then
   if [[ $OSTYPE == 'darwin'* ]]; then
     COMPRESSED_HUB=hub-darwin-amd64-2.14.2.tgz
     HUB_V=hub-darwin-amd64-2.14.2
+    curl -LO --silent https://github.com/github/hub/releases/download/v2.14.2/$COMPRESSED_HUB
   else
     COMPRESSED_HUB=hub-linux-amd64-2.14.2.tgz
     HUB_V=hub-linux-amd64-2.14.2
+    wget -cq https://github.com/github/hub/releases/download/v2.14.2/$COMPRESSED_HUB
   fi
 
-  wget -cq https://github.com/github/hub/releases/download/v2.14.2/$COMPRESSED_HUB
   tar -zxf $COMPRESSED_HUB
   cp $HUB_V/bin/hub $EXECUTABLES
 fi

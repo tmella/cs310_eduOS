@@ -22,7 +22,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
       NASM_ZIP=
       if [[ $OSTYPE == 'darwin'* ]]; then
         NASM_ZIP=nasm-2.15.05-macosx.zip
-        wget -cq https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/macosx/nasm-2.15.05-macosx.zip
+        curl -LO --silent https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/macosx/nasm-2.15.05-macosx.zip
         unzip -qq nasm-2.15.05-macosx.zip
       else
         NASM_ZIP=nasm-2.15.05.tar.gz
