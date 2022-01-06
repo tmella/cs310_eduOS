@@ -41,7 +41,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   GCC_V=
 
   # TODO: should probably add a check for all tools
-  if ! command -v qemu-system-i386 &>/dev/null; then
+  if ! command -v i386-elf-gcc &>/dev/null; then
 
     echo "Compiler and tools not found, will install at $TOOLS_BIN. Installing ..."
 
