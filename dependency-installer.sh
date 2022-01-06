@@ -13,7 +13,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   cd $INSTALL_DIR
 
-  if command -v nasm &>/dev/null; then
+  if ! command -v nasm &>/dev/null; then
     echo "Nasm not found will install to $TOOLS_BIN. Installing ..."
 
     if [ ! -d "nasm-2.15.05" ]; then
@@ -42,7 +42,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   GCC_V=
 
   # TODO: should probably add a check for all tools
-  if command -v x86_64-elf-gcc &>/dev/null; then
+  if ! command -v x86_64-elf-gcc &>/dev/null; then
 
     echo "Compiler and tools not found, will install at $TOOLS_BIN. Installing ..."
 
