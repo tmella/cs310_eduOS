@@ -52,7 +52,7 @@ void print_pcbs(Queue *queue) {
 
 void *dequeue(Queue *queue) {
     if (queue->size == 0)
-        return;
+        return null_ptr;
 
     queue_elem *old_head = queue->head;
     // This should work as k_free does not 0 mem

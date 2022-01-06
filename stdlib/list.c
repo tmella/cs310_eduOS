@@ -64,7 +64,7 @@ list_elem *get_at_index(List *lst, int index) {
 void *remove_at(List *lst, int index) {
     if(index >= lst->size) {
         // FIXME PANIC SHOULDNT HAPPEN
-        return;
+        return null_ptr;
     }
 
     lst->size--;

@@ -96,12 +96,13 @@ void internal_printf(char colour, const char *format, va_list args) {
     // Size is max INT
     char var_temp[20];
     char string_buff[100];
+    char *char_buf;
     for (int i = 0; format[i]; i++) {
         if (format[i] == '%') {
             i++;
             switch (format[i]) {
                 case 'd':
-                    char *p = itoa(va_arg(args,int), var_temp, DECIMAL);
+                    itoa(va_arg(args,int), var_temp, DECIMAL);
                     print_string_colour(var_temp, colour);
                     break;
                 case 's':
