@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 INSTALL_DIR=$(pwd)/"build-tools"
 TOOLS_BIN=$INSTALL_DIR/bin
 
 read -p "Are you sure you want to install all necessary dependencies?[Yy]: " -n 1 -r
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [ $REPLY =~ ^[Yy]$ ]; then
   mkdir -p $INSTALL_DIR
   mkdir -p $INSTALL_DIR/bin
 

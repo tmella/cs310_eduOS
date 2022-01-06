@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # THIS FILE WILL STORE ALL THE NEEDED CONFIGS AND ENV VARIALES
 

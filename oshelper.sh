@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 OS_PROJECT=https://github.com/tmella/cs310_eduOS.git
 LAB_1_BRANCH=creating-helper-script
