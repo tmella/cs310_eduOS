@@ -31,7 +31,7 @@ if ! command -v hub &>/dev/null; then
     HUB_V=hub-linux-amd64-2.14.2
   fi
 
-  curl -OL https://github.com/github/hub/releases/download/v2.14.2/$COMPRESSED_HUB
+  wget -cq https://github.com/github/hub/releases/download/v2.14.2/$COMPRESSED_HUB
   tar -zxf $COMPRESSED_HUB
   cp $HUB_V/bin/hub $EXECUTABLES
 fi
