@@ -32,6 +32,7 @@ fi
 #fi
 
 load_lab() {
+  echo "Well the first is $2"
   case $2 in
   "lab1")
     CURRENT_LAB=$LAB_1_BRANCH
@@ -95,13 +96,13 @@ print_error_msg() {
 
 case $1 in
   "load")
-    load_lab ;;
+    load_lab $@ ;;
   "compile")
-    compile_lab;;
+    compile_lab $@;;
   "run")
-    run_os ;;
+    run_os $@;;
   "save")
-    save_progress ;;
+    save_progress $@;;
   *)
     print_error_msg ;;
 esac
