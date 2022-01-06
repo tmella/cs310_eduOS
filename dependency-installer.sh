@@ -71,7 +71,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
       wget -cq https://github.com/lordmilko/i686-elf-tools/releases/download/7.1.0/x86_64-elf-tools-linux.zip
       unzip x86_64-elf-tools-linux.zip
     fi
-    cd x86_64-elf-tools-linux
+    cd x86_64-elf
     mv bin/* $TOOLS_BIN/
     cd ..
 #    rm -rf x86_64-elf-tools-linux
