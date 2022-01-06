@@ -23,7 +23,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         unzip -qq nasm-2.15.05-macosx.zip
       else
         # Linux users will have to build from source
-        wget -cq --silent https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.gz
+        wget -cq https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.gz
         tar xfz nasm-2.15.05.tar.gz
       fi
     fi
