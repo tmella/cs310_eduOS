@@ -15,6 +15,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   if ! command -v nasm &>/dev/null; then
     echo "Nasm not found will install to $TOOLS_BIN. Installing ..."
+    rm -f $TOOLS_BIN/nasm
 
     if [ ! -d "nasm-2.15.05" ]; then
 
@@ -32,7 +33,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 
     cd nasm-2.15.05
-    rm -f $TOOLS_BIN/nasm
+
+    # Build from source if Linux (their package manager is "fiddly")
+    if [[ $OSTYPE != 'darwin'* ]]; then
+      ./configure
+      make
+    fi
+
     mv nasm $TOOLS_BIN
     mv ndisasm $TOOLS_BIN
     cd ..
@@ -40,42 +47,22 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     rm -rf nasm-2.15.05
   fi
 
-  # Defaulting install versions to Mac
-  BINUTILS_V=
-  GCC_V=
-
-  # TODO: should probably add a check for all tools
   if ! command -v x86_64-elf-gcc &>/dev/null; then
-
     echo "Compiler and tools not found, will install at $TOOLS_BIN. Installing ..."
 
-#    if [[ $OSTYPE == 'darwin'* ]]; then
-#      BINUTILS_V=i386-elf-binutils-apple-darwin-x86_64.tar.bz2
-#      GCC_V=i386-elf-gcc-apple-darwin-x86_64.tar.bz2
-#    else
-#      BINUTILS_V=i386-elf-binutils-apple-darwin-x86_64.tar.bz2
-#      GCC_V=i386-elf-gcc-apple-darwin-x86_64.tar.bz2
-#    fi
-
-#    if [ ! -d "i386-elf-binutils" ]; then
-#      wget -cq https://github.com/nativeos/i386-elf-toolchain/releases/download/preview/$BINUTILS_V
-#      tar -xf $BINUTILS_V
-#    fi
-#    cd i386-elf-binutils
-##    mv bin/* $TOOLS_BIN/
-##    cd ..
-##    rm -rf i386-elf-binutils
-##    rm $BINUTILS_V
-
-    if [ ! -d "fake" ]; then
-      wget -cq https://github.com/lordmilko/i686-elf-tools/releases/download/7.1.0/x86_64-elf-tools-linux.zip
-      unzip x86_64-elf-tools-linux.zip
+    if [[ $OSTYPE == 'darwin'* ]]; then
+      brew install x86_64-elf-gcc
+    else
+      if [ ! -d "fake" ]; then
+        wget -cq https://github.com/lordmilko/i686-elf-tools/releases/download/7.1.0/x86_64-elf-tools-linux.zip
+        unzip x86_64-elf-tools-linux.zip
+      fi
+      cd x86_64-elf
+      mv bin/* $TOOLS_BIN/
+      cd ..
+      rm -rf x86_64-elf-tools-linux
+      rm x86_64-elf-tools-linux.zip
     fi
-    cd x86_64-elf
-    mv bin/* $TOOLS_BIN/
-    cd ..
-#    rm -rf x86_64-elf-tools-linux
-#    rm x86_64-elf-tools-linux.zip
 
   fi
 
