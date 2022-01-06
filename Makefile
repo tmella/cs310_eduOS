@@ -8,7 +8,7 @@ HEADERS = $(wildcard kernel/*.h drivers/*.h kernel/process/*.h kernel/process/ta
 OBJ = ${SRC:.c=.o}
 
 # First rule is the one executed when no parameters are fed to the Makefile
-all: run
+all: os-image.bin
 
 run: os-image.bin
 	qemu-system-i386 -fda $<
