@@ -18,13 +18,16 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     if [ ! -d "nasm-2.15.05" ]; then
 
+      NASM_ZIP=
       if [[ $OSTYPE == 'darwin'* ]]; then
+        NASM_ZIP=nasm-2.15.05-macosx.zip
         wget -cq https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/macosx/nasm-2.15.05-macosx.zip
         unzip -qq nasm-2.15.05-macosx.zip
       else
+        NASM_ZIP=nasm-2.15.05.tar.gz
         # Linux users will have to build from source
         wget -cq https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.gz
-        tar xfz nasm-2.15.05.tar.gz
+        tar xfz $NASM_ZIP
       fi
     fi
 
@@ -33,7 +36,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     mv nasm $TOOLS_BIN
     mv ndisasm $TOOLS_BIN
     cd ..
-    rm nasm-2.15.05-macosx.zip
+    rm $NASM_ZIP
     rm -rf nasm-2.15.05
   fi
 
