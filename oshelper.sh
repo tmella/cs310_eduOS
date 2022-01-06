@@ -44,7 +44,7 @@ load_lab() {
     ;;
 
   *)
-    echo "Unknown lab $1"
+    echo "Unknown lab $2"
     exit
     ;;
   esac
