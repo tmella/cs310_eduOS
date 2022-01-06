@@ -1,14 +1,10 @@
 #!/bin/sh
 
-NASM="nasm"
-GCC=""
-LD="ld"
-
 INSTALL_DIR=$(pwd)/"build-tools"
 TOOLS_BIN=$INSTALL_DIR/bin
 
-read -p "Are you sure you want to install all necessary dependencies? " -n 1 -r
-echo # (optional) move to a new line
+read -p "Are you sure you want to install all necessary dependencies?[Yy]: " -n 1 -r
+echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   mkdir -p $INSTALL_DIR
   mkdir -p $INSTALL_DIR/bin
@@ -17,7 +13,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   cd $INSTALL_DIR
 
-  if command -v nasm &>/dev/null; then
+  if ! command -v nasm &>/dev/null; then
     echo "Nasm not found will install to $TOOLS_BIN. Installing ..."
 
     if [ ! -d "nasm-2.15.05" ]; then
@@ -45,7 +41,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   GCC_V=
 
   # TODO: should probably add a check for all tools
-  if command -v qemu-system-i386 &>/dev/null; then
+  if ! command -v qemu-system-i386 &>/dev/null; then
 
     echo "Compiler and tools not found, will install at $TOOLS_BIN. Installing ..."
 
