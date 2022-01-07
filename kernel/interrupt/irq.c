@@ -26,7 +26,7 @@ void reprogram_pic() {
  * An EOI signal must be sent so that
  * we can receive further interrupts
  */
-void end_of_interrupt_pic(int interruptNo) {
+void ack_interrupt_pic(int interruptNo) {
     // perhaps add sanity check
 
     port_byte_out(0x20, 0x20);

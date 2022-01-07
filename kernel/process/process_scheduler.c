@@ -3,7 +3,6 @@
 #include "process_scheduler.h"
 #include "../memory/heap.h"
 #include "../memory/frame_allocator.h"
-#include "../../stdlib/stdlib.h"
 #include "../../stdlib/queue.h"
 #include "../../stdlib/list.h"
 
@@ -14,8 +13,9 @@
 
 // TODO: remember for now no processes are deleted
 
-extern context_switch(process_control_block
-*pcb);
+char scheduler_started = 0;
+
+extern context_switch(process_control_block *pcb);
 
 unsigned int process_id;
 
@@ -140,7 +140,7 @@ void save_current_process(unsigned int esp) {
 void reschedule() {
     // Avoid any unnecessary context switching
     if (ready_queue->size == 0) {
-        if(current->state == RUNNING_STATE) {
+        if (current->state == RUNNING_STATE) {
             return;
         }
         context_switch(idle_pcb);
@@ -165,6 +165,7 @@ void reschedule() {
 
 // Entry point
 void start_scheduler() {
+    scheduler_started = 1;
     reschedule();
 }
 
@@ -173,7 +174,6 @@ void set_process_running() {
     current->state = RUNNING_STATE;
     unlock_scheduler();
 }
-
 
 void kill_current_process(void) {
     lock_scheduler();
@@ -184,10 +184,10 @@ void kill_current_process(void) {
 
 void wake_up_process() {
     lock_scheduler();
-    if(current != idle_pcb && current->state == RUNNING_STATE) {
+    if (current != idle_pcb && current->state == RUNNING_STATE) {
         enqueue(ready_queue, current);
     }
-    end_of_interrupt_pic();
+    ack_interrupt_pic();
     reschedule();
     unlock_scheduler();
 }
@@ -213,6 +213,7 @@ void process_waiting() {
     }
 }
 
+// TODO use this to keep track of time passing
 uint64_t timer_counter;
 
 void preempt_processes() {
@@ -220,14 +221,12 @@ void preempt_processes() {
 }
 
 void scheduler_timer_handler() {
-    lock_scheduler();
-
-    process_waiting();
-
-    // TODO: need to ads skeleton for RR scheduler
-    preempt_processes();
-
-    unlock_scheduler();
+    if (scheduler_started) {
+        lock_scheduler();
+        process_waiting();
+        preempt_processes();
+        unlock_scheduler();
+    }
 }
 
 void sleep_current_process(uint32_t millis) {
@@ -236,7 +235,7 @@ void sleep_current_process(uint32_t millis) {
 
     struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));
     waiting->pcb = current;
-    waiting->ticks = millis_to_ticks(millis);
+    waiting->ticks = MILLIS_TO_TICKS(millis);
 
     add_back(waiting_list, waiting);
 

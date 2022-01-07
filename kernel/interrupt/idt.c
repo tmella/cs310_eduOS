@@ -97,12 +97,11 @@ void add_handler(int num, handler handlerFunc) {
 }
 
 void irq_handler(i_registers_t *reg) {
-//    print_string("Received interrupt");
     if (interrupt_handlers[reg->int_no] != 0) {
         handler func = interrupt_handlers[reg->int_no];
         func(reg);
     }
-    end_of_interrupt_pic();
+    ack_interrupt_pic();
 }
 
 /*

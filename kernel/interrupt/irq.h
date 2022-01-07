@@ -25,6 +25,6 @@ extern void irq14();
 extern void irq15();
 
 void reprogram_pic();
-void end_of_interrupt_pic();
+void ack_interrupt_pic();
 
 #endif //CSWK_IRQ_H

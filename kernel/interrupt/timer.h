@@ -11,10 +11,10 @@
 
 #define TIMER_CMD_PORT 0x43 // Write only (read will be ignored)
 
+#define MILLIS_TO_TICKS(ms)(ms/ 1000 * TIMER_FREQUENCY)
+
 void init_timer(void);
 void set_periodic_func(unsigned int millis, void (*function)());
-
-unsigned int millis_to_ticks(unsigned int millis);
 
 
 #endif //CSWK_KERNEL_INTERRUPT_TIMER_H
