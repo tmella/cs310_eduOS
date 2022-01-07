@@ -29,11 +29,6 @@ struct periodic_functions functions[MAX_FUNCTIONS];
 
 static unsigned long count;
 
-/* ticks = f * millis/1000 */
-unsigned int millis_to_ticks(unsigned int millis) {
-    return millis / 1000 * TIMER_FREQUENCY;
-}
-
 unsigned int seconds_to_tick(unsigned int seconds) {
     return seconds * TIMER_FREQUENCY;
 }
@@ -69,5 +64,5 @@ void set_periodic_func(unsigned int millis, void (*function)()) {
     }
     functions[value].function = function;
     functions[value].needed_count = functions[value].remaining
-        = millis_to_ticks(millis);
+        = MILLIS_TO_TICKS(millis);
 }
