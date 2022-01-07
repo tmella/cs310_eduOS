@@ -14,30 +14,11 @@ extern void context_switch(process_control_block *pcb);
 void process_one_text() {
     // TODO: add a loop, which modifies and prints a var then switch to process_two
     // Terminates the process
-
-    int i = 0;
-    while(1) {
-        i++;
-        if(i == 2147483647) {
-            break;
-        }
-    }
-
-    sleep(15000);
     exit(0);
 }
 
 void process_two_text() {
     // TODO: add a loop, which modifies and prints a var then switch to process_one
     // Terminates the process
-
-    int i = 0;
-    while(1) {
-        i++;
-        if(i == 2147483647) {
-            break;
-        }
-    }
-
     exit(0);
 }
