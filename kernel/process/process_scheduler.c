@@ -5,6 +5,7 @@
 #include "../memory/frame_allocator.h"
 #include "../../stdlib/queue.h"
 #include "../../stdlib/list.h"
+#include "../../stdlib/stdlib.h"
 
 #include "../interrupt/timer.h"
 #include "../interrupt/irq.h"
@@ -57,9 +58,10 @@ void clear_green_square() {
 void print_bench_mark() {
     if(waiting_list->size == 0 && ready_queue->size == 0) {
         list_elem *search = terminated_list->head;
+        printf("BENCHMARKS:");
         while(search) {
             process_control_block  *pcb = (process_control_block *)search->value;
-            printf("\n Process %d ran for %ds had to wait for %ds",pcb->process_id,  ticks_to_seconds(pcb->cpu_ticks),
+            printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  ticks_to_seconds(pcb->cpu_ticks),
                    ticks_to_seconds(pcb->waiting_ticks));
             search = search->next;
         }
