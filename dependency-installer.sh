@@ -60,7 +60,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
       cd x86_64-elf
       mv bin/* $TOOLS_BIN/
       cd ..
-      rm -rf x86_64-elf-tools-linux
+      rm -rf x86_64-elf
       rm x86_64-elf-tools-linux.zip
     fi
 
