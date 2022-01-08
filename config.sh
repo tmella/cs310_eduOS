@@ -7,11 +7,14 @@ ORIGINAL_DIR=$(pwd)
 EXECUTABLES=$(pwd)/bin/
 TEMP_BUILD=$(pwd)/temp-build/
 
-WORK_DIR=$(pwd)
+# Assuming that it will be run in DCS system,
+# if not then brew or linux package handler will set it
+QEMU_BIN=/local/java/qemu-i386-softmmu/bin/qemu-system-i386
 
 # Create dir for scripts and add to PATH
 mkdir -p "bin"
 export PATH="$PATH:$EXECUTABLES"
+export PATH="$PATH:$QEMU_BIN"
 
 \cp oshelper.sh $EXECUTABLES/oshelper
 chmod u+x $EXECUTABLES/oshelper
@@ -39,5 +42,22 @@ fi
 
 rm -rf $TEMP_BUILD
 cd $ORIGINAL_DIR
+
+# Use cross compiler if available
+if command -v x86_64-elf-gcc &>/dev/null; then
+  export CC=x86_64-elf-gcc
+fi
+if command -v x86_64-elf-ld &>/dev/null; then
+  export LD=x86_64-elf-ld
+fi
+
+
+if command -v qemu-system-i386 &>/dev/null; then
+  echo "\n Warning: could not find qemu-system-i386 on the PATH \n"
+fi
+
+if command -v nasm &>/dev/null; then
+  echo "\n Warning: could not find 'nasm' in the PATH. Did you run ./dependency-installer.sh? (not on DCS) \n"
+fid
 
 # TODO: here we should also check for required dependencies
