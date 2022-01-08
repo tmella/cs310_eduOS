@@ -12,6 +12,8 @@
 
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
+#define BURST_PERIOD 2000
+
 // TODO: remember for now no processes are deleted
 
 char scheduler_started = 0;
@@ -59,7 +61,7 @@ void print_bench_mark() {
     if(waiting_list->size == 0 && ready_queue->size == 0) {
         list_elem *search = terminated_list->head;
         printf("BENCHMARKS:");
-        while(search) {
+        for(int i = 0; i<terminated_list->size; i++){
             process_control_block  *pcb = (process_control_block *)search->value;
             printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  ticks_to_seconds(pcb->cpu_ticks),
                    ticks_to_seconds(pcb->waiting_ticks));
@@ -99,7 +101,7 @@ void init_process_scheduler() {
     // Init a queue that stores PCBs
     ready_queue = init_queue(sizeof(process_control_block));
     waiting_list = init_list(sizeof(struct waiting_pcb));
-    terminated_list = init_queue(sizeof(process_control_block));
+    terminated_list = init_list(sizeof(process_control_block));
 
     init_idle_process();
 }
@@ -152,9 +154,14 @@ process_control_block *create_process(void (*text)()) {
 
 // For now we will save the state of terminated processes
 void save_current_process(unsigned int esp) {
+    lock_scheduler();
     if (current) {
         current->esp = esp;
+        if(current->state == RUNNING_STATE){
+            current->cpu_ticks += get_current_count() - current_running_count;
+        }
     }
+    unlock_scheduler();
 }
 
 void reschedule() {
