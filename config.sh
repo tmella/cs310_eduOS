@@ -58,6 +58,6 @@ fi
 
 if command -v nasm &>/dev/null; then
   echo "\n Warning: could not find 'nasm' in the PATH. Did you run ./dependency-installer.sh? (not on DCS) \n"
-fid
+fi
 
 # TODO: here we should also check for required dependencies
