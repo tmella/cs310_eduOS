@@ -5,6 +5,7 @@
 #include "../memory/frame_allocator.h"
 #include "../../stdlib/queue.h"
 #include "../../stdlib/list.h"
+#include "../../stdlib/stdlib.h"
 
 #include "../interrupt/timer.h"
 #include "../interrupt/irq.h"
@@ -24,12 +25,14 @@ typedef Queue ProcessQueue;
 
 ProcessQueue *ready_queue;
 ProcessList *waiting_list;
+ProcessList *terminated_list;
 
 struct waiting_pcb {
   uint32_t ticks;
   process_control_block *pcb;
 };
 
+uint64_t current_running_count;
 process_control_block *current;
 
 // Keep the Idle process separate from queueing logic (avoid push/pull)
@@ -50,6 +53,19 @@ void clear_green_square() {
     // Prints a small green block
     clear_at(76, 1);
     clear_at(77, 1);
+}
+
+void print_bench_mark() {
+    if(waiting_list->size == 0 && ready_queue->size == 0) {
+        list_elem *search = terminated_list->head;
+        printf("BENCHMARKS:");
+        while(search) {
+            process_control_block  *pcb = (process_control_block *)search->value;
+            printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  ticks_to_seconds(pcb->cpu_ticks),
+                   ticks_to_seconds(pcb->waiting_ticks));
+            search = search->next;
+        }
+    }
 }
 
 /* Idle process which puts the processor to sleep */
@@ -83,6 +99,7 @@ void init_process_scheduler() {
     // Init a queue that stores PCBs
     ready_queue = init_queue(sizeof(process_control_block));
     waiting_list = init_list(sizeof(struct waiting_pcb));
+    terminated_list = init_queue(sizeof(process_control_block));
 
     init_idle_process();
 }
@@ -124,6 +141,9 @@ process_control_block *create_process(void (*text)()) {
 
     pcb->esp = esp;
     pcb->cr3 = create_kmapped_table();
+    pcb->cpu_ticks = 0;
+    pcb->waiting_ticks = get_current_count();
+    pcb->process_id = process_id++;
 
     enqueue(ready_queue, pcb);
 
@@ -171,6 +191,7 @@ void start_scheduler() {
 
 void set_process_running() {
     lock_scheduler();
+    current_running_count = get_current_count();
     current->state = RUNNING_STATE;
     unlock_scheduler();
 }
@@ -178,6 +199,12 @@ void set_process_running() {
 void kill_current_process(void) {
     lock_scheduler();
     current->state = TERMINATED_STATE;
+    current->cpu_ticks += get_current_count() - current_running_count;
+    current->waiting_ticks = get_current_count() - current->waiting_ticks;
+    add_back(terminated_list, current);
+
+    print_bench_mark();
+
     reschedule();
     unlock_scheduler();
 }
@@ -217,7 +244,8 @@ void process_waiting() {
 uint64_t timer_counter;
 
 void preempt_processes() {
-
+    // TODO: implement logic for RR scheduler
+    // should safely call reschedule() every 2s
 }
 
 void scheduler_timer_handler() {
@@ -231,6 +259,7 @@ void scheduler_timer_handler() {
 
 void sleep_current_process(uint32_t millis) {
     lock_scheduler();
+    current->cpu_ticks += get_current_count() - current_running_count;
     current->state = WAITING_STATE;
 
     struct waiting_pcb *waiting = k_malloc(sizeof(struct waiting_pcb));

@@ -1,9 +1,11 @@
 
 #include "timer.h"
-#include "../low_level.h"
-#include "idt.h"
 
+#include "idt.h"
+#include "../low_level.h"
 #include "../process/process_scheduler.h"
+
+#include "../../stdlib/stdlib.h"
 
 /*
  *  Timer & Counter: this implementation acts as both
@@ -14,7 +16,6 @@
   */
 
 // Random num can be increased
-#define MAX_PERIODIC 25
 #define MAX_FUNCTIONS 10
 
 struct periodic_functions {
@@ -29,14 +30,21 @@ struct periodic_functions functions[MAX_FUNCTIONS];
 
 static unsigned long count;
 
+unsigned int ticks_to_seconds(unsigned long ticks) {
+    return ticks/TIMER_FREQUENCY;
+}
+
 unsigned int seconds_to_tick(unsigned int seconds) {
     return seconds * TIMER_FREQUENCY;
 }
 
-// TODO: check what will happen when count reaches the int limit
 void timer_handler() {
+    // No issue with counter as it should take ~7 years to overflow
     count++;
     scheduler_timer_handler();
+
+    // Runs periodic functions (potentially unreachable)
+    // not used for now though
     for (int i = 0; i < index; i++) {
         if (functions[i].remaining) {
             functions[i].remaining--;
@@ -65,4 +73,8 @@ void set_periodic_func(unsigned int millis, void (*function)()) {
     functions[value].function = function;
     functions[value].needed_count = functions[value].remaining
         = MILLIS_TO_TICKS(millis);
+}
+
+unsigned long get_current_count() {
+    return count;
 }

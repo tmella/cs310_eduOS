@@ -30,7 +30,8 @@ struct x86_registers {
 
 /* Warning:
  *    If ANYTHING is modified in this struct, make sure that the current offsets are set
- *    in the context_switch.asm (these values are not retrieved dynamically)
+ *    in the context_switch.asm (these values are not retrieved dynamically).
+ *    Adding elements to the botton of the struct is the safest option.
  * */
 typedef struct {
   unsigned int esp;
@@ -38,6 +39,9 @@ typedef struct {
   page_directory_t *cr3;
   // TODO need to add more fields (state, )
   uint8_t state;
+  uint32_t process_id;
+  uint64_t waiting_ticks;
+  uint64_t cpu_ticks;
 } process_control_block;
 
 
