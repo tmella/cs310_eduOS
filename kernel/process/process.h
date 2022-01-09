@@ -35,9 +35,7 @@ struct x86_registers {
  * */
 typedef struct {
   unsigned int esp;
-  // Not used anymore as paging has been disabled for debugging
   page_directory_t *cr3;
-  // TODO need to add more fields (state, )
   uint8_t state;
   uint32_t process_id;
   uint64_t waiting_ticks;

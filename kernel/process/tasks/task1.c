@@ -4,10 +4,12 @@
 #include "../../../stdlib/stdlib.h"
 #include "../../../stdlib/exit.h"
 
-void welcome_process() {
-    printf_c(0x04, "\nWelcome to the Educational Operating System\n");
+#define RED_ON_BLACK 0x04
 
+void welcome_process() {
     // TODO: create a basic method perhaps with a welcome method
+    printf_c(RED_ON_BLACK, "\nWelcome to the Educational Operating System\n");
+
     exit(0);
 }
 

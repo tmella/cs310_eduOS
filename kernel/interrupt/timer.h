@@ -12,11 +12,10 @@
 #define TIMER_CMD_PORT 0x43 // Write only (read will be ignored)
 
 #define MILLIS_TO_TICKS(ms)(ms/ 1000 * TIMER_FREQUENCY)
+#define TICKS_TO_SECONDS(ticks) (ticks/TIMER*FREQUENCY)
 
 void init_timer(void);
 void set_periodic_func(unsigned int millis, void (*function)());
-
-unsigned int ticks_to_seconds(unsigned long ticks);
 
 unsigned long get_current_count();
 
