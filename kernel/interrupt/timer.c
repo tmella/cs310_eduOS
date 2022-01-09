@@ -30,10 +30,6 @@ struct periodic_functions functions[MAX_FUNCTIONS];
 
 static unsigned long count;
 
-unsigned int ticks_to_seconds(unsigned long ticks) {
-    return ticks/TIMER_FREQUENCY;
-}
-
 unsigned int seconds_to_tick(unsigned int seconds) {
     return seconds * TIMER_FREQUENCY;
 }

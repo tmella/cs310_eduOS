@@ -66,12 +66,12 @@ load_lab() {
 
 compile_lab() {
   cd $WORK_DIR
-  if [ -z "$var" ]; then
-    echo "Error lab hasn't been loaded. Try \n oshelper load <lab_name>"
-  else
-    cd $WORK_DIR
-    make -B
+  if [ -z "$CURRENT_LAB" ]; then
+    echo "Warning: lab hasn't been loaded. Try \n oshelper load <lab_name>"
   fi
+  cd $WORK_DIR
+  echo "This is the dir im in $WORK_DIR"
+  make -B
 }
 
 run_os() {
@@ -95,14 +95,22 @@ print_error_msg() {
 }
 
 case $1 in
-  "load")
-    load_lab $@ ;;
-  "compile")
-    compile_lab $@;;
-  "run")
-    run_os $@;;
-  "save")
-    save_progress $@;;
-  *)
-    print_error_msg ;;
+"load")
+  load_lab $@
+  ;;
+"compile")
+  compile_lab $@
+  ;;
+"run")
+  run_os $@
+  ;;
+"save")
+  save_progress $@
+  ;;
+"atom")
+  atom $WORK_DIR
+  ;;
+*)
+  print_error_msg
+  ;;
 esac

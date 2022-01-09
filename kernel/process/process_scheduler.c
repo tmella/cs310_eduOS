@@ -63,8 +63,8 @@ void print_bench_mark() {
         printf("BENCHMARKS:");
         for(int i = 0; i<terminated_list->size; i++){
             process_control_block  *pcb = (process_control_block *)search->value;
-            printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  ticks_to_seconds(pcb->cpu_ticks),
-                   ticks_to_seconds(pcb->waiting_ticks));
+            printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  TICKS_TO_SECONDS(pcb->cpu_ticks),
+                   TICKS_TO_SECONDS(pcb->waiting_ticks));
             search = search->next;
         }
     }
