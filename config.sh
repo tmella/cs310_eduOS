@@ -2,7 +2,7 @@
 
 # THIS FILE WILL STORE ALL THE NEEDED CONFIGS AND ENV VARIABLES
 
-ORIGINAL_DIR=$(pwd)
+export WORK_DIR=$(pwd)
 
 EXECUTABLES=$(pwd)/bin/
 TEMP_BUILD=$(pwd)/temp-build/
@@ -41,7 +41,7 @@ if ! command -v hub &>/dev/null; then
 fi
 
 rm -rf $TEMP_BUILD
-cd $ORIGINAL_DIR
+cd $WORK_DIR
 
 # Use cross compiler if available
 if command -v x86_64-elf-gcc &>/dev/null; then
