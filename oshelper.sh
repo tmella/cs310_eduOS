@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OS_PROJECT=https://github.com/tmella/cs310_eduOS.git
-LAB_1_BRANCH=creating-helper-script
+LAB_1_BRANCH=lab1
 LAB_2_BRANCH=creating-helper-script
 LAB_3_BRANCH=creating-helper-script
 
