@@ -6,7 +6,6 @@ with can be found at [Labs homepage](https://github.com/tmella/cs310_eduOS/wiki#
 
 ### Labs 
 * [Lab 1: Multitasking and Scheduling
-  Edit New Page
   ](https://github.com/tmella/cs310_eduOS/wiki/Lab-1:-Multitasking-and-Scheduling)
 
 
