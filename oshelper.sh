@@ -31,8 +31,9 @@ fi
 #  echo "Forking OS project"
 #fi
 
+BRCH_SUF=_work
+
 load_lab() {
-  echo "Well the first is $2"
   case $2 in
   "lab1")
     CURRENT_LAB=$LAB_1_BRANCH
@@ -54,11 +55,13 @@ load_lab() {
     echo "You have unsaved changes in your working directory"
   fi
 
+  git pull --tags
+
   # If branch exists locally, else checkout remote
-  if git rev-parse --verify $CURRENT_LAB &>/dev/null; then
-    git checkout $CURRENT_LAB
+  if git rev-parse --verify "$CURRENT_LAB_work" &>/dev/null; then
+    echo "You are already on the lab branch"
   else
-    git checkout -t remotes/origin/$CURRENT_LAB
+    git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
   fi
 
   git fetch && git pull
