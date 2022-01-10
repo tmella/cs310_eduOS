@@ -53,6 +53,14 @@ load_lab() {
 
   if [[ ! -z "$(git status --porcelain)" ]]; then
     echo "You have unsaved changes in your working directory"
+
+    read -p "The changes will be stashed. Are you sure you want to continue?[Yy]: " -n 1 -r
+    echo
+    if [[! $REPLY =~ ^[Yy]$ ]]; then
+        exit
+    fi
+    git stash
+    echo "Your changes have been stashed"
   fi
 
   git pull --tags
@@ -60,6 +68,7 @@ load_lab() {
   # If branch exists locally, else checkout remote
   if git rev-parse --verify "$CURRENT_LAB$BRCH_SUF" &>/dev/null; then
     echo "You are already on the lab branch"
+    git checkout -b "$CURRENT_LAB$BRCH_SUF"
   else
     git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
   fi
