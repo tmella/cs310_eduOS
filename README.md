@@ -5,7 +5,7 @@ This operating system is a basic 32-bit x86 architecture operating system, which
 with can be found at [Labs homepage](https://github.com/tmella/cs310_eduOS/wiki#welcome-to-the-educational-operating-system)
 
 ### Labs 
-* [Lab 1: Lab 1: Multitasking and Scheduling
+* [Lab 1: Multitasking and Scheduling
   Edit New Page
   ](https://github.com/tmella/cs310_eduOS/wiki/Lab-1:-Multitasking-and-Scheduling)
 
@@ -57,3 +57,4 @@ make run
 
 
 ## Design decisions
+TO BE ADDED ONCE FINALISED
