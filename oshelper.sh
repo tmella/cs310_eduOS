@@ -58,7 +58,7 @@ load_lab() {
   git pull --tags
 
   # If branch exists locally, else checkout remote
-  if git rev-parse --verify "$CURRENT_LAB_work" &>/dev/null; then
+  if git rev-parse --verify "$CURRENT_LAB$BRCH_SUF" &>/dev/null; then
     echo "You are already on the lab branch"
   else
     git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
