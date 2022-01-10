@@ -2,7 +2,13 @@
 # Pedagogical Operating System for Undergraduates 
 
 This operating system is a basic 32-bit x86 architecture operating system, which intends to serve as a resource for the accompanying labs 
-with can be found at [Labs homepage](https://github.com/tmella/cs310_eduOS/wiki#welcome-to-the-educational-operating-system) 
+with can be found at [Labs homepage](https://github.com/tmella/cs310_eduOS/wiki#welcome-to-the-educational-operating-system)
+
+### Labs 
+* [Lab 1: Lab 1: Multitasking and Scheduling
+  Edit New Page
+  ](https://github.com/tmella/cs310_eduOS/wiki/Lab-1:-Multitasking-and-Scheduling)
+
 
 ### Required resources
 A helper script has been created ``dependency-installer.sh`` which will install all the needed resources to compile the project. 
@@ -50,4 +56,4 @@ make run
 ```
 
 
-##Design decisions
+## Design decisions
