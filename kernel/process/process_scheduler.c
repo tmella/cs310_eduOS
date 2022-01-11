@@ -251,15 +251,25 @@ void process_waiting() {
 uint64_t timer_counter;
 
 void preempt_processes() {
-    // TODO: implement logic for RR scheduler
-    // should safely call reschedule() every 2s
+    if(timer_counter == MILLIS_TO_TICKS(2000)) {
+        lock_scheduler();
+        if(current != idle_pcb) {
+            enqueue(ready_queue, current);
+        }
+        ack_interrupt_pic();
+        reschedule();
+        unlock_scheduler();
+    } else {
+        timer_counter++;
+        ack_interrupt_pic();
+    }
 }
 
 void scheduler_timer_handler() {
     if (scheduler_started) {
         lock_scheduler();
         process_waiting();
-        preempt_processes();
+//        preempt_processes();
         unlock_scheduler();
     }
 }
