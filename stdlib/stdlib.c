@@ -84,52 +84,46 @@ void strcpy(const char *src, void *dest) {
     d[i] = 0;
 }
 
-void *memset(void *src, void *dest, int n) {
-    char *d = dest;
-    const char *s = src;
-    for (int i = 0; i < n; i++)
-        d[i] = s[i];
-    return dest;
-}
-
 void internal_printf(char colour, const char *format, va_list args) {
     // Size is max INT
-    char var_temp[20];
-    char string_buff[100];
-    char *char_buf;
+    char var_temp[40];
     for (int i = 0; format[i]; i++) {
         if (format[i] == '%') {
             i++;
             switch (format[i]) {
                 case 'd':
-                    itoa(va_arg(args,int), var_temp, DECIMAL);
+                    itoa(va_arg(args,long), var_temp, DECIMAL);
                     print_string_colour(var_temp, colour);
                     break;
                 case 's':
                     print_string_colour(va_arg(args,char*), colour);
                     break;
                 case 'o':
-                    itoa(va_arg(args,int), var_temp, OCTAL);
+                    itoa(va_arg(args,long), var_temp, OCTAL);
                     print_string_colour(var_temp, colour);
                     break;
                 case '%':
                     print_char_colour('%', colour);
                     break;
                 case 'c':
-                    print_char_colour(va_arg(args,int), colour);
+                    print_char_colour(va_arg(args,long), colour);
                     break;
                 case 'x':
                 case 'p':
-                    itoa(va_arg(args,int), var_temp, HEXADECIMAL);
+                    itoa(va_arg(args,long), var_temp, HEXADECIMAL);
                     print_string_colour(var_temp, colour);
                     break;
                 case 'b':
-                    itoa(va_arg(args,int), var_temp, BINARY);
+                    itoa(va_arg(args,long), var_temp, BINARY);
                     print_string_colour(var_temp, colour);
                     break;
                 case 'f':
                 default:
                     print_string_colour("UNKNOWN VALUE", colour);
+
+                // Temp solution mem std functions on unmergeable ranch
+                for(int i =0; i<20; i++)
+                    var_temp[i] = 0;
             }
         } else {
             print_char_colour(format[i], colour);

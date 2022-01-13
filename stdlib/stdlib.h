@@ -15,9 +15,6 @@ char* reverse(char *buffer, int i, int j);
 // Iterative function to implement `itoa()` function in C
 char* itoa(int value, char* buffer, int base);
 
-// TODO: should this be here (check if I should add it to a memory based file)
-void *memset(void *src, const void *dest, int n);
-
 void println(void);
 void printf(const char *format, ...);
 void printf_c(char colour, const char *format, ...);

@@ -1,0 +1,7 @@
+
+#ifndef CSWK_KERNEL_INTERRUPT_GDT_H
+#define CSWK_KERNEL_INTERRUPT_GDT_H
+
+void load_gdt();
+
+#endif //CSWK_KERNEL_INTERRUPT_GDT_H

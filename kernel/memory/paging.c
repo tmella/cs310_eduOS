@@ -79,7 +79,7 @@ void map_page(page_directory_t *dir, uint32_t *v_address, uint32_t *p_address, u
 
     page_t *page = &page_table->entry[page_tab_index];
 
-    set_page(page, p_address, p, wr, us);
+    set_page(page, p_address, p, wr, 1);
 }
 
 void enable_paging() {
@@ -159,7 +159,16 @@ page_directory_t *create_kmapped_table() {
 
 void page_fault_handler(i_registers_t *regs) {
     asm volatile("sti");
-    printf("A page fault has occurred with the following address %p", regs->eax);
+
+    uint64_t fault_addr;
+    asm volatile("mov %%cr2, %0" : "=r" (fault_addr));
+
+    int present = regs->err_code & 0x1;
+    int wr = regs->err_code & 0x2;
+    int us = regs->err_code & 0x4;
+
+    printf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
+
     while(1);
 }
 
