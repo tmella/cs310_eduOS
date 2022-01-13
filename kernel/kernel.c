@@ -3,6 +3,8 @@
 #include "../drivers/screen.h"
 #include "interrupt/timer.h"
 #include "interrupt/idt.h"
+#include "interrupt/gdt.h"
+
 
 #include "memory/paging.h"
 #include "memory/heap.h"
@@ -17,9 +19,18 @@
 
 void wait_for_understanding();
 
+void user_process() {
+    printf("This is a process");
+//    asm volatile("sti");
+    while(1);
+}
+
+extern void jump_usermode(void);
+
 void main() {
     clearScreen();
     print_new_line();
+    load_gdt();
     print_string("Enabling service routine... ");
     install_interrupt_service_routine();
     asm volatile("sti");
