@@ -71,14 +71,15 @@ void map_page(page_directory_t *dir, uint32_t *v_address, uint32_t *p_address, u
 
     if (!page_tab_ent->present) {
         page_table = (page_table_t *) alloc_frame_addr();
-        set_page(page_tab_ent, page_table, 1, 1, 0);
+        // This could potentially an issue us = 1
+        set_page(page_tab_ent, page_table, 1, 1, 1);
     } else {
         page_table = (page_table_t *) table_to_pAddr(page_tab_ent->physical_addr);
     }
 
     page_t *page = &page_table->entry[page_tab_index];
 
-    set_page(page, p_address, 1, 1, 0);
+    set_page(page, p_address, p, wr, us);
 }
 
 void enable_paging() {
