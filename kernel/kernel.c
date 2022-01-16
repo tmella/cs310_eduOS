@@ -5,6 +5,7 @@
 #include "interrupt/idt.h"
 #include "interrupt/gdt.h"
 
+#include "shell.h"
 #include "memory/paging.h"
 #include "memory/heap.h"
 #include "memory/frame_allocator.h"
@@ -52,6 +53,8 @@ void main() {
 
     process_one = create_process(process_one_text);
     process_two = create_process(process_two_text);
+
+    create_process(run_shell);
 
     start_scheduler();
 
