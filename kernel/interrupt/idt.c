@@ -148,7 +148,7 @@ void isr_handler(i_registers_t *registers) {
             printf("Stack-Segment Fault");
             break;
         case 13:
-            printf("General Protection Fault");
+//            printf("General Protection Fault");
             break;
         case 14:
             page_fault_handler(registers);
