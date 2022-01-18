@@ -126,7 +126,7 @@ void init_paging() {
         set_page(&page_directory->entry[i], 0, 0, 0, 0);
 
     // IDENTITY MAP EVERYTHING (as a starting point)
-    for (int i = 0; i < 0x400000; i += FRAME_SIZE){
+    for (int i = 0; i < 0x600000; i += FRAME_SIZE){
         map_page(page_directory, i, i, 1, 1, 0);
     }
 

@@ -59,7 +59,6 @@ void main() {
     process_one = create_process(process_one_text);
     process_two = create_process(process_two_text);
 
-    start_scheduler();
 
 
     // Should be unreachable but if reached will stop an uncontrolled crash
