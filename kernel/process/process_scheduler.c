@@ -183,7 +183,7 @@ void reschedule() {
         if (new_process) {
             context_switch(new_process);
         } else {
-            printf("PANIC: SHIT ITS NULL");
+            printf("PANIC: FETCHED A NULL PROCESS");
             context_switch(idle_pcb);
             // FIXME
         }

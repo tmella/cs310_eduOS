@@ -65,7 +65,7 @@ void install_interrupt_service_routine() {
     set_idt_gate(30, (uint32_t) isr30);
     set_idt_gate(31, (uint32_t) isr31);
 
-    // TODO: fix this long winded shit
+    // TODO: fix this long winded stuff
     set_idt_gate(32, (uint32_t) irq0);
     set_idt_gate(33, (uint32_t) irq1);
     set_idt_gate(34, (uint32_t) irq2);
