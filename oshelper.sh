@@ -92,11 +92,17 @@ run_os() {
 }
 
 save_progress() {
-  # TODO check if current is empty
-  # check the name of the current branch as back up
 
-  # THEN use GITHUB hub helper to fork repo so student can push to their own repo
-  echo "YET TODO"
+  if [ -z "$2" ]
+    then
+      echo "Missing commit message! Aborting"
+      exit
+  fi
+
+  msg="${@:2}"
+
+  git add .
+  git commit -m "$msg"
 }
 
 print_error_msg() {
