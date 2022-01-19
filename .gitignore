@@ -5,6 +5,8 @@ CMakeLists.txt
 build-tools/
 bin/
 
+*.bin.h
+
 *.o
 kernel.bin
 os-image.bin
