@@ -6,8 +6,8 @@ USER_FLAGS= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartf
 
 all: random.bin.h
 
-%.bin: %.o
-	$(LD) -m elf_i386 -o $@ -Ttext 0x0 random.o --oformat binary
+%.bin: crt0.o %.o
+	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x0 crt0.o random.o --oformat binary
 
 %.bin.h: %.bin
 	xxd -i $< $@
