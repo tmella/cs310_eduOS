@@ -5,6 +5,8 @@
 #include "../syscalls.h"
 #include "../../stdlib/stdlib.h"
 
+#include "exception.h"
+
 idt_ptr interrupt_descriptor_table_ptr;
 idt_entry interrupt_descriptor_table[256];
 
@@ -24,12 +26,21 @@ void set_idt_gate(int entryNo, uint32_t address) {
  */
 void load_idt() {
     interrupt_descriptor_table_ptr.limit = sizeof(idt_entry) * 255;
-    interrupt_descriptor_table_ptr.base  =
-            (uint32_t)&interrupt_descriptor_table;
+    interrupt_descriptor_table_ptr.base =
+        (uint32_t) & interrupt_descriptor_table;
     asm volatile("lidt (%0)" : : "r" (&interrupt_descriptor_table_ptr));
 }
 
 // TODO: need to check if should use gates or traps?
+
+// More generic methods for both interrupts and traps
+void set_idt_entry(uint16_t entry_n, uint32_t address, uint8_t selector, uint8_t flags) {
+    interrupt_descriptor_table[entry_n].low_offset = address & 0xFFFF;
+    interrupt_descriptor_table[entry_n].selector = selector;
+    interrupt_descriptor_table[entry_n].zero = 0;
+    interrupt_descriptor_table[entry_n].flags = flags;
+    interrupt_descriptor_table[entry_n].high_offset = (((address) >> 16) & 0xFFFF);
+}
 
 void install_interrupt_service_routine() {
     set_idt_gate(0, (uint32_t) isr0);
@@ -65,7 +76,7 @@ void install_interrupt_service_routine() {
     set_idt_gate(30, (uint32_t) isr30);
     set_idt_gate(31, (uint32_t) isr31);
 
-    // TODO: fix this long winded stuff
+    // TODO: should they be traps or gates
     set_idt_gate(32, (uint32_t) irq0);
     set_idt_gate(33, (uint32_t) irq1);
     set_idt_gate(34, (uint32_t) irq2);
@@ -84,7 +95,7 @@ void install_interrupt_service_routine() {
     set_idt_gate(47, (uint32_t) irq15);
 
     // Set gate for system calls
-    set_idt_gate(128, (uint32_t) isr80);
+    set_idt_entry(128, (uint32_t) isr80, 0x08, DPL3_INTERRUPT);
 
     reprogram_pic();
 
@@ -148,7 +159,7 @@ void isr_handler(i_registers_t *registers) {
             printf("Stack-Segment Fault");
             break;
         case 13:
-//            printf("General Protection Fault");
+            general_protection_fault_handler(registers);
             break;
         case 14:
             page_fault_handler(registers);
@@ -181,7 +192,7 @@ void isr_handler(i_registers_t *registers) {
         case 25:
         case 26:
         case 27:
-             printf("Reserved %d", registers->int_no);
+            printf("Reserved %d", registers->int_no);
             break;
         case 28:
             printf("Hypervisor Injection Exception");
@@ -195,10 +206,24 @@ void isr_handler(i_registers_t *registers) {
         case 31:
             printf("Reserved");
             break;
-        // System calls
+            // System calls
         case 80:
             handle_syscall(registers);
             break;
     }
     println();
+}
+
+void register_dump(i_registers_t *regs) {
+    printf("\nDS: 0x%p", regs->ds);
+    printf("\nEDI: %p, ESI: %p, EBP: %p", regs->edi, regs->esi, regs->ebp);
+    printf("\nESP: %p, EBX: %p, EDX: %p", regs->esp, regs->ebx, regs->edx);
+    printf("\nECX: %p, EAX: %p", regs->ecx, regs->eax);
+    printf("\nInterrupt Number: %d Error Code: %p", regs->int_no, regs->err_code);
+    printf("\nEIP: %p, CS: 0x%p, EFLAGS: %p, u_esp: %p, ss: %p",
+           regs->eip,
+           regs->cs,
+           regs->eflags,
+           regs->useresp,
+           regs->ss);
 }

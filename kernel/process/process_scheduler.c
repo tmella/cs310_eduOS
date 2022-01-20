@@ -18,7 +18,8 @@
 
 char scheduler_started = 0;
 
-extern context_switch(process_control_block *pcb);
+extern context_switch(process_control_block *);
+extern void jump_usermode(uint32_t);
 
 unsigned int process_id;
 
@@ -128,6 +129,12 @@ void start_up_process() {
     unlock_scheduler();
 }
 
+void user_start_up(uint32_t text) {
+    unlock_scheduler();
+//    printf("Interrupts enabled 0x%p", text);
+    jump_usermode(text);
+}
+
 /* What does create process do:
  *      1. Will assign the next PID
  *      2. Will add the PCB to the Process queue
@@ -137,7 +144,8 @@ process_control_block *create_process(void (*text)()) {
 
     unsigned int *esp = alloc_frame_addr();
     push_to_stack(esp, (unsigned int) text);
-    push_to_stack(esp, (unsigned int) start_up_process);
+    push_to_stack(esp, 0);
+    push_to_stack(esp, (unsigned int) user_start_up);
     for (int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
