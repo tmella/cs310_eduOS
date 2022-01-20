@@ -4,6 +4,12 @@
 
 #include <stdint.h>
 
+/* Flags for the IDT entry type */
+#define DPL0_TRAP 0x8F
+#define DPL0_INTERRUPT 0x8E
+#define DPL3_TRAP 0xEF
+#define DPL3_INTERRUPT 0xEE
+
 extern void isr0();
 extern void isr1();
 extern void isr2();
@@ -70,5 +76,7 @@ void install_interrupt_service_routine();
 void isr_handler(i_registers_t *registers);
 
 void add_handler(int num, handler handlerFunc);
+
+void register_dump(i_registers_t *regs);
 
 #endif //CSWK_INTERRUPT_H

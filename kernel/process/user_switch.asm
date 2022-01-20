@@ -1,9 +1,10 @@
 global jump_usermode
-extern user_process
-extern printmark
 
 jump_usermode:
-    mov ax, (4 * 8) | 3
+
+    mov ebx, [esp+4]
+
+    mov ax, 0x20
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -12,9 +13,9 @@ jump_usermode:
     ; set up the stack frame iret expects
     mov eax, esp
 
-    push (4 * 8) | 3 ; data selector
+    push 0x23 ; data selector
     push eax ; current esp
     pushf ; eflags
-    push (3 * 8) | 3 ; code selector (ring 3 code with bottom 2 bits set for ring 3)
-    push user_process ; instruction address to return to
+    push 0x1b ; code selector (ring 3 code with bottom 2 bits set for ring 3)
+    push ebx ; instruction address to return to
     iret

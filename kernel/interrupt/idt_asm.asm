@@ -121,7 +121,7 @@ isr12:
 
 isr13:
     cli
-    push byte 0
+;    push byte 0
     push byte 13
     jmp isr_common_handler
 

@@ -5,7 +5,6 @@
 #include "interrupt/idt.h"
 #include "interrupt/gdt.h"
 
-
 #include "memory/paging.h"
 #include "memory/heap.h"
 #include "memory/frame_allocator.h"
@@ -16,6 +15,8 @@
 #include "process/tasks/include/task2.h"
 
 #include "../stdlib/stdlib.h"
+
+#include "file-system/file-system.h"
 
 void wait_for_understanding();
 
@@ -59,7 +60,7 @@ void main() {
     process_one = create_process(process_one_text);
     process_two = create_process(process_two_text);
 
-
+    start_scheduler();
 
     // Should be unreachable but if reached will stop an uncontrolled crash
     while (1) {
