@@ -2,7 +2,8 @@
 #include "file.h"
 
 // For now this is included manually
-#include "../../user/random.bin.h"
+
+#include "../../user/user_headers.h"
 
 static bin_node user_programs[] = {
     {"random", sizeof(random_bin), random_bin}
