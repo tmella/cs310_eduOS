@@ -48,3 +48,4 @@ CLEAN_ASM = ${SRC_ASM:.asm=.o}
 
 clean:
 	$(RM) *.bin *.o *.dis ${OBJ} ${CLEAN_ASM}
+	cd user && make clean

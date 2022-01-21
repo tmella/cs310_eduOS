@@ -28,3 +28,6 @@ user_headers.h: $(USER_H)
 	for number in $^ ; do \
         echo "#include <$$(pwd)/$$number>" > $@; \
     done
+
+clean:
+	$(RM) user_headers.h *.o *.bin.h
