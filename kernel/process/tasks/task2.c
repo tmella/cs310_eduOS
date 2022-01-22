@@ -14,6 +14,9 @@ extern void context_switch(process_control_block *pcb);
 void process_one_text() {
     // TODO: add a loop, which modifies and prints a var then switch to process_two
     // Terminates the process
+
+    printf("This is the first text");
+
     exit(0);
 }
 
