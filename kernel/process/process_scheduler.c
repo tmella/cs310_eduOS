@@ -10,6 +10,10 @@
 #include "../interrupt/timer.h"
 #include "../interrupt/irq.h"
 
+#include "../file-system/file-system.h"
+
+#include "../../stdlib/stdtypes.h"
+
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
 #define BURST_PERIOD 2000
@@ -18,7 +22,8 @@
 
 char scheduler_started = 0;
 
-extern context_switch(process_control_block *);
+extern context_switch(process_control_block
+*);
 extern void jump_usermode(uint32_t);
 
 unsigned int process_id;
@@ -62,9 +67,9 @@ void print_bench_mark() {
     if(waiting_list->size == 0 && ready_queue->size == 0) {
         list_elem *search = terminated_list->head;
         printf("BENCHMARKS:");
-        for(int i = 0; i<terminated_list->size; i++){
-            process_control_block  *pcb = (process_control_block *)search->value;
-            printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  TICKS_TO_SECONDS(pcb->cpu_ticks),
+        for(int i = 0; i < terminated_list->size; i++) {
+            process_control_block * pcb = (process_control_block *) search->value;
+            printf("\n\t Process %d ran for %ds had to wait for %ds", pcb->process_id, TICKS_TO_SECONDS(pcb->cpu_ticks),
                    TICKS_TO_SECONDS(pcb->waiting_ticks));
             search = search->next;
         }
@@ -75,7 +80,7 @@ void print_bench_mark() {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 void idle_process_m() {
-    while (1) {
+    while(1) {
         // WHY DO WE NEED TO DISABLE AND ENABLE HTL
         draw_green_square();
         asm volatile("sti");
@@ -90,7 +95,7 @@ void init_idle_process() {
 
     unsigned int *esp = alloc_frame_addr();
     push_to_stack(esp, (unsigned int) idle_process_m);
-    for (int i = 0; i < 4; i++)
+    for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
     idle_pcb->esp = esp;
@@ -120,7 +125,7 @@ void lock_scheduler(void) {
 
 void unlock_scheduler(void) {
     IRQ_disable_counter--;
-    if (IRQ_disable_counter == 0) {
+    if(IRQ_disable_counter == 0) {
         asm volatile("sti");
     }
 }
@@ -131,8 +136,34 @@ void start_up_process() {
 
 void user_start_up(uint32_t text) {
     unlock_scheduler();
-//    printf("Interrupts enabled 0x%p", text);
     jump_usermode(text);
+}
+
+process_control_block *create_process_u(char *name) {
+    bin_node *file = find_file(name);
+
+    if(!file) {
+        return null_ptr;
+    }
+
+    process_control_block * pcb = init_pcb();
+
+    unsigned int *esp = alloc_frame_addr();
+    push_to_stack(esp, (unsigned int) file->data);
+    push_to_stack(esp, 0);
+    push_to_stack(esp, (unsigned int) user_start_up);
+    for(int i = 0; i < 4; i++)
+        push_to_stack(esp, 0);
+
+    pcb->esp = esp;
+    pcb->cr3 = create_kmapped_table();
+    pcb->cpu_ticks = 0;
+    pcb->waiting_ticks = get_current_count();
+    pcb->process_id = process_id++;
+
+    enqueue(ready_queue, pcb);
+
+    return pcb;
 }
 
 /* What does create process do:
@@ -144,9 +175,8 @@ process_control_block *create_process(void (*text)()) {
 
     unsigned int *esp = alloc_frame_addr();
     push_to_stack(esp, (unsigned int) text);
-    push_to_stack(esp, 0);
-    push_to_stack(esp, (unsigned int) user_start_up);
-    for (int i = 0; i < 4; i++)
+    push_to_stack(esp, (unsigned int) start_up_process);
+    for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
     pcb->esp = esp;
@@ -163,9 +193,9 @@ process_control_block *create_process(void (*text)()) {
 // For now we will save the state of terminated processes
 void save_current_process(unsigned int esp) {
     lock_scheduler();
-    if (current) {
+    if(current) {
         current->esp = esp;
-        if(current->state == RUNNING_STATE){
+        if(current->state == RUNNING_STATE) {
             current->cpu_ticks += get_current_count() - current_running_count;
         }
     }
@@ -174,8 +204,8 @@ void save_current_process(unsigned int esp) {
 
 void reschedule() {
     // Avoid any unnecessary context switching
-    if (ready_queue->size == 0) {
-        if (current->state == RUNNING_STATE) {
+    if(ready_queue->size == 0) {
+        if(current->state == RUNNING_STATE) {
             return;
         }
         context_switch(idle_pcb);
@@ -184,11 +214,11 @@ void reschedule() {
         process_control_block * new_process =
             (process_control_block *) dequeue(ready_queue);
 
-        if (current == new_process) {
+        if(current == new_process) {
             return;
         }
 
-        if (new_process) {
+        if(new_process) {
             context_switch(new_process);
         } else {
             printf("PANIC: FETCHED A NULL PROCESS");
@@ -226,7 +256,7 @@ void kill_current_process(void) {
 
 void wake_up_process() {
     lock_scheduler();
-    if (current != idle_pcb && current->state == RUNNING_STATE) {
+    if(current != idle_pcb && current->state == RUNNING_STATE) {
         enqueue(ready_queue, current);
     }
     ack_interrupt_pic();
@@ -235,16 +265,16 @@ void wake_up_process() {
 }
 
 void process_waiting() {
-    if (waiting_list->size == 0) {
+    if(waiting_list->size == 0) {
         return;
     }
 
     int index = 0;
     list_elem *iter = waiting_list->head;
-    while (iter) {
+    while(iter) {
         struct waiting_pcb *value = (struct waiting_pcb *) iter->value;
         value->ticks--;
-        if (!value->ticks) {
+        if(!value->ticks) {
             enqueue(ready_queue, value->pcb);
             remove_at(waiting_list, index);
             wake_up_process();
@@ -264,7 +294,7 @@ void preempt_processes() {
 }
 
 void scheduler_timer_handler() {
-    if (scheduler_started) {
+    if(scheduler_started) {
         lock_scheduler();
         process_waiting();
         preempt_processes();

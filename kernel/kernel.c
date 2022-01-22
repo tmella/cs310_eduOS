@@ -16,7 +16,6 @@
 
 #include "../stdlib/stdlib.h"
 
-#include "file-system/file-system.h"
 
 void wait_for_understanding();
 
@@ -53,12 +52,16 @@ void main() {
     init_process_scheduler();
     print_string("Done successfully\n");
 
+    process_control_block *pcb = create_process_u("random");
+
     wait_for_understanding();
 
     create_process(welcome_process);
 
-    process_one = create_process(process_one_text);
-    process_two = create_process(process_two_text);
+    create_process(welcome_process);
+
+//    process_one = create_process(process_one_text);
+//    process_two = create_process(process_two_text);
 
     start_scheduler();
 
