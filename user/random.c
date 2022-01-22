@@ -1,6 +1,7 @@
 
 
 int main(int argc, const char *argv[]) {
-//    asm volatile("hlt");
+  // This should cause an error
+   asm volatile("hlt");
     while(1);
 }

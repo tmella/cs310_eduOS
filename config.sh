@@ -7,6 +7,8 @@ export WORK_DIR=$(pwd)
 EXECUTABLES=$(pwd)/bin/
 TEMP_BUILD=$(pwd)/temp-build/
 
+# TODO wipe the dynamic headers from the user folders
+
 # Assuming that it will be run in DCS system,
 # if not then brew or linux package handler will set it
 QEMU_BIN=/local/java/qemu-i386-softmmu/bin
