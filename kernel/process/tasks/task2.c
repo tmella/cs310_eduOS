@@ -1,6 +1,6 @@
 
 #include "include/task2.h"
-#include "../../../stdlib/exit.h"
+#include "../../../stdlib/syscall.h"
 #include "../../../stdlib/stdlib.h"
 
 /* Pointers to each process to be able to switch. Set in Kernel main*/
