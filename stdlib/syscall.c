@@ -1,5 +1,5 @@
 
-#include "exit.h"
+#include "syscall.h"
 #include "../kernel/syscalls.h"
 
 void exit(int code) {
@@ -19,15 +19,3 @@ void sleep(unsigned int ms) {
     );
 }
 
-void print_syscall(unsigned int colour, char *text) {
-    asm("mov %0, %%edi;"
-        "mov %1, %%ebx;"
-        "mov %2, %%eax;"
-        "int $0x80;"
-    : :
-    "r" (colour),
-    "r" (text),
-    "r" (SYSCALL_PRINT_SCREEN)
-    : "eax", "edi", "ebx"
-    );
-}
