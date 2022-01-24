@@ -148,7 +148,7 @@ process_control_block *create_process_u(char *name) {
 
     process_control_block * pcb = init_pcb();
 
-    unsigned int *esp = alloc_frame_addr();
+    unsigned int *esp = alloc_frame_addr() + FRAME_SIZE;
     push_to_stack(esp, (unsigned int) file->data);
     push_to_stack(esp, 0);
     push_to_stack(esp, (unsigned int) user_start_up);
