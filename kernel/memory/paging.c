@@ -1,6 +1,6 @@
 
 #include "paging.h"
-#include "../../stdlib/stdlib.h"
+#include "../kstdlib.h"
 #include "../../drivers/screen.h"
 #include "frame_allocator.h"
 
@@ -167,7 +167,7 @@ void page_fault_handler(i_registers_t *regs) {
     int wr = regs->err_code & 0x2;
     int us = regs->err_code & 0x4;
 
-    printf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
+    kprintf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
 
     while(1);
 }

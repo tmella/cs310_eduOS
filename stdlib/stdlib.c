@@ -1,5 +1,7 @@
 
-#include <stdarg.h>
+#include "stdlib.h"
+#include "syscall.h"
+#include "string.h"
 #include "../drivers/screen.h"
 
 // Disable stdlib C redefinitions warnings
@@ -11,7 +13,7 @@
 #define DECIMAL 10
 #define HEXADECIMAL 16
 
-static char printf_color = WHITE_ON_BLACK;
+static char printf_color = 0x0f;
 
 int abs(int value) {
     return value * ((value > 0) - (value < 0));
@@ -26,7 +28,7 @@ void swap(char *x, char *y) {
 
 // Function to reverse `buffer[i…j]`
 char *reverse(char *buffer, int i, int j) {
-    while (i < j) {
+    while(i < j) {
         swap(&buffer[i++], &buffer[j--]);
     }
 
@@ -37,7 +39,7 @@ char *reverse(char *buffer, int i, int j) {
 // Iterative function to implement `itoa()` function in C
 char *itoa(int value, char *buffer, int base) {
     // invalid input
-    if (base < 2 || base > 32) {
+    if(base < 2 || base > 32) {
         return buffer;
     }
 
@@ -45,10 +47,10 @@ char *itoa(int value, char *buffer, int base) {
     int n = abs(value);
 
     int i = 0;
-    while (n) {
+    while(n) {
         int r = n % base;
 
-        if (r >= 10) {
+        if(r >= 10) {
             buffer[i++] = 65 + (r - 10);
         } else {
             buffer[i++] = 48 + r;
@@ -58,14 +60,14 @@ char *itoa(int value, char *buffer, int base) {
     }
 
     // if the number is 0
-    if (i == 0) {
+    if(i == 0) {
         buffer[i++] = '0';
     }
 
     // If the base is 10 and the value is negative, the resulting string
     // is preceded with a minus sign (-)
     // With any other base, value is always considered unsigned
-    if (value < 0 && base == 10) {
+    if(value < 0 && base == 10) {
         buffer[i++] = '-';
     }
 
@@ -79,76 +81,102 @@ void strcpy(const char *src, void *dest) {
     char *d = dest;
     const char *s = src;
     int i;
-    for (i = 0; src[i]; i++)
+    for(i = 0; src[i]; i++)
         d[i] = s[i];
     d[i] = 0;
 }
 
-void internal_printf(char colour, const char *format, va_list args) {
-    // Size is max INT
+char *sprintf_args(char *str, const char *format, va_list args) {
     char var_temp[40];
-    for (int i = 0; format[i]; i++) {
-        if (format[i] == '%') {
+    int i = 0;
+    int buf_count = 0;
+    while(format[i]) {
+        if(format[i] == '%') {
             i++;
             switch (format[i]) {
                 case 'd':
-                    itoa(va_arg(args,long), var_temp, DECIMAL);
-                    print_string_colour(var_temp, colour);
+                    itoa(va_arg(args,
+                    long), var_temp, DECIMAL);
+                    strcpy(var_temp, &str[buf_count]);
+                    buf_count += strlen(var_temp);
                     break;
                 case 's':
-                    print_string_colour(va_arg(args,char*), colour);
+                    char *str = va_arg(args,
+                    char*);
+                    strcpy(str, &str[buf_count]);
+                    buf_count += strlen(str);
                     break;
                 case 'o':
-                    itoa(va_arg(args,long), var_temp, OCTAL);
-                    print_string_colour(var_temp, colour);
+                    itoa(va_arg(args,
+                    long), var_temp, OCTAL);
+                    strcpy(var_temp, &str[buf_count]);
+                    buf_count += strlen(var_temp);
                     break;
                 case '%':
-                    print_char_colour('%', colour);
+                    str[buf_count++] = '%';
                     break;
                 case 'c':
-                    print_char_colour(va_arg(args,long), colour);
+                    str[buf_count++] = va_arg(args,
+                    long);
                     break;
                 case 'x':
                 case 'p':
-                    itoa(va_arg(args,long), var_temp, HEXADECIMAL);
-                    print_string_colour(var_temp, colour);
+                    itoa(va_arg(args,
+                    long), var_temp, HEXADECIMAL);
+                    strcpy(var_temp, &str[buf_count]);
+                    buf_count += strlen(var_temp);
                     break;
                 case 'b':
-                    itoa(va_arg(args,long), var_temp, BINARY);
-                    print_string_colour(var_temp, colour);
+                    itoa(va_arg(args,
+                    long), var_temp, BINARY);
+                    strcpy(var_temp, &str[buf_count]);
+                    buf_count += strlen(var_temp);
                     break;
                 case 'f':
                 default:
-                    print_string_colour("UNKNOWN VALUE", colour);
-
-                // Temp solution mem std functions on unmergeable ranch
-                for(int i =0; i<20; i++)
-                    var_temp[i] = 0;
+                    // Temp solution mem std functions on unmergeable ranch
+                    for(int i = 0; i < 20; i++)
+                        var_temp[i] = 0;
             }
         } else {
-            print_char_colour(format[i], colour);
+            str[buf_count++] = format[i];
         }
+        i++;
     }
+
+    // End string
+    str[i] = '\0';
+    return str;
+}
+
+char *sprintf(char *str, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    char *result = sprintf_args(str, format, args);
+    va_end(args);
+    return result;
 }
 
 void printf_c(char colour, const char *format, ...) {
     va_list args;
     va_start(args, format);
-
-    internal_printf(colour, format, args);
+    char buffer[1024];
+    sprintf_args(buffer, format, args);
     va_end(args);
+    print_syscall(buffer, colour);
 }
 
 void printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
-
-    internal_printf(WHITE_ON_BLACK, format, args);
+    char buffer[1024];
+    sprintf_args(buffer, format, args);
     va_end(args);
+    print_syscall(buffer, 0x0f);
 }
 
 void println(void) {
-    printf("\n");
+    print_syscall("\n", 0x0f);
 }
 
 #pragma clang diagnostic pop

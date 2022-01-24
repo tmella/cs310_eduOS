@@ -14,9 +14,8 @@
 #include "process/tasks/include/task1.h"
 #include "process/tasks/include/task2.h"
 
-#include "../stdlib/stdlib.h"
 
-#include "file-system/file-system.h"
+#include "kstdlib.h"
 
 void wait_for_understanding();
 
@@ -24,28 +23,28 @@ void main() {
     clearScreen();
     print_new_line();
     load_gdt();
-    print_string("Enabling service routine... ");
+    kprintf("Enabling service routine... ");
     install_interrupt_service_routine();
     asm volatile("sti");
-    print_string("Done successfully");
+    kprintf("Done successfully");
 
-    print_string("\nInitialising keyboard ... ");
+    kprintf("\nInitialising keyboard ... ");
     initialise_keyboard();
-    print_string("Done successfully");
+    kprintf("Done successfully");
 
-    print_string("\nInitialising memory... ");
+    kprintf("\nInitialising memory... ");
     init_mem();
     init_heap();
     init_paging();
-    print_string("Done successfully");
+    kprintf("Done successfully");
 
     init_timer();
 
-    print_string("\nInitialising processes ...");
+    kprintf("\nInitialising processes ...");
     init_process_scheduler();
-    print_string("Done successfully\n");
+    kprintf("Done successfully\n");
 
-    create_process_u("random");
+//    create_process_u("random");
 
     wait_for_understanding();
 
@@ -64,8 +63,8 @@ void main() {
 
 
 void wait_for_understanding() {
-    printf("\n\nTake a minute to understand what is happening on startup!!\n");
-    printf("\nPress 'y' to continue: ");
+    kprintf("\n\nTake a minute to understand what is happening on startup!!\n");
+    kprintf("\nPress 'y' to continue: ");
 
     blocking_wait_for_char('y');
     clearScreen();

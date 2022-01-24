@@ -14,7 +14,6 @@
 
 #include "../x86/x86_32.h"
 
-#include "../../stdlib/stdlib.h"
 #include "../../stdlib/memory.h"
 
 struct gdt_ptr {
