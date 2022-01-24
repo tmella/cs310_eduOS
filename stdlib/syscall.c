@@ -19,3 +19,13 @@ void sleep(unsigned int ms) {
     );
 }
 
+void print_syscall(char *text, unsigned int colour) {
+    asm("mov %0, %%edi;"
+        "mov %1, %%esi;"
+        "mov %2, %%eax;"
+        "int $0x80;"
+    : : "r" (text), "r" (colour), "r" (SYSCALL_PRINT)
+    : "eax", "edi", "esi"
+    );
+}
+

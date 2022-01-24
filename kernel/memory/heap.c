@@ -2,7 +2,7 @@
 #include "heap.h"
 #include "mem_common.h"
 #include "../../drivers/screen.h"
-#include "../../stdlib/stdlib.h"
+#include "../kstdlib.h"
 
 #define null_ptr ((void*)0)
 
@@ -72,7 +72,7 @@ void *k_malloc(uint32_t no_bytes) {
 
     // No memory. Should I add a debug error message. Is that possible in a Kernel
     if (chosen_segment == null_ptr) {
-        printf("PANIC kmalloc failed to allocate memory");
+        kprintf("PANIC kmalloc failed to allocate memory");
         while(1);
     }
 
@@ -98,7 +98,7 @@ void *k_malloc(uint32_t no_bytes) {
 
     // Validation
     if(!validate_seg(chosen_segment)) {
-        printf("PANIC, Kmalloc failed the sanity check");
+        kprintf("PANIC, Kmalloc failed the sanity check");
         while(1);
     }
 
@@ -106,7 +106,7 @@ void *k_malloc(uint32_t no_bytes) {
 }
 
 void *debug_malloc(uint32_t no_bytes) {
-    printf("Allocating %d", no_bytes);
+    kprintf("Allocating %d", no_bytes);
     heap_segment_t *chosen_segment = null_ptr;
     heap_segment_t *optimal_search = heap_start;
 
@@ -201,7 +201,7 @@ void k_free(void *ptr) {
 }
 
 void print_actual_seg(heap_segment_t *seg) {
-    printf("Size %d actual %p mem %p", seg->size, seg, (void *) seg + sizeof(heap_segment_t));
+    kprintf("Size %d actual %p mem %p", seg->size, seg, (void *) seg + sizeof(heap_segment_t));
 }
 
 
@@ -222,7 +222,7 @@ void print_seg(heap_segment_t *seg) {
 void debug() {
     heap_segment_t *elem = heap_start;
     while (elem != null_ptr) {
-        printf( " ");
+        kprintf( " ");
         print_seg(elem);
         elem = elem->next;
     }

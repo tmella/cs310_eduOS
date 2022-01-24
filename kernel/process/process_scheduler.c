@@ -1,11 +1,11 @@
 
 #include "process.h"
+#include "../kstdlib.h"
 #include "process_scheduler.h"
 #include "../memory/heap.h"
 #include "../memory/frame_allocator.h"
 #include "../../stdlib/queue.h"
 #include "../../stdlib/list.h"
-#include "../../stdlib/stdlib.h"
 
 #include "../interrupt/timer.h"
 #include "../interrupt/irq.h"
@@ -66,10 +66,10 @@ void clear_green_square() {
 void print_bench_mark() {
     if(waiting_list->size == 0 && ready_queue->size == 0) {
         list_elem *search = terminated_list->head;
-        printf("BENCHMARKS:");
+        kprintf("BENCHMARKS:");
         for(int i = 0; i < terminated_list->size; i++) {
             process_control_block * pcb = (process_control_block *) search->value;
-            printf("\n\t Process %d ran for %ds had to wait for %ds", pcb->process_id, TICKS_TO_SECONDS(pcb->cpu_ticks),
+            kprintf("\n\t Process %d ran for %ds had to wait for %ds", pcb->process_id, TICKS_TO_SECONDS(pcb->cpu_ticks),
                    TICKS_TO_SECONDS(pcb->waiting_ticks));
             search = search->next;
         }
@@ -221,7 +221,7 @@ void reschedule() {
         if(new_process) {
             context_switch(new_process);
         } else {
-            printf("PANIC: FETCHED A NULL PROCESS");
+            kprintf("PANIC: FETCHED A NULL PROCESS");
             context_switch(idle_pcb);
             // FIXME
         }
