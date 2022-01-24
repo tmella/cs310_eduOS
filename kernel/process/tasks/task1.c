@@ -2,7 +2,7 @@
 #include "include/task1.h"
 
 #include "../../../stdlib/stdlib.h"
-#include "../../../stdlib/exit.h"
+#include "../../../stdlib/syscall.h"
 
 #define RED_ON_BLACK 0x04
 
