@@ -44,14 +44,14 @@ void main() {
     init_process_scheduler();
     kprintf("Done successfully\n");
 
-//    create_process_u("random");
+    create_process_u("random");
 
     wait_for_understanding();
 
-    create_process(welcome_process);
-
-    process_one = create_process(process_one_text);
-    process_two = create_process(process_two_text);
+//    create_process(welcome_process);
+//
+//    process_one = create_process(process_one_text);
+//    process_two = create_process(process_two_text);
 
     start_scheduler();
 

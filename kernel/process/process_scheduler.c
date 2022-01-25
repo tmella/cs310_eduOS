@@ -155,6 +155,8 @@ process_control_block *create_process_u(char *name) {
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
+    page_directory_t *dir = create_kmapped_table();
+
     pcb->esp = esp;
     pcb->cr3 = create_kmapped_table();
     pcb->cpu_ticks = 0;
@@ -248,7 +250,7 @@ void kill_current_process(void) {
     current->waiting_ticks = get_current_count() - current->waiting_ticks;
     add_back(terminated_list, current);
 
-    print_bench_mark();
+//    print_bench_mark();
 
     reschedule();
     unlock_scheduler();

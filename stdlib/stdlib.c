@@ -81,13 +81,13 @@ void strcpy(const char *src, void *dest) {
     char *d = dest;
     const char *s = src;
     int i;
-    for(i = 0; src[i]; i++)
+    for(i = 0; src[i] != '\0'; i++)
         d[i] = s[i];
-    d[i] = 0;
+    d[i] = '\0';
 }
 
 char *sprintf_args(char *str, const char *format, va_list args) {
-    char var_temp[40];
+    char temp[40];
     int i = 0;
     int buf_count = 0;
     while(format[i]) {
@@ -95,48 +95,38 @@ char *sprintf_args(char *str, const char *format, va_list args) {
             i++;
             switch (format[i]) {
                 case 'd':
-                    itoa(va_arg(args,
-                    long), var_temp, DECIMAL);
-                    strcpy(var_temp, &str[buf_count]);
-                    buf_count += strlen(var_temp);
+                    itoa(va_arg(args,long), temp, DECIMAL);
+                    strcpy(temp, &str[buf_count]);
+                    buf_count += strlen(temp);
                     break;
                 case 's':
-                    char *str = va_arg(args,
-                    char*);
-                    strcpy(str, &str[buf_count]);
-                    buf_count += strlen(str);
+                    char *temp_str = va_arg(args,char*);
+                    strcpy(temp_str, &str[buf_count]);
+                    buf_count += strlen(temp_str);
                     break;
                 case 'o':
-                    itoa(va_arg(args,
-                    long), var_temp, OCTAL);
-                    strcpy(var_temp, &str[buf_count]);
-                    buf_count += strlen(var_temp);
+                    itoa(va_arg(args,long), temp, OCTAL);
+                    strcpy(temp, &str[buf_count]);
+                    buf_count += strlen(temp);
                     break;
                 case '%':
                     str[buf_count++] = '%';
                     break;
                 case 'c':
-                    str[buf_count++] = va_arg(args,
-                    long);
+                    str[buf_count++] = va_arg(args,long);
                     break;
-                case 'x':
                 case 'p':
-                    itoa(va_arg(args,
-                    long), var_temp, HEXADECIMAL);
-                    strcpy(var_temp, &str[buf_count]);
-                    buf_count += strlen(var_temp);
+                    itoa(va_arg(args,int), temp, HEXADECIMAL);
+                    strcpy(temp, &str[buf_count]);
+                    buf_count += strlen(temp);
                     break;
                 case 'b':
-                    itoa(va_arg(args,
-                    long), var_temp, BINARY);
-                    strcpy(var_temp, &str[buf_count]);
-                    buf_count += strlen(var_temp);
+                    itoa(va_arg(args,long), temp, BINARY);
+                    strcpy(temp, &str[buf_count]);
+                    buf_count += strlen(temp);
                     break;
-                case 'f':
                 default:
-                    // Temp solution mem std functions on unmergeable ranch
-                    for(int i = 0; i < 20; i++)
-                        var_temp[i] = 0;
+                    print_string("THIS");
             }
         } else {
             str[buf_count++] = format[i];
@@ -145,7 +135,7 @@ char *sprintf_args(char *str, const char *format, va_list args) {
     }
 
     // End string
-    str[i] = '\0';
+    str[buf_count] = '\0';
     return str;
 }
 

@@ -1,7 +1,7 @@
 
 #include "syscalls.h"
 #include "process/process_scheduler.h"
-
+#include "kstdlib.h"
 #include "../drivers/screen.h"
 
 extern process_control_block *first;
@@ -23,7 +23,7 @@ void handle_syscall(i_registers_t *regs) {
             print_string_colour((char *)regs->edi, regs->esi);
             break;
         default: {
-//            printf("Unrecognised system call %d", regs->eax);
+            kprintf("Unrecognised system call %d", regs->eax);
         }
     }
 }

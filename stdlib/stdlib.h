@@ -24,5 +24,6 @@ void set_print_color(char color);
 
 char *sprintf(char *str, const char *format, ...);
 char *sprintf_args(char *str, const char *format, va_list args);
+char *sprintf_argsss(char *str, const char *format, va_list args);
 
 #endif //CSWK_STDLIB_STDLIB_H

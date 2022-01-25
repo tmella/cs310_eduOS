@@ -15,7 +15,7 @@ all: user_headers.h $(USER_H)
 %.bin.h: %.bin
 	xxd -i $< $@
 
-%.bin: crt0.o %.o
+%.bin: %.o
 	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x0 $^ --oformat binary
 
 %.o: %.c
