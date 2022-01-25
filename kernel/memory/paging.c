@@ -4,6 +4,8 @@
 #include "../../drivers/screen.h"
 #include "frame_allocator.h"
 
+#include "../../stdlib/stdlib.h"
+
 page_directory_t *page_directory;
 
 void print_if_set(unsigned int flag) {
@@ -79,7 +81,7 @@ void map_page(page_directory_t *dir, uint32_t *v_address, uint32_t *p_address, u
 
     page_t *page = &page_table->entry[page_tab_index];
 
-    set_page(page, p_address, p, wr, 1);
+    set_page(page, p_address, p, wr, us);
 }
 
 void enable_paging() {
@@ -146,8 +148,8 @@ page_directory_t *create_kmapped_table() {
     // Ideally we could get the size of the kernel from a linker
     // and we can map more accurately
     // This includes kernel code/heap
-//    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE)
-//        map_page(directory, i, i, 1, 1, 0);
+    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE)
+        map_page(directory, i, i, 1, 1, 0);
 
 //     TODO check if the permissions are correct
 //    map_page(directory, directory, directory, 1, 1, 0 );
