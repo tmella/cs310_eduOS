@@ -66,7 +66,7 @@ void wait_for_understanding() {
     kprintf("\n\nTake a minute to understand what is happening on startup!!\n");
     kprintf("\nPress 'y' to continue: ");
 
-    blocking_wait_for_char('y');
+    // blocking_wait_for_char('y');
     clearScreen();
     print_new_line();
 }

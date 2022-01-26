@@ -6,6 +6,7 @@
 #include "../memory/frame_allocator.h"
 #include "../../stdlib/queue.h"
 #include "../../stdlib/list.h"
+#include "../../stdlib/memory.h"
 
 #include "../interrupt/timer.h"
 #include "../interrupt/irq.h"
@@ -148,8 +149,13 @@ process_control_block *create_process_u(char *name) {
 
     process_control_block * pcb = init_pcb();
 
+
+    char *program_text = alloc_frame_addr();
+    memcpy(file->data, program_text, file->size);
+
+
     unsigned int *esp = alloc_frame_addr() + FRAME_SIZE;
-    push_to_stack(esp, (unsigned int) file->data);
+    push_to_stack(esp, (unsigned int) program_text);
     push_to_stack(esp, 0);
     push_to_stack(esp, (unsigned int) user_start_up);
     for(int i = 0; i < 4; i++)

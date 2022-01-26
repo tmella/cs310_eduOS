@@ -90,6 +90,7 @@ char *sprintf_args(char *str, const char *format, va_list args) {
     char temp[40];
     int i = 0;
     int buf_count = 0;
+    char *temp_str;
     while(format[i]) {
         if(format[i] == '%') {
             i++;
@@ -100,7 +101,7 @@ char *sprintf_args(char *str, const char *format, va_list args) {
                     buf_count += strlen(temp);
                     break;
                 case 's':
-                    char *temp_str = va_arg(args,char*);
+                    temp_str = va_arg(args,char*);
                     strcpy(temp_str, &str[buf_count]);
                     buf_count += strlen(temp_str);
                     break;

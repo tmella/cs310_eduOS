@@ -162,8 +162,9 @@ char is_set(uint32_t binary, char bit_num) {
     return (binary & bit_num) ? 1 : 0;
 }
 
+// TODO need to gracefully shutdown the currently running process
 void page_fault_handler(i_registers_t *regs) {
-    asm volatile("sti");
+    asm volatile("cli");
 
     uint64_t fault_addr;
     asm volatile("mov %%cr2, %0" : "=r" (fault_addr));
@@ -176,4 +177,3 @@ void page_fault_handler(i_registers_t *regs) {
 
     while(1);
 }
-
