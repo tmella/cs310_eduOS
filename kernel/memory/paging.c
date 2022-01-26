@@ -158,6 +158,9 @@ page_directory_t *create_kmapped_table() {
 
 }
 
+char is_set(uint32_t binary, char bit_num) {
+    return (binary & bit_num) ? 1 : 0;
+}
 
 void page_fault_handler(i_registers_t *regs) {
     asm volatile("sti");
@@ -165,9 +168,9 @@ void page_fault_handler(i_registers_t *regs) {
     uint64_t fault_addr;
     asm volatile("mov %%cr2, %0" : "=r" (fault_addr));
 
-    int present = regs->err_code & 0x1;
-    int wr = regs->err_code & 0x2;
-    int us = regs->err_code & 0x4;
+    int present = is_set(regs->err_code, 0x1);
+    int wr = is_set(regs->err_code, 0x2);
+    int us = is_set(regs->err_code, 0x4);
 
     kprintf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
 
