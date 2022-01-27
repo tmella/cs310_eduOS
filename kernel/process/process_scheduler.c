@@ -184,14 +184,21 @@ process_control_block *create_process_u(char *name) {
 process_control_block *create_process(void (*text)()) {
     process_control_block * pcb = init_pcb();
 
-    unsigned int *esp = alloc_frame_addr();
+    uint32_t stack_btm = (uint32_t) alloc_frame_addr();
+    unsigned int *esp = stack_btm + FRAME_SIZE;
+    kprintf("The value of esp is 0x%p", stack_btm);
     push_to_stack(esp, (unsigned int) text);
     push_to_stack(esp, (unsigned int) start_up_process);
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
-    pcb->esp = esp;
-    pcb->cr3 = create_kmapped_table();
+
+    page_directory_t *dir = create_kmapped_table();
+
+    map_page(dir, 0x400000, stack_btm, 1, 1,1 );
+
+    pcb->esp = 0x400000;
+    pcb->cr3 = dir;
     pcb->cpu_ticks = 0;
     pcb->waiting_ticks = get_current_count();
     pcb->process_id = process_id++;

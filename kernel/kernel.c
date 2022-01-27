@@ -59,8 +59,8 @@ void main() {
 
     wait_for_understanding();
 
-//    create_process(welcome_process);
-//
+    create_process(welcome_process);
+    
 //    process_one = create_process(process_one_text);
 //    process_two = create_process(process_two_text);
 

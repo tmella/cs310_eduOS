@@ -12,7 +12,7 @@ extern context_switch(process_control_block *pcb);
 int i = 1;
 
 void handle_syscall(i_registers_t *regs) {
-    kprintf("Received syscall %d", regs->eax);
+    char *text;
     switch (regs->eax) {
         case SYSCALL_PROCESS_EXIT:
             kill_current_process();
@@ -21,7 +21,7 @@ void handle_syscall(i_registers_t *regs) {
             sleep_current_process(regs->edi);
             break;
         case SYSCALL_PRINT:
-            char *text = regs->edi;
+             text = regs->edi;
             kprintf("The pointer is %p", text);
             print_string("This is the string : ");
             print_string(text);
