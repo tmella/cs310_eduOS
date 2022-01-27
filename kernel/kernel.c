@@ -20,6 +20,7 @@
 void wait_for_understanding();
 
 void main() {
+    int a = 0;
     clearScreen();
     print_new_line();
     load_gdt();
@@ -44,7 +45,17 @@ void main() {
     init_process_scheduler();
     kprintf("Done successfully\n");
 
-    create_process_u("random");
+//    create_process_u("random");
+//
+//    char *tex = "this is the text we want";
+//
+//    asm("mov %0, %%edi;"
+//        "mov %1, %%esi;"
+//        "mov %2, %%eax;"
+//        "int $0x80;"
+//    : : "r" (tex), "r" (0x0f), "r" (2)
+//    : "eax", "edi", "esi"
+//    );
 
     wait_for_understanding();
 
@@ -66,7 +77,7 @@ void wait_for_understanding() {
     kprintf("\n\nTake a minute to understand what is happening on startup!!\n");
     kprintf("\nPress 'y' to continue: ");
 
-    // blocking_wait_for_char('y');
+     blocking_wait_for_char('y');
     clearScreen();
     print_new_line();
 }

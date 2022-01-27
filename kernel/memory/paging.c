@@ -137,25 +137,29 @@ void init_paging() {
     enable_paging();
 }
 
+page_directory_t *create_table_kmap() {
+    page_directory_t *directory = (page_directory_t *) alloc_frame_addr();
+    for (int i = 0; i < 1024; i++)
+        set_page(&directory->entry[i], 0, 0, 0, 0);
+    for (int i = 0; i < FRAME_SIZE; i += FRAME_SIZE)
+        map_page(directory, i, i, 1, 0, 0);
+
+    map_page(directory, directory, directory, 1, 0, 0);
+    return directory;
+}
+
 /* At the moment there is no user space therefore there is no distinction
  * between user and kernel stack */
 page_directory_t *create_kmapped_table() {
     page_directory_t *directory = (page_directory_t *) alloc_frame_addr();
     for (int i = 0; i < 1024; i++)
         set_page(&directory->entry[i], 0, 0, 0, 0);
+    for (int i = 0; i < (int)0x6000000; i += FRAME_SIZE)
+        map_page(directory, i, i, 1, 1, 1);
 
-    // Identity map everything from kernel to FRAMES MEMORY
-    // Ideally we could get the size of the kernel from a linker
-    // and we can map more accurately
-    // This includes kernel code/heap
-    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE)
-        map_page(directory, i, i, 1, 1, 0);
+    map_page(directory, (unsigned int *)directory, (unsigned int *)directory, 1, 1, 0);
 
-//     TODO check if the permissions are correct
-//    map_page(directory, directory, directory, 1, 1, 0 );
-//    for(int i= 1; i<=3; i++)
-//        map_page(directory, (directory) + (i * FRAME_SIZE), (directory) + (i * FRAME_SIZE), 1, 1, 0);
-
+    return directory;
 }
 
 char is_set(uint32_t binary, char bit_num) {

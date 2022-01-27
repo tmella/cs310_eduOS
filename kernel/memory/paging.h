@@ -69,6 +69,7 @@ void set_page_dir(page_directory_t *dir);
 void init_paging();
 
 page_directory_t *create_kmapped_table();
+page_directory_t *create_table_kmap();
 
 void page_fault_handler(i_registers_t *regs);
 

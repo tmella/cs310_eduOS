@@ -70,8 +70,10 @@ void print_bench_mark() {
         kprintf("BENCHMARKS:");
         for(int i = 0; i < terminated_list->size; i++) {
             process_control_block * pcb = (process_control_block *) search->value;
-            kprintf("\n\t Process %d ran for %ds had to wait for %ds", pcb->process_id, TICKS_TO_SECONDS(pcb->cpu_ticks),
-                   TICKS_TO_SECONDS(pcb->waiting_ticks));
+            kprintf("\n\t Process %d ran for %ds had to wait for %ds",
+                    pcb->process_id,
+                    TICKS_TO_SECONDS(pcb->cpu_ticks),
+                    TICKS_TO_SECONDS(pcb->waiting_ticks));
             search = search->next;
         }
     }
@@ -101,7 +103,7 @@ void init_idle_process() {
 
     idle_pcb->esp = esp;
     // TODO this could be wrong as we need to access mem (check)
-    idle_pcb->cr3 = 0;
+    idle_pcb->cr3 = 0x300000;
 }
 
 void init_process_scheduler() {
@@ -143,28 +145,29 @@ void user_start_up(uint32_t text) {
 process_control_block *create_process_u(char *name) {
     bin_node *file = find_file(name);
 
-    if(!file) {
-        return null_ptr;
-    }
+    if(!file) return null_ptr;
 
     process_control_block * pcb = init_pcb();
 
+    page_directory_t *dir = create_kmapped_table();
 
     char *program_text = alloc_frame_addr();
     memcpy(file->data, program_text, file->size);
+    kprintf("The program text is loaded at 0x%p", program_text);
+    map_page(dir, 0x500000, program_text, 1, 1, 1);
 
-
-    unsigned int *esp = alloc_frame_addr() + FRAME_SIZE;
+    unsigned int *esp = alloc_frame_addr() - FRAME_SIZE;
     push_to_stack(esp, (unsigned int) program_text);
     push_to_stack(esp, 0);
     push_to_stack(esp, (unsigned int) user_start_up);
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
-    page_directory_t *dir = create_kmapped_table();
+    // Map in the stack
+    map_page(dir, 0x500000, esp, 1, 1, 1);
 
     pcb->esp = esp;
-    pcb->cr3 = create_kmapped_table();
+    pcb->cr3 = dir;
     pcb->cpu_ticks = 0;
     pcb->waiting_ticks = get_current_count();
     pcb->process_id = process_id++;

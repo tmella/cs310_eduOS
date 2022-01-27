@@ -16,7 +16,7 @@ all: user_headers.h $(USER_H)
 	xxd -i $< $@
 
 %.bin: %.o
-	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x0 $^ --oformat binary
+	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x500000 $^ --oformat binary
 
 %.o: %.c
 	$(CC) $(USER_FLAGS) -c $< -o $@
