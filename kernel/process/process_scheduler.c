@@ -145,7 +145,8 @@ void user_start_up(uint32_t text) {
 process_control_block *create_process_u(char *name) {
     bin_node *file = find_file(name);
 
-    if(!file) return null_ptr;
+    if(!file)
+        return null_ptr;
 
     process_control_block * pcb = init_pcb();
 
@@ -192,12 +193,14 @@ process_control_block *create_process(void (*text)()) {
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
+    // This value is the distance between the bottom of the stack and the data added
+    int stack_diff = (uint32_t) esp - stack_btm;
 
     page_directory_t *dir = create_kmapped_table();
 
-    map_page(dir, 0x400000, stack_btm, 1, 1,1 );
+    map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1);
 
-    pcb->esp = 0x400000;
+    pcb->esp = PROCESS_STACK + stack_diff;
     pcb->cr3 = dir;
     pcb->cpu_ticks = 0;
     pcb->waiting_ticks = get_current_count();
@@ -256,6 +259,7 @@ void set_process_running() {
     lock_scheduler();
     current_running_count = get_current_count();
     current->state = RUNNING_STATE;
+    kprintf("The value of the cr3 is 0x%p", current->cr3);
     unlock_scheduler();
 }
 

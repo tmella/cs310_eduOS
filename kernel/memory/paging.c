@@ -154,8 +154,11 @@ page_directory_t *create_kmapped_table() {
     page_directory_t *directory = (page_directory_t *) alloc_frame_addr();
     for (int i = 0; i < 1024; i++)
         set_page(&directory->entry[i], 0, 0, 0, 0);
-    for (int i = 0; i < (int)0x6000000; i += FRAME_SIZE)
+    for (int i = 0; i < (int)FRAMES_START; i += FRAME_SIZE)
         map_page(directory, i, i, 1, 1, 1);
+
+    for (int i = FRAMES_START; i < (int)0x6000000; i += FRAME_SIZE)
+        map_page(directory, i, i, 0, 1, 1);
 
     map_page(directory, (unsigned int *)directory, (unsigned int *)directory, 1, 1, 0);
 
