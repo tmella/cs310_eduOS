@@ -46,24 +46,12 @@ void main() {
     kprintf("Done successfully\n");
 
     create_process_u("random");
-//    create_process_u("random");
-
-//    char *tex = "this is the text we want";
-//
-//    asm("mov %0, %%edi;"
-//        "mov %1, %%esi;"
-//        "mov %2, %%eax;"
-//        "int $0x80;"
-//    : : "r" (tex), "r" (0x0f), "r" (2)
-//    : "eax", "edi", "esi"
-//    );
-
     wait_for_understanding();
 
-//    create_process(welcome_process);
-    
-//    process_one = create_process(process_one_text);
-//    process_two = create_process(process_two_text);
+    create_process(welcome_process);
+
+    process_one = create_process(process_one_text);
+    process_two = create_process(process_two_text);
 
     start_scheduler();
 

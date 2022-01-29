@@ -18,7 +18,7 @@ all: user_headers.h $(USER_H)
 # The address should not be changed, if necessary you will also need to change the
 # process start address in its virtual memory
 %.bin: crt0.o %.o
-	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x500000 $^ ../stdlib/libmylib.a --oformat binary
+	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x500000 $^  --oformat binary
 
 %.o: %.c
 	$(CC) $(USER_FLAGS) -c $< -o $@

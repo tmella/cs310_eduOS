@@ -1,6 +1,4 @@
 
-#include "syscall.h"
-
 int main(int argc, const char *argv[]) {
 
     char *t = "SOME OTHER TEXT";
@@ -13,6 +11,9 @@ int main(int argc, const char *argv[]) {
     : "eax", "edi", "esi"
     );
 
-
-    exit(0);
+    asm volatile ("mov %0, %%eax;"
+                  "int $0x80;"
+    : : "r" (0)
+    : "eax"
+    );
 }
