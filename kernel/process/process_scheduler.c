@@ -142,6 +142,7 @@ void user_start_up(uint32_t text) {
     jump_usermode(text);
 }
 
+// TODO: perhaps make cleaner
 process_control_block *create_process_u(char *name) {
     bin_node *file = find_file(name);
 
@@ -152,17 +153,22 @@ process_control_block *create_process_u(char *name) {
 
     page_directory_t *dir = create_kmapped_table();
 
-    memcpy(file->data, (char *)0x1000000, file->size);
+    uint32_t *program_txt = alloc_frame_addr();
+    memcpy(file->data, program_txt, file->size);
+    map_page(dir, (unsigned int *)PROCESS_START, program_txt, 1, 1, 1);
 
     uint32_t stack_btm = (uint32_t) alloc_frame_addr();
     unsigned int *esp = stack_btm + FRAME_SIZE;
-    push_to_stack(esp,  0x1000000);
+    push_to_stack(esp,  PROCESS_START);
     push_to_stack(esp, 0);
     push_to_stack(esp, (unsigned int) user_start_up);
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
+    int stack_diff = (uint32_t) esp - stack_btm;
 
-    pcb->esp = esp;
+    map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1 );
+
+    pcb->esp = PROCESS_STACK + stack_diff;
     pcb->cr3 = dir;
     pcb->cpu_ticks = 0;
     pcb->waiting_ticks = get_current_count();

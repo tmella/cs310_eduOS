@@ -134,7 +134,7 @@ void init_paging() {
 
     set_page_dir(page_directory);
 
-//    enable_paging();
+    enable_paging();
 }
 
 page_directory_t *create_table_kmap() {
