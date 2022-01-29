@@ -18,7 +18,9 @@
 
 #define FRAMES_NO (MEMORY_END-FRAMES_START)/FRAME_SIZE_HEX
 
+#define PROCESS_STACK 0x400000
 
+#define PROCESS_START 0x500000
 
 // TODO need to decide the heap start address and size
 // TODO need to figure out what happens with the STACK and size

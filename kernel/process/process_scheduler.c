@@ -1,14 +1,19 @@
 
 #include "process.h"
+#include "../kstdlib.h"
 #include "process_scheduler.h"
 #include "../memory/heap.h"
 #include "../memory/frame_allocator.h"
 #include "../../stdlib/queue.h"
 #include "../../stdlib/list.h"
-#include "../../stdlib/stdlib.h"
+#include "../../stdlib/memory.h"
 
 #include "../interrupt/timer.h"
 #include "../interrupt/irq.h"
+
+#include "../file-system/file-system.h"
+
+#include "../../stdlib/stdtypes.h"
 
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
@@ -18,7 +23,9 @@
 
 char scheduler_started = 0;
 
-extern context_switch(process_control_block *pcb);
+extern context_switch(process_control_block
+*);
+extern void jump_usermode(uint32_t);
 
 unsigned int process_id;
 
@@ -60,11 +67,13 @@ void clear_green_square() {
 void print_bench_mark() {
     if(waiting_list->size == 0 && ready_queue->size == 0) {
         list_elem *search = terminated_list->head;
-        printf("BENCHMARKS:");
-        for(int i = 0; i<terminated_list->size; i++){
-            process_control_block  *pcb = (process_control_block *)search->value;
-            printf("\n\t Process %d ran for %ds had to wait for %ds",pcb->process_id,  TICKS_TO_SECONDS(pcb->cpu_ticks),
-                   TICKS_TO_SECONDS(pcb->waiting_ticks));
+        kprintf("BENCHMARKS:");
+        for(int i = 0; i < terminated_list->size; i++) {
+            process_control_block * pcb = (process_control_block *) search->value;
+            kprintf("\n\t Process %d ran for %ds had to wait for %ds",
+                    pcb->process_id,
+                    TICKS_TO_SECONDS(pcb->cpu_ticks),
+                    TICKS_TO_SECONDS(pcb->waiting_ticks));
             search = search->next;
         }
     }
@@ -74,7 +83,7 @@ void print_bench_mark() {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 void idle_process_m() {
-    while (1) {
+    while(1) {
         // WHY DO WE NEED TO DISABLE AND ENABLE HTL
         draw_green_square();
         asm volatile("sti");
@@ -89,12 +98,12 @@ void init_idle_process() {
 
     unsigned int *esp = alloc_frame_addr();
     push_to_stack(esp, (unsigned int) idle_process_m);
-    for (int i = 0; i < 4; i++)
+    for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
 
     idle_pcb->esp = esp;
     // TODO this could be wrong as we need to access mem (check)
-    idle_pcb->cr3 = 0;
+    idle_pcb->cr3 = 0x300000;
 }
 
 void init_process_scheduler() {
@@ -119,13 +128,55 @@ void lock_scheduler(void) {
 
 void unlock_scheduler(void) {
     IRQ_disable_counter--;
-    if (IRQ_disable_counter == 0) {
+    if(IRQ_disable_counter == 0) {
         asm volatile("sti");
     }
 }
 
 void start_up_process() {
     unlock_scheduler();
+}
+
+void user_start_up(uint32_t text) {
+    unlock_scheduler();
+    jump_usermode(text);
+}
+
+// TODO: perhaps make cleaner
+process_control_block *create_process_u(char *name) {
+    bin_node *file = find_file(name);
+
+    if(!file)
+        return null_ptr;
+
+    process_control_block * pcb = init_pcb();
+
+    page_directory_t *dir = create_kmapped_table();
+
+    uint32_t *program_txt = alloc_frame_addr();
+    memcpy(file->data, program_txt, file->size);
+    map_page(dir, (unsigned int *)PROCESS_START, program_txt, 1, 1, 1);
+
+    uint32_t stack_btm = (uint32_t) alloc_frame_addr();
+    unsigned int *esp = stack_btm + FRAME_SIZE;
+    push_to_stack(esp,  PROCESS_START);
+    push_to_stack(esp, 0);
+    push_to_stack(esp, (unsigned int) user_start_up);
+    for(int i = 0; i < 4; i++)
+        push_to_stack(esp, 0);
+    int stack_diff = (uint32_t) esp - stack_btm;
+
+    map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1 );
+
+    pcb->esp = PROCESS_STACK + stack_diff;
+    pcb->cr3 = dir;
+    pcb->cpu_ticks = 0;
+    pcb->waiting_ticks = get_current_count();
+    pcb->process_id = process_id++;
+
+    enqueue(ready_queue, pcb);
+
+    return pcb;
 }
 
 /* What does create process do:
@@ -135,14 +186,24 @@ void start_up_process() {
 process_control_block *create_process(void (*text)()) {
     process_control_block * pcb = init_pcb();
 
-    unsigned int *esp = alloc_frame_addr();
+    uint32_t stack_btm = (uint32_t) alloc_frame_addr();
+    unsigned int *esp = stack_btm + FRAME_SIZE;
     push_to_stack(esp, (unsigned int) text);
     push_to_stack(esp, (unsigned int) start_up_process);
-    for (int i = 0; i < 4; i++)
+    for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
+    // This value is the distance between the bottom of the stack and the data added
+    int stack_diff = (uint32_t) esp - stack_btm;
 
-    pcb->esp = esp;
-    pcb->cr3 = create_kmapped_table();
+    page_directory_t *dir = create_kmapped_table();
+
+    // Map the process stack to a fixed location in mem
+    map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1);
+
+    map_page(dir, dir, dir, 1, 1, 1);
+
+    pcb->esp = PROCESS_STACK + stack_diff;
+    pcb->cr3 = dir;
     pcb->cpu_ticks = 0;
     pcb->waiting_ticks = get_current_count();
     pcb->process_id = process_id++;
@@ -155,9 +216,9 @@ process_control_block *create_process(void (*text)()) {
 // For now we will save the state of terminated processes
 void save_current_process(unsigned int esp) {
     lock_scheduler();
-    if (current) {
+    if(current) {
         current->esp = esp;
-        if(current->state == RUNNING_STATE){
+        if(current->state == RUNNING_STATE) {
             current->cpu_ticks += get_current_count() - current_running_count;
         }
     }
@@ -166,8 +227,8 @@ void save_current_process(unsigned int esp) {
 
 void reschedule() {
     // Avoid any unnecessary context switching
-    if (ready_queue->size == 0) {
-        if (current->state == RUNNING_STATE) {
+    if(ready_queue->size == 0) {
+        if(current->state == RUNNING_STATE) {
             return;
         }
         context_switch(idle_pcb);
@@ -176,14 +237,14 @@ void reschedule() {
         process_control_block * new_process =
             (process_control_block *) dequeue(ready_queue);
 
-        if (current == new_process) {
+        if(current == new_process) {
             return;
         }
 
-        if (new_process) {
+        if(new_process) {
             context_switch(new_process);
         } else {
-            printf("PANIC: FETCHED A NULL PROCESS");
+            kprintf("PANIC: FETCHED A NULL PROCESS");
             context_switch(idle_pcb);
             // FIXME
         }
@@ -210,7 +271,7 @@ void kill_current_process(void) {
     current->waiting_ticks = get_current_count() - current->waiting_ticks;
     add_back(terminated_list, current);
 
-    print_bench_mark();
+//    print_bench_mark();
 
     reschedule();
     unlock_scheduler();
@@ -218,7 +279,7 @@ void kill_current_process(void) {
 
 void wake_up_process() {
     lock_scheduler();
-    if (current != idle_pcb && current->state == RUNNING_STATE) {
+    if(current != idle_pcb && current->state == RUNNING_STATE) {
         enqueue(ready_queue, current);
     }
     ack_interrupt_pic();
@@ -227,16 +288,16 @@ void wake_up_process() {
 }
 
 void process_waiting() {
-    if (waiting_list->size == 0) {
+    if(waiting_list->size == 0) {
         return;
     }
 
     int index = 0;
     list_elem *iter = waiting_list->head;
-    while (iter) {
+    while(iter) {
         struct waiting_pcb *value = (struct waiting_pcb *) iter->value;
         value->ticks--;
-        if (!value->ticks) {
+        if(!value->ticks) {
             enqueue(ready_queue, value->pcb);
             remove_at(waiting_list, index);
             wake_up_process();
@@ -256,7 +317,7 @@ void preempt_processes() {
 }
 
 void scheduler_timer_handler() {
-    if (scheduler_started) {
+    if(scheduler_started) {
         lock_scheduler();
         process_waiting();
         preempt_processes();

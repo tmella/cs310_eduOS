@@ -121,14 +121,13 @@ isr12:
 
 isr13:
     cli
-    push byte 0
+;    push byte 0
     push byte 13
     jmp isr_common_handler
 
 ; Page fault (needs checking)
 isr14:
     cli
-    push byte 0
     push byte 14
     jmp isr_common_handler
 

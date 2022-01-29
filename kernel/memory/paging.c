@@ -1,8 +1,10 @@
 
 #include "paging.h"
-#include "../../stdlib/stdlib.h"
+#include "../kstdlib.h"
 #include "../../drivers/screen.h"
 #include "frame_allocator.h"
+
+#include "../../stdlib/stdlib.h"
 
 page_directory_t *page_directory;
 
@@ -79,7 +81,7 @@ void map_page(page_directory_t *dir, uint32_t *v_address, uint32_t *p_address, u
 
     page_t *page = &page_table->entry[page_tab_index];
 
-    set_page(page, p_address, p, wr, 1);
+    set_page(page, p_address, p, wr, us);
 }
 
 void enable_paging() {
@@ -126,7 +128,7 @@ void init_paging() {
         set_page(&page_directory->entry[i], 0, 0, 0, 0);
 
     // IDENTITY MAP EVERYTHING (as a starting point)
-    for (int i = 0; i < 0x400000; i += FRAME_SIZE){
+    for (int i = 0; i < 0x600000; i += FRAME_SIZE){
         map_page(page_directory, i, i, 1, 1, 0);
     }
 
@@ -135,40 +137,50 @@ void init_paging() {
     enable_paging();
 }
 
+page_directory_t *create_table_kmap() {
+    page_directory_t *directory = (page_directory_t *) alloc_frame_addr();
+    for (int i = 0; i < 1024; i++)
+        set_page(&directory->entry[i], 0, 0, 0, 0);
+    for (int i = 0; i < FRAME_SIZE; i += FRAME_SIZE)
+        map_page(directory, i, i, 1, 0, 0);
+
+    map_page(directory, directory, directory, 1, 0, 0);
+    return directory;
+}
+
 /* At the moment there is no user space therefore there is no distinction
  * between user and kernel stack */
 page_directory_t *create_kmapped_table() {
     page_directory_t *directory = (page_directory_t *) alloc_frame_addr();
     for (int i = 0; i < 1024; i++)
         set_page(&directory->entry[i], 0, 0, 0, 0);
+    for (int i = 0; i < (int)FRAMES_START; i += FRAME_SIZE)
+        map_page(directory, i, i, 1, 1, 1);
 
-    // Identity map everything from kernel to FRAMES MEMORY
-    // Ideally we could get the size of the kernel from a linker
-    // and we can map more accurately
-    // This includes kernel code/heap
-//    for (int i = 0; i < FRAMES_START + 4; i += FRAME_SIZE)
-//        map_page(directory, i, i, 1, 1, 0);
+    for (int i = FRAMES_START; i < (int)0x6000000; i += FRAME_SIZE)
+        map_page(directory, i, i, 1, 1, 1);
 
-//     TODO check if the permissions are correct
-//    map_page(directory, directory, directory, 1, 1, 0 );
-//    for(int i= 1; i<=3; i++)
-//        map_page(directory, (directory) + (i * FRAME_SIZE), (directory) + (i * FRAME_SIZE), 1, 1, 0);
+    map_page(directory, (unsigned int *)directory, (unsigned int *)directory, 1, 1, 0);
 
+    return directory;
 }
 
+char is_set(uint32_t binary, char bit_num) {
+    return (binary & bit_num) ? 1 : 0;
+}
 
+// TODO need to gracefully shutdown the currently running process
 void page_fault_handler(i_registers_t *regs) {
-    asm volatile("sti");
+    asm volatile("cli");
 
     uint64_t fault_addr;
     asm volatile("mov %%cr2, %0" : "=r" (fault_addr));
 
-    int present = regs->err_code & 0x1;
-    int wr = regs->err_code & 0x2;
-    int us = regs->err_code & 0x4;
+    int present = is_set(regs->err_code, 0x1);
+    int wr = is_set(regs->err_code, 0x2);
+    int us = is_set(regs->err_code, 0x4);
 
-    printf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
+    kprintf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
 
     while(1);
 }
-

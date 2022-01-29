@@ -6,6 +6,7 @@
 
 #define SYSCALL_PROCESS_EXIT 0
 #define SYSCALL_PROCESS_SLEEP 1
+#define SYSCALL_PRINT 2
 
 void handle_syscall(i_registers_t* regs);
 

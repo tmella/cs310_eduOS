@@ -3,7 +3,9 @@
 #include "irq.h"
 #include "../memory/paging.h"
 #include "../syscalls.h"
-#include "../../stdlib/stdlib.h"
+#include "../../drivers/screen.h"
+
+#include "exception.h"
 
 idt_ptr interrupt_descriptor_table_ptr;
 idt_entry interrupt_descriptor_table[256];
@@ -24,12 +26,21 @@ void set_idt_gate(int entryNo, uint32_t address) {
  */
 void load_idt() {
     interrupt_descriptor_table_ptr.limit = sizeof(idt_entry) * 255;
-    interrupt_descriptor_table_ptr.base  =
-            (uint32_t)&interrupt_descriptor_table;
+    interrupt_descriptor_table_ptr.base =
+        (uint32_t) & interrupt_descriptor_table;
     asm volatile("lidt (%0)" : : "r" (&interrupt_descriptor_table_ptr));
 }
 
 // TODO: need to check if should use gates or traps?
+
+// More generic methods for both interrupts and traps
+void set_idt_entry(uint16_t entry_n, uint32_t address, uint8_t selector, uint8_t flags) {
+    interrupt_descriptor_table[entry_n].low_offset = address & 0xFFFF;
+    interrupt_descriptor_table[entry_n].selector = selector;
+    interrupt_descriptor_table[entry_n].zero = 0;
+    interrupt_descriptor_table[entry_n].flags = flags;
+    interrupt_descriptor_table[entry_n].high_offset = (((address) >> 16) & 0xFFFF);
+}
 
 void install_interrupt_service_routine() {
     set_idt_gate(0, (uint32_t) isr0);
@@ -65,7 +76,7 @@ void install_interrupt_service_routine() {
     set_idt_gate(30, (uint32_t) isr30);
     set_idt_gate(31, (uint32_t) isr31);
 
-    // TODO: fix this long winded stuff
+    // TODO: should they be traps or gates
     set_idt_gate(32, (uint32_t) irq0);
     set_idt_gate(33, (uint32_t) irq1);
     set_idt_gate(34, (uint32_t) irq2);
@@ -84,7 +95,7 @@ void install_interrupt_service_routine() {
     set_idt_gate(47, (uint32_t) irq15);
 
     // Set gate for system calls
-    set_idt_gate(128, (uint32_t) isr80);
+    set_idt_entry(128, (uint32_t) isr80, 0x08, DPL3_INTERRUPT);
 
     reprogram_pic();
 
@@ -112,68 +123,68 @@ void isr_handler(i_registers_t *registers) {
     // Switch statement
     switch (registers->int_no) {
         case 1:
-            printf("Division by 0");
+            print_string("Division by 0");
             break;
         case 2:
-            printf("Single step interrupt");
+            print_string("Single step interrupt");
             break;
         case 3:
-            printf("Non maskable interrupt");
+            print_string("Non maskable interrupt");
             break;
         case 4:
-            printf("Breakpoint");
+            print_string("Breakpoint");
             break;
         case 5:
-            printf("Overflow");
+            print_string("Overflow");
             break;
         case 6:
-            printf("Bound range exceeded");
+            print_string("Bound range exceeded");
             break;
         case 7:
-            printf("Invalid op code");
+            print_string("Invalid op code");
             break;
         case 8:
-            printf("Double fault");
+            print_string("Double fault");
             break;
         case 9:
-            printf("Coprocessor Segment Overrun");
+            print_string("Coprocessor Segment Overrun");
             break;
         case 10:
-            printf("Invalid TSS");
+            print_string("Invalid TSS");
             break;
         case 11:
-            printf("Segment Not Present");
+            print_string("Segment Not Present");
             break;
         case 12:
-            printf("Stack-Segment Fault");
+            print_string("Stack-Segment Fault");
             break;
         case 13:
-            printf("General Protection Fault");
+            general_protection_fault_handler(registers);
             break;
         case 14:
             page_fault_handler(registers);
             break;
         case 15:
-            printf("Reserved 15");
+            print_string("Reserved 15");
             break;
         case 16:
             // Is this possible on i386 arch? check
-            printf("x87 Floating Point Exception");
+            print_string("x87 Floating Point Exception");
             break;
         case 17:
-            printf("Alignment Check");
+            print_string("Alignment Check");
             break;
         case 18:
-            printf("Machine Check");
+            print_string("Machine Check");
             break;
         case 19:
-            printf("SIMD Floating-Point Exception");
+            print_string("SIMD Floating-Point Exception");
             break;
         case 20:
-            printf("Virtualization Exception");
+            print_string("Virtualization Exception");
             break;
         case 21:
-            printf("Control Protection Exception");
+            print_string("Control Protection Exception");
             break;
         case 22:
         case 23:
@@ -181,24 +192,37 @@ void isr_handler(i_registers_t *registers) {
         case 25:
         case 26:
         case 27:
-             printf("Reserved %d", registers->int_no);
+//            print_string("Reserved %d", registers->int_no);
             break;
         case 28:
-            printf("Hypervisor Injection Exception");
+            print_string("Hypervisor Injection Exception");
             break;
         case 29:
-            printf("VMM Communication Exception");
+            print_string("VMM Communication Exception");
             break;
         case 30:
-            printf("Security Exception");
+            print_string("Security Exception");
             break;
         case 31:
-            printf("Reserved");
+            print_string("Reserved");
             break;
-        // System calls
+            // System calls
         case 80:
             handle_syscall(registers);
             break;
     }
-    println();
+}
+
+void register_dump(i_registers_t *regs) {
+    kprintf("\nDS: 0x%p", regs->ds);
+    kprintf("\nEDI: %p, ESI: %p, EBP: %p", regs->edi, regs->esi, regs->ebp);
+    kprintf("\nESP: %p, EBX: %p, EDX: %p", regs->esp, regs->ebx, regs->edx);
+    kprintf("\nECX: %p, EAX: %p", regs->ecx, regs->eax);
+    kprintf("\nInterrupt Number: %d Error Code: %p", regs->int_no, regs->err_code);
+    kprintf("\nEIP: %p, CS: 0x%p, EFLAGS: %p, u_esp: %p, ss: %p",
+           regs->eip,
+           regs->cs,
+           regs->eflags,
+           regs->useresp,
+           regs->ss);
 }

@@ -39,11 +39,6 @@ context_switch:
         mov esp,[esi+ESP_OFFSET]
         mov eax,[esi+PD_OFFSET]
 
-        ; Checks if the CR3 (page directory addr) needs to be refreshed
-        ; it avoids unnecessary cache flushes
-        mov ecx,cr3
-        cmp ecx,eax
-        jmp .sameVAS
         mov cr3, eax
 
 .sameVAS:

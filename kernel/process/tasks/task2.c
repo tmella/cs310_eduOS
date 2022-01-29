@@ -1,6 +1,6 @@
 
 #include "include/task2.h"
-#include "../../../stdlib/exit.h"
+#include "../../../stdlib/syscall.h"
 #include "../../../stdlib/stdlib.h"
 
 /* Pointers to each process to be able to switch. Set in Kernel main*/
@@ -14,6 +14,9 @@ extern void context_switch(process_control_block *pcb);
 void process_one_text() {
     // TODO: add a loop, which modifies and prints a var then switch to process_two
     // Terminates the process
+
+    printf("This is the first text");
+
     exit(0);
 }
 
