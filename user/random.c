@@ -2,21 +2,25 @@
 
 int main(int argc, const char *argv[]) {
 
-    char *tex = "this is the text we want";
-//    int b = 4;
+//    char **val = (char **) 0x400000;
+//    *val = "a";
 //
-//    // This should cause an error
-//    asm volatile ("mov %0, %%eax;"
-//                  "int $0x80;"
-//    : : "r" (&b)
-//    : "eax"
+    char *t = "SOME OTHER TEXT";
+//    char text[16] = "For fuck sake";
+
+//    asm("mov %0, %%edi;"
+//        "mov %1, %%esi;"
+//        "mov %2, %%eax;"
+//        "int $0x80;"
+//    : : "r" (&text), "r" (0x0f), "r" (2)
+//    : "eax", "edi", "esi"
 //    );
-////
+
     asm("mov %0, %%edi;"
         "mov %1, %%esi;"
         "mov %2, %%eax;"
         "int $0x80;"
-    : : "r" (&tex), "r" (0x0f), "r" (2)
+    : : "r" (&t), "r" (0x0f), "r" (2)
     : "eax", "edi", "esi"
     );
 
@@ -26,4 +30,5 @@ int main(int argc, const char *argv[]) {
     : : "r" (0)
     : "eax"
     );
+
 }
