@@ -45,8 +45,9 @@ void main() {
     init_process_scheduler();
     kprintf("Done successfully\n");
 
+    create_process_u("random");
 //    create_process_u("random");
-//
+
 //    char *tex = "this is the text we want";
 //
 //    asm("mov %0, %%edi;"
@@ -59,7 +60,7 @@ void main() {
 
     wait_for_understanding();
 
-    create_process(welcome_process);
+//    create_process(welcome_process);
     
 //    process_one = create_process(process_one_text);
 //    process_two = create_process(process_two_text);
@@ -77,7 +78,7 @@ void wait_for_understanding() {
     kprintf("\n\nTake a minute to understand what is happening on startup!!\n");
     kprintf("\nPress 'y' to continue: ");
 
-     blocking_wait_for_char('y');
+//     blocking_wait_for_char('y');
     clearScreen();
     print_new_line();
 }

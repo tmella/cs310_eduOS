@@ -134,7 +134,7 @@ void init_paging() {
 
     set_page_dir(page_directory);
 
-    enable_paging();
+//    enable_paging();
 }
 
 page_directory_t *create_table_kmap() {
@@ -158,7 +158,7 @@ page_directory_t *create_kmapped_table() {
         map_page(directory, i, i, 1, 1, 1);
 
     for (int i = FRAMES_START; i < (int)0x6000000; i += FRAME_SIZE)
-        map_page(directory, i, i, 0, 1, 1);
+        map_page(directory, i, i, 1, 1, 1);
 
     map_page(directory, (unsigned int *)directory, (unsigned int *)directory, 1, 1, 0);
 

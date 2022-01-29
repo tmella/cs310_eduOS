@@ -152,20 +152,15 @@ process_control_block *create_process_u(char *name) {
 
     page_directory_t *dir = create_kmapped_table();
 
-    char *program_text = alloc_frame_addr();
-    memcpy(file->data, program_text, file->size);
-    kprintf("The program text is loaded at 0x%p", program_text);
-    map_page(dir, 0x500000, program_text, 1, 1, 1);
+    memcpy(file->data, (char *)0x1000000, file->size);
 
-    unsigned int *esp = alloc_frame_addr() - FRAME_SIZE;
-    push_to_stack(esp, (unsigned int) program_text);
+    uint32_t stack_btm = (uint32_t) alloc_frame_addr();
+    unsigned int *esp = stack_btm + FRAME_SIZE;
+    push_to_stack(esp,  0x1000000);
     push_to_stack(esp, 0);
     push_to_stack(esp, (unsigned int) user_start_up);
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
-
-    // Map in the stack
-    map_page(dir, 0x500000, esp, 1, 1, 1);
 
     pcb->esp = esp;
     pcb->cr3 = dir;
@@ -187,18 +182,19 @@ process_control_block *create_process(void (*text)()) {
 
     uint32_t stack_btm = (uint32_t) alloc_frame_addr();
     unsigned int *esp = stack_btm + FRAME_SIZE;
-    kprintf("The value of esp is 0x%p", stack_btm);
     push_to_stack(esp, (unsigned int) text);
     push_to_stack(esp, (unsigned int) start_up_process);
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
-
     // This value is the distance between the bottom of the stack and the data added
     int stack_diff = (uint32_t) esp - stack_btm;
 
     page_directory_t *dir = create_kmapped_table();
 
+    // Map the process stack to a fixed location in mem
     map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1);
+
+    map_page(dir, dir, dir, 1, 1, 1);
 
     pcb->esp = PROCESS_STACK + stack_diff;
     pcb->cr3 = dir;
@@ -259,7 +255,6 @@ void set_process_running() {
     lock_scheduler();
     current_running_count = get_current_count();
     current->state = RUNNING_STATE;
-    kprintf("The value of the cr3 is 0x%p", current->cr3);
     unlock_scheduler();
 }
 

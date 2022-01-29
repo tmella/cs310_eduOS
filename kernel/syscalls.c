@@ -12,7 +12,6 @@ extern context_switch(process_control_block *pcb);
 int i = 1;
 
 void handle_syscall(i_registers_t *regs) {
-    char *text;
     switch (regs->eax) {
         case SYSCALL_PROCESS_EXIT:
             kill_current_process();
