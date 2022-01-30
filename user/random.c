@@ -10,10 +10,4 @@ int main(int argc, const char *argv[]) {
     : : "r" (t), "r" (0x0f), "r" (2)
     : "eax", "edi", "esi"
     );
-
-    asm volatile ("mov %0, %%eax;"
-                  "int $0x80;"
-    : : "r" (0)
-    : "eax"
-    );
 }
