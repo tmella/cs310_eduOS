@@ -1,6 +1,7 @@
 
 #include "list.h"
 #include "../kernel/memory/heap.h"
+#include "../kernel/kstdlib.h"
 
 // should exclude this
 // TODO should the list handle the k_malloc logic
@@ -28,10 +29,10 @@ void add_front(List *lst, void *elem) {
 
 list_elem *get_tail(List *lst) {
     list_elem *iter = lst->head;
-    if (!lst->head)
+    if(!iter)
         return null_ptr;
 
-    while (iter->next)
+    while(iter->next)
         iter = iter->next;
 
     return iter;
@@ -40,9 +41,9 @@ list_elem *get_tail(List *lst) {
 void add_back(List *lst, void *elem) {
     list_elem *new_elem = k_malloc(sizeof(list_elem));
     new_elem->value = elem;
+    new_elem->next = null_ptr;
 
-    if (lst->size == 0) {
-        new_elem->next = null_ptr;
+    if(lst->size == 0) {
         lst->head = new_elem;
     } else {
         list_elem *last = get_tail(lst);
@@ -77,7 +78,7 @@ void *remove_at(List *lst, int index) {
         return val_to_free;
     }
 
-    list_elem *prev_elem = get_at_index(lst, index-1);
+    list_elem *prev_elem = get_at_index(lst, index - 1);
     list_elem *actual_elem = prev_elem->next;
     void *val_to_free = actual_elem->value;
 
