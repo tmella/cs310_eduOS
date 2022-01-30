@@ -22,7 +22,7 @@ os-image.bin: booloader_with_kernel.bin kernel.bin
 	cat $^ > $@
 
 user-programs:
-	cd user && make -B
+	make -C user -B
 
 kernel.bin:  kernel/kernel-ep.o ${OBJ} ${ASM_OBJ}
 	$(LD) -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
