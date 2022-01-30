@@ -33,8 +33,8 @@ void execute_cmd(char *cmd) {
         bin_node * exec = find_file(cmd);
         if(exec) {
             print_new_line();
-            process_control_block *pcb = create_process_u(cmd);
-            run_process(pcb->process_id);
+            create_process_u(cmd);
+            run_process();
         } else {
             kprintf("\nUnknown command: %s", cmd);
         }
@@ -57,6 +57,7 @@ void run_shell() {
             kprintf_c(0x04,"\nshell> ");
         } else if (value == '\b')  {
             print_backspace();
+            line_buf[--counter] = '\0';
         }else {
             line_buf[counter++] = value;
             kprintf("%c", value);
