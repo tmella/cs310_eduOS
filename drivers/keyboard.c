@@ -36,7 +36,7 @@ static void keyboard_handler(i_registers_t *registers) {
             break;
         case BACKSPACE: // Backspace
 //            printBackspace();
-            letter = '?';
+            letter = '\b';
             break;
         case ENTER:
             letter = '\n';

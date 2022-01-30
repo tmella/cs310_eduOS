@@ -40,13 +40,13 @@ typedef enum color {
 static int side_margins = 2;
 static int top_margin = 4;
 
-void clearScreen();
+void clear_screen();
 // Blanks the section specified with black background
 void clear_at(int col, int row);
 
 void print_new_line();
 
-void printBackspace();
+void print_backspace();
 
 void print_char(char chr);
 void print_char_colour(char chr, char colour);
