@@ -127,7 +127,7 @@ char *sprintf_args(char *str, const char *format, va_list args) {
                     buf_count += strlen(temp);
                     break;
                 default:
-                    print_string("THIS");
+
             }
         } else {
             str[buf_count++] = format[i];

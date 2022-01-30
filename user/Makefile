@@ -18,10 +18,10 @@ all: user_headers.h $(USER_H)
 # The address should not be changed, if necessary you will also need to change the
 # process start address in its virtual memory
 %.bin: crt0.o %.o
-	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x500000 $^  --oformat binary
+	$(LD) -m elf_i386 -O0 -o $@ -Ttext 0x500000 $^ ../stdlib/stdlib.a  --oformat binary
 
 %.o: %.c
-	$(CC) $(USER_FLAGS) -c $< -o $@
+	$(CC) $(USER_FLAGS) -c $< -I ../stdlib -o $@
 
 # Adds all the user files to a user_headers file
 # Essentially its a hack for a fake file system

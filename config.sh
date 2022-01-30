@@ -48,6 +48,7 @@ cd $WORK_DIR
 # Use cross compiler if available
 if command -v x86_64-elf-gcc &>/dev/null; then
   export CC=x86_64-elf-gcc
+  export AR=x86_64-elf-ar
 fi
 if command -v x86_64-elf-ld &>/dev/null; then
   export LD=x86_64-elf-ld

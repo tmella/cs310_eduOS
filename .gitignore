@@ -9,6 +9,8 @@ bin/
 *.bin.h
 *user_headers.h
 
+*stdlib.a
+
 *.o
 kernel.bin
 os-image.bin

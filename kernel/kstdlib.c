@@ -1,6 +1,6 @@
 
 #include "kstdlib.h"
-#include <stdarg.h>
+#include "../stdlib/stdarg.h"
 #include "../drivers/screen.h"
 #include "../stdlib/stdlib.h"
 

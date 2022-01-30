@@ -4,9 +4,10 @@
 
 void exit(int code) {
     asm volatile ("mov %0, %%eax;"
+                  "mov %1, %%edi;"
                   "int $0x80;"
-    : : "r" (SYSCALL_PROCESS_EXIT)
-    : "eax"
+    : : "r" (SYSCALL_PROCESS_EXIT), "r" (code)
+    : "eax", "edi"
     );
 }
 
