@@ -41,15 +41,6 @@ void enqueue(Queue *queue, void *add) {
     queue->size++;
 }
 
-void print_pcbs(Queue *queue) {
-    queue_elem *elem = queue->head;
-    while (elem != null_ptr) {
-        print_string("\nDoing this");
-        elem = elem->next;
-    }
-
-}
-
 void *dequeue(Queue *queue) {
     if (queue->size == 0)
         return null_ptr;

@@ -4,8 +4,9 @@
 
 #include "file.h"
 
-void run();
+uint32_t file_count();
 
 bin_node *find_file(char *name);
+bin_node *get_all_executables(void);
 
 #endif //CSWK_KERNEL_FILE_SYSTEM_FILE_SYSTEM_H

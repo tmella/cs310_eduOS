@@ -225,6 +225,18 @@ void save_current_process(unsigned int esp) {
     unlock_scheduler();
 }
 
+// FIXME: for now it is not dequeued
+void run_process(void) {
+    lock_scheduler();
+
+    if(current->state == RUNNING_STATE) {
+        enqueue(ready_queue, current);
+    }
+
+    reschedule();
+    unlock_scheduler();
+}
+
 void reschedule() {
     // Avoid any unnecessary context switching
     if(ready_queue->size == 0) {

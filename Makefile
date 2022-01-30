@@ -13,7 +13,7 @@ ASM_OBJ = ${ASM_SRC:.asm=.o}
 U_OBJ = ${U_SRC:.c=.o}
 
 # First rule is the one executed when no parameters are fed to the Makefile
-all: user-programs os-image.bin
+all: user-programs os-image.bin stdlib
 
 run: os-image.bin
 	qemu-system-i386 -d int -fda $<
@@ -23,6 +23,9 @@ os-image.bin: booloader_with_kernel.bin kernel.bin
 
 user-programs:
 	make -C user -B
+
+stdlib:
+	make -C stdlib -B
 
 kernel.bin:  kernel/kernel-ep.o ${OBJ} ${ASM_OBJ}
 	$(LD) -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
@@ -48,4 +51,5 @@ CLEAN_ASM = ${SRC_ASM:.asm=.o}
 
 clean:
 	$(RM) *.bin *.o *.dis ${OBJ} ${CLEAN_ASM}
-	cd user && make clean
+	make -C user clean
+	make -C stdlib clean

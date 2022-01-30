@@ -92,7 +92,7 @@ void clear_at(int col, int row) {
     print_free_char(' ', col, row, WHITE_ON_BLACK);
 }
 
-void clearScreen() {
+void clear_screen() {
     for (int row = 0; row < MAX_ROWS; row++) {
         for (int col = 0; col < MAX_COLS; col++) {
             print_char_at(' ', col, row, WHITE_ON_BLACK);
@@ -121,7 +121,7 @@ void print_string_colour(char *str, char attribute_type) {
     }
 }
 
-void printBackspace() {
+void print_backspace() {
     int backOffset = getCursor() - 2;
     print_chat_at_offset(' ', WHITE_ON_BLACK, backOffset);
     setCursor(backOffset);
