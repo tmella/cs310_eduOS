@@ -21,8 +21,7 @@
 void wait_for_understanding();
 
 void main() {
-    int a = 0;
-    clearScreen();
+    clear_screen();
     print_new_line();
     load_gdt();
     kprintf("Enabling service routine... ");
@@ -70,6 +69,6 @@ void wait_for_understanding() {
     kprintf("\nPress 'y' to continue: ");
 
 //     blocking_wait_for_char('y');
-    clearScreen();
+    clear_screen();
     print_new_line();
 }

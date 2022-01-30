@@ -22,5 +22,7 @@ void local_switch(process_control_block *pcb);
 
 void save_current_process(unsigned int esp);
 
+void run_process(uint32_t id);
+
 
 #endif //CSWK_KERNEL_PROCESS_SCHEDULER_H

@@ -1,7 +1,7 @@
 
 int main(int argc, const char *argv[]) {
 
-    char *t = "SOME OTHER TEXT";
+    char *t = "Random just prints this value";
 
     asm("mov %0, %%edi;"
         "mov %1, %%esi;"

@@ -225,6 +225,36 @@ void save_current_process(unsigned int esp) {
     unlock_scheduler();
 }
 
+// FIXME: for now it is not dequeued
+void run_process(uint32_t id) {
+    lock_scheduler();
+
+    ProcessQueue *queue = ready_queue;
+
+    process_control_block *result;
+
+    queue_elem *it = queue->head;
+    while(it) {
+        result = (process_control_block *) it->value;
+        if(result->process_id == id) {
+            break;
+        }
+    }
+
+    if(!result) {
+        kprintf("PANIC: could not find process with ID %d", id);
+        return;
+    }
+
+    if(current->state == RUNNING_STATE) {
+        enqueue(ready_queue, current);
+    }
+
+    context_switch(result);
+
+    unlock_scheduler();
+}
+
 void reschedule() {
     // Avoid any unnecessary context switching
     if(ready_queue->size == 0) {
