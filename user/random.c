@@ -3,7 +3,7 @@
 
 int main(int argc, const char *argv[]) {
 
-    char *t = "Random just prints this value";
+    char *t = "Random ust prints this value";
 
     printf(t);
 }
