@@ -13,13 +13,13 @@ ASM_OBJ = ${ASM_SRC:.asm=.o}
 U_OBJ = ${U_SRC:.c=.o}
 
 # First rule is the one executed when no parameters are fed to the Makefile
-all: user-programs os-image.bin stdlib
+all: os-image.bin
 
 run: os-image.bin
 	qemu-system-i386 -d int -fda $<
 
-os-image.bin: booloader_with_kernel.bin kernel.bin
-	cat $^ > $@
+os-image.bin: subdirs booloader_with_kernel.bin kernel.bin
+	cat $(filter-out $<,$^) > $@
 
 user-programs:
 	make -C user -B
@@ -45,6 +45,16 @@ booloader_with_kernel.bin: bootloader/booloader_with_kernel.asm
 
 echo: os-image.bin
 	xxd $<
+
+SUBDIRS = stdlib user
+
+.PHONY: subdirs $(SUBDIRS)
+
+subdirs: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
+
 
 SRC_ASM = $(wildcard kernel/*.asm drivers/*.asm kernel/memory/*.asm kernel/interrupt/*.asm stdlib/*.asm kernel/process/*.asm)
 CLEAN_ASM = ${SRC_ASM:.asm=.o}
