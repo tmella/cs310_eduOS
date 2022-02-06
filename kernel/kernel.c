@@ -47,7 +47,7 @@ void main() {
 
     wait_for_understanding();
 
-    create_process(run_shell);
+    create_kernel_process(run_shell);
 
     start_scheduler();
 

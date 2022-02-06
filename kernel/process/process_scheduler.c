@@ -183,27 +183,17 @@ process_control_block *create_process_u(char *name) {
  *      1. Will assign the next PID
  *      2. Will add the PCB to the Process queue
  * */
-process_control_block *create_process(void (*text)()) {
+process_control_block *create_kernel_process(void (*text)()) {
     process_control_block * pcb = init_pcb();
 
-    uint32_t stack_btm = (uint32_t) alloc_frame_addr();
-    unsigned int *esp = stack_btm + FRAME_SIZE;
+    unsigned int *esp = alloc_frame_addr() + FRAME_SIZE;
     push_to_stack(esp, (unsigned int) text);
     push_to_stack(esp, (unsigned int) start_up_process);
     for(int i = 0; i < 4; i++)
         push_to_stack(esp, 0);
-    // This value is the distance between the bottom of the stack and the data added
-    int stack_diff = (uint32_t) esp - stack_btm;
 
-    page_directory_t *dir = create_kmapped_table();
-
-    // Map the process stack to a fixed location in mem
-    map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1);
-
-    map_page(dir, dir, dir, 1, 1, 1);
-
-    pcb->esp = PROCESS_STACK + stack_diff;
-    pcb->cr3 = dir;
+    pcb->esp = esp;
+    pcb->cr3 = 0x300000;
     pcb->cpu_ticks = 0;
     pcb->waiting_ticks = get_current_count();
     pcb->process_id = process_id++;

@@ -157,8 +157,9 @@ page_directory_t *create_kmapped_table() {
     for (int i = 0; i < (int)FRAMES_START; i += FRAME_SIZE)
         map_page(directory, i, i, 1, 1, 1);
 
-    for (int i = FRAMES_START; i < (int)0x6000000; i += FRAME_SIZE)
-        map_page(directory, i, i, 1, 1, 1);
+    // Map all other entries as not present for more readable page fault errors (prioritising learning over memory)
+    for (int i = FRAMES_START; i < (int)0x10000000; i += FRAME_SIZE)
+        map_page(directory, i, i, 0, 1, 1);
 
     map_page(directory, (unsigned int *)directory, (unsigned int *)directory, 1, 1, 0);
 
