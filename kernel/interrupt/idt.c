@@ -140,7 +140,6 @@ void isr_handler(i_registers_t *registers) {
             break;
         case 6:
             kprintf("Bound range exceeded %p", registers->eip);
-            while(1);
             break;
         case 7:
             print_string("Invalid op code");
@@ -194,7 +193,7 @@ void isr_handler(i_registers_t *registers) {
         case 25:
         case 26:
         case 27:
-//            print_string("Reserved %d", registers->int_no);
+            kprintf("Reserved %d", registers->int_no);
             break;
         case 28:
             print_string("Hypervisor Injection Exception");

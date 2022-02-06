@@ -4,6 +4,7 @@
 #include "interrupt/timer.h"
 #include "interrupt/idt.h"
 #include "interrupt/gdt.h"
+#include "kpanic.h"
 
 #include "shell.h"
 #include "memory/paging.h"
@@ -52,9 +53,7 @@ void main() {
     start_scheduler();
 
     // Should be unreachable but if reached will stop an uncontrolled crash
-    while (1) {
-        // TODO add a debug dump
-    }
+    PANIC("Reached end of kernel");
 }
 
 

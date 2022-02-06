@@ -6,6 +6,7 @@
 
 // OS stdlib headers
 #include "stdlib.h"
+#include "../kpanic.h"
 
 page_directory_t *page_directory;
 
@@ -178,11 +179,9 @@ void page_fault_handler(i_registers_t *regs) {
     uint64_t fault_addr;
     asm volatile("mov %%cr2, %0" : "=r" (fault_addr));
 
-    int present = is_set(regs->err_code, 0x1);
-    int wr = is_set(regs->err_code, 0x2);
-    int us = is_set(regs->err_code, 0x4);
+    uint8_t present = is_set(regs->err_code, 0x1);
+    uint8_t wr = is_set(regs->err_code, 0x2);
+    uint8_t us = is_set(regs->err_code, 0x4);
 
-    kprintf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
-
-    while(1);
+    PANIC("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
 }

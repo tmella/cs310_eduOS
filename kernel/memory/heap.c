@@ -3,6 +3,7 @@
 #include "mem_common.h"
 #include "../../drivers/screen.h"
 #include "../kstdlib.h"
+#include "../kpanic.h"
 
 #define null_ptr ((void*)0)
 
@@ -72,8 +73,7 @@ void *k_malloc(uint32_t no_bytes) {
 
     // No memory. Should I add a debug error message. Is that possible in a Kernel
     if (chosen_segment == null_ptr) {
-        kprintf("PANIC kmalloc failed to allocate memory");
-        while(1);
+        PANIC("kmalloc failed to allocate memory");
     }
 
     if (chosen_segment->size - (no_bytes + sizeof(heap_segment_t)) > 0) {
@@ -98,8 +98,7 @@ void *k_malloc(uint32_t no_bytes) {
 
     // Validation
     if(!validate_seg(chosen_segment)) {
-        kprintf("PANIC, Kmalloc failed the sanity check");
-        while(1);
+        PANIC("Kmalloc failed the sanity check");
     }
 
     return data_start(chosen_segment);
