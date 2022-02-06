@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 
-void init_heap();
+void init_kheap();
 
 void k_free(void *addr);
 void *k_malloc(uint32_t bytes);

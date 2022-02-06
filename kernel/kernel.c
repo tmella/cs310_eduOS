@@ -35,7 +35,7 @@ void main() {
 
     kprintf("\nInitialising memory... ");
     init_mem();
-    init_heap();
+    init_kheap();
     init_paging();
     kprintf("Done successfully");
 

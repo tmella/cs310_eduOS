@@ -4,7 +4,8 @@
 #include "../../drivers/screen.h"
 #include "frame_allocator.h"
 
-#include "../../stdlib/stdlib.h"
+// OS stdlib headers
+#include "stdlib.h"
 
 page_directory_t *page_directory;
 

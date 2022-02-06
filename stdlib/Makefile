@@ -4,7 +4,7 @@
 
 all: stdlib.a
 
-stdlib.a: string.o syscall.o stdlib.o
+stdlib.a: string.o syscall.o stdlib.o memory.o
 	$(AR) rv $@ $^
 
 %.o: %.c
