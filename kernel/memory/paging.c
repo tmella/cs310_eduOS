@@ -4,7 +4,9 @@
 #include "../../drivers/screen.h"
 #include "frame_allocator.h"
 
-#include "../../stdlib/stdlib.h"
+// OS stdlib headers
+#include "stdlib.h"
+#include "../kpanic.h"
 
 page_directory_t *page_directory;
 
@@ -157,8 +159,9 @@ page_directory_t *create_kmapped_table() {
     for (int i = 0; i < (int)FRAMES_START; i += FRAME_SIZE)
         map_page(directory, i, i, 1, 1, 1);
 
-    for (int i = FRAMES_START; i < (int)0x6000000; i += FRAME_SIZE)
-        map_page(directory, i, i, 1, 1, 1);
+    // Map all other entries as not present for more readable page fault errors (prioritising learning over memory)
+    for (int i = FRAMES_START; i < (int)0x10000000; i += FRAME_SIZE)
+        map_page(directory, i, i, 0, 1, 1);
 
     map_page(directory, (unsigned int *)directory, (unsigned int *)directory, 1, 1, 0);
 
@@ -176,11 +179,9 @@ void page_fault_handler(i_registers_t *regs) {
     uint64_t fault_addr;
     asm volatile("mov %%cr2, %0" : "=r" (fault_addr));
 
-    int present = is_set(regs->err_code, 0x1);
-    int wr = is_set(regs->err_code, 0x2);
-    int us = is_set(regs->err_code, 0x4);
+    uint8_t present = is_set(regs->err_code, 0x1);
+    uint8_t wr = is_set(regs->err_code, 0x2);
+    uint8_t us = is_set(regs->err_code, 0x4);
 
-    kprintf("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
-
-    while(1);
+    PANIC("\nPage fault Present: %d, User:%d, Read-Write: %d \nMem location: 0x%p", present, wr, us, fault_addr);
 }

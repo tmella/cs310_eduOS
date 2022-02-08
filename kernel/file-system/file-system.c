@@ -4,8 +4,9 @@
 // For now this is included manually
 
 #include "../../user/user_headers.h"
-#include "../../stdlib/string.h"
-#include "../../stdlib/stdtypes.h"
+// Custom OS stdlib headers
+#include "string.h"
+#include "stdtypes.h"
 
 static bin_node user_programs[] = {
     {"random", sizeof(random_bin), random_bin}

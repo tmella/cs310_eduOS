@@ -27,14 +27,14 @@ user-programs:
 stdlib:
 	make -C stdlib -B
 
-kernel.bin:  kernel/kernel-ep.o ${OBJ} ${ASM_OBJ}
+kernel.bin:  kernel/kernel-ep.o ${OBJ} ${ASM_OBJ} stdlib/stdlib.a
 	$(LD) -m elf_i386 -o $@ -Ttext 0x10000 $^ --oformat binary
 
 %.o: %.asm
 	nasm $< -f elf -o $@
 
 %.o: %.c
-	$(CC) -m32 -ffreestanding -c $< -o $@
+	$(CC) -m32 -ffreestanding -I stdlib -c $< -o $@
 
 # Disassemble
 kernel.dis: kernel.bin

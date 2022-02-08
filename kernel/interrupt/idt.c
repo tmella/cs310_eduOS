@@ -4,6 +4,7 @@
 #include "../memory/paging.h"
 #include "../syscalls.h"
 #include "../../drivers/screen.h"
+#include "../kstdlib.h"
 
 #include "exception.h"
 
@@ -138,7 +139,7 @@ void isr_handler(i_registers_t *registers) {
             print_string("Overflow");
             break;
         case 6:
-            print_string("Bound range exceeded");
+            kprintf("Bound range exceeded %p", registers->eip);
             break;
         case 7:
             print_string("Invalid op code");
@@ -192,7 +193,7 @@ void isr_handler(i_registers_t *registers) {
         case 25:
         case 26:
         case 27:
-//            print_string("Reserved %d", registers->int_no);
+            kprintf("Reserved %d", registers->int_no);
             break;
         case 28:
             print_string("Hypervisor Injection Exception");

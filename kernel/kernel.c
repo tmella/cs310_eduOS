@@ -4,6 +4,7 @@
 #include "interrupt/timer.h"
 #include "interrupt/idt.h"
 #include "interrupt/gdt.h"
+#include "kpanic.h"
 
 #include "shell.h"
 #include "memory/paging.h"
@@ -35,7 +36,7 @@ void main() {
 
     kprintf("\nInitialising memory... ");
     init_mem();
-    init_heap();
+    init_kheap();
     init_paging();
     kprintf("Done successfully");
 
@@ -47,14 +48,12 @@ void main() {
 
     wait_for_understanding();
 
-    create_process(run_shell);
+    create_kernel_process(run_shell);
 
     start_scheduler();
 
     // Should be unreachable but if reached will stop an uncontrolled crash
-    while (1) {
-        // TODO add a debug dump
-    }
+    PANIC("Reached end of kernel");
 }
 
 

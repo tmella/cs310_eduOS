@@ -1,7 +1,8 @@
 
 #include "include/task2.h"
-#include "../../../stdlib/syscall.h"
-#include "../../../stdlib/stdlib.h"
+// OS stdlib headers
+#include "syscall.h"
+#include "stdlib.h"
 
 /* Pointers to each process to be able to switch. Set in Kernel main*/
 process_control_block *process_one;

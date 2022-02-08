@@ -2,7 +2,6 @@
 #include "stdlib.h"
 #include "syscall.h"
 #include "string.h"
-#include "../drivers/screen.h"
 
 // Disable stdlib C redefinitions warnings
 #pragma clang diagnostic push
@@ -126,8 +125,6 @@ char *sprintf_args(char *str, const char *format, va_list args) {
                     strcpy(temp, &str[buf_count]);
                     buf_count += strlen(temp);
                     break;
-                default:
-
             }
         } else {
             str[buf_count++] = format[i];
