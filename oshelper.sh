@@ -17,23 +17,22 @@ fi
 # This is for the end when we save
 #if [[ ! $(git config user.name) ]]; then
 #
-#  echo "Not logged in to github"
+#  printf '\e[31m%s\e[0m' "You are not logged into Git. You will not be able to save your progress."
 #
-#  read -p "You are not logged into Github. You will not be able to save your progress. Do you still want to continue [Yy]: " -n 1 -r
+#  read -p " Do you still want to continue [Yy]: " -n 1 -r
 #  echo    # (optional) move to a new line
 #  if [[ $REPLY =~ ^[Yy]$ ]]
 #  then
 #      git clone $OS_PROJECT
-#      git checkout -t remotes/origin/$LAB1
+#      git checkout -t remotes/origin/"$LAB1"
 #  fi
 #
 #else
 #  echo "Forking OS project"
 #fi
 
-BRCH_SUF=_work
-
 load_lab() {
+  echo "Well the first is $2"
   case $2 in
   "lab1")
     CURRENT_LAB=$LAB_1_BRANCH
@@ -52,36 +51,36 @@ load_lab() {
   esac
 
   if [[ ! -z "$(git status --porcelain)" ]]; then
-    echo "You have unsaved changes in your working directory"
+    printf '\e[31m%s\e[0m' "\nYou have unsaved changes in your working directory"
 
     read -p "The changes will be stashed. Are you sure you want to continue?[Yy]: " -n 1 -r
     echo
-    if [[! $REPLY =~ ^[Yy]$ ]]; then
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         exit
     fi
     git stash
-    echo "Your changes have been stashed"
+    printf "\n Your changes have been stashed!! \n"
   fi
 
   git pull --tags
 
   # If branch exists locally, else checkout remote
   if git rev-parse --verify "$CURRENT_LAB$BRCH_SUF" &>/dev/null; then
-    echo "You are already on the lab branch"
-    git checkout -b "$CURRENT_LAB$BRCH_SUF"
+    printf "\nYou already have a local version. Will switch to that branch"
+    git checkout "$CURRENT_LAB$BRCH_SUF"
   else
-    git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
+    git checkout -t remotes/origin/$CURRENT_LAB
   fi
 
   git fetch && git pull
 }
 
 compile_lab() {
-  cd $WORK_DIR
+  cd "$WORK_DIR"
   if [ -z "$CURRENT_LAB" ]; then
-    echo "Warning: lab hasn't been loaded. Try \n oshelper load <lab_name>"
+    printf "Warning: lab hasn't been loaded. Try \n oshelper load <lab_name>"
   fi
-  cd $WORK_DIR
+  cd "$WORK_DIR"
   echo "This is the dir im in $WORK_DIR"
   make -B
 }
@@ -99,34 +98,34 @@ save_progress() {
       exit
   fi
 
-  msg="${@:2}"
+  msg="${*:2}"
 
   git add .
   git commit -m "$msg"
 }
 
 print_error_msg() {
-  echo "Unknown command $1 \n\n"
+  printf "Unknown command $1 \n\n"
 
-  echo "The following commands are available:\n\t -load \n\t -compile \n\t -run \n\t -save "
+  printf "The following commands are available:\n\t -load \n\t -compile \n\t -run \n\t -save "
 
 }
 
 case $1 in
 "load")
-  load_lab $@
+  load_lab "$@"
   ;;
 "compile")
-  compile_lab $@
+  compile_lab "$@"
   ;;
 "run")
-  run_os $@
+  run_os "$@"
   ;;
 "save")
-  save_progress $@
+  save_progress "$@"
   ;;
 "atom")
-  atom $WORK_DIR
+  atom "$WORK_DIR"
   ;;
 *)
   print_error_msg
