@@ -31,6 +31,8 @@ fi
 #  echo "Forking OS project"
 #fi
 
+BRCH_SUF=_work
+
 load_lab() {
   echo "Well the first is $2"
   case $2 in
