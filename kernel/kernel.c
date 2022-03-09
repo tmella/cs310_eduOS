@@ -18,6 +18,7 @@
 
 
 #include "kstdlib.h"
+#include "string.h"
 
 void wait_for_understanding();
 

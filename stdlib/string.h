@@ -5,5 +5,7 @@
 int strlen(const char *str);
 int strcmp(const char *str1, const char *str2);
 
+int first_word(const char *str1, char *str2);
+
 
 #endif //CSWK_STDLIB_STRING_H
