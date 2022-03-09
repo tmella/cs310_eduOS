@@ -28,17 +28,18 @@ all: user_headers.h user_files.c $(USER_H)
 user_headers.h: $(USER_H)
 	cat /dev/null > $@ # Clear the file
 	for file in $^ ; do \
-        echo "#include <$$(pwd)/$$file>" >> $@; \
+        /bin/echo "#include <$$(pwd)/$$file>" >> $@; \
     done
 
 user_files.c: $(USER_SRC)
 	cat /dev/null > $@ # Clear the file
+	which echo
 	for file in $(basename $^) ; do \
-        echo -n "{" >> $@; \
-        echo -n "\"$$file\"," >> $@; \
-        echo -n "sizeof($$file" >> $@; \
-        echo -n "_bin), $$file" >> $@; \
-        echo -n "_bin}," >> $@; \
+        /bin/echo -n "{" >> $@; \
+        /bin/echo -n "\"$$file\"," >> $@; \
+        /bin/echo -n "sizeof($$file" >> $@; \
+        /bin/echo -n "_bin), $$file" >> $@; \
+        /bin/echo -n "_bin}," >> $@; \
     done
 
 	truncate -s-1 $@

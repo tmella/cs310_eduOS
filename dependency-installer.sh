@@ -14,6 +14,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   cd $INSTALL_DIR
 
   if ! command -v nasm &>/dev/null; then
+      echo "Truncate not found will install to $TOOLS_BIN. Installing ..."
+
+
+    fi
+
+
+  if ! command -v nasm &>/dev/null; then
     echo "Nasm not found will install to $TOOLS_BIN. Installing ..."
     rm -f $TOOLS_BIN/nasm
 
