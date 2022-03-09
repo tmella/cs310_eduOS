@@ -9,7 +9,7 @@
 #include "stdtypes.h"
 
 static bin_node user_programs[] = {
-    {"random", sizeof(random_bin), random_bin}
+    #include "../../user/user-files.c"
 };
 
 uint32_t file_count() {
