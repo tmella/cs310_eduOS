@@ -153,8 +153,28 @@ int required_pages(int file_size) {
     return div + 1;
 }
 
+void pass_args(unsigned int * esp, int argc, char **argv) {
+    // TODO: implement in Lab 2 task 2
+}
+
+unsigned int *set_user_stack(unsigned int stack_btm, int argc, char **argv) {
+    // Stack grows down so add Frame
+    unsigned int *esp = stack_btm + FRAME_SIZE;
+
+    /* Set the arguments Main will expect */
+    pass_args(esp, argc, argv);
+
+    push_to_stack(esp, PROCESS_START);
+    push_to_stack(esp, 0);
+    push_to_stack(esp, (unsigned int) user_start_up);
+    for(int i = 0; i < 4; i++)
+        push_to_stack(esp, 0);
+
+    return esp;
+}
+
 // TODO: perhaps make cleaner
-process_control_block *create_process_u(char *name) {
+process_control_block *create_user_process(char *name, int argc, char **argv) {
     bin_node *file = find_file(name);
 
     if(!file)
@@ -166,24 +186,21 @@ process_control_block *create_process_u(char *name) {
 
     uint32_t *program_txt = alloc_frame_addr();
     memcpy(file->data, program_txt, file->size);
-    for(int i = 0; i < required_pages(file->size); i++){
+    for(int i = 0; i < required_pages(file->size); i++) {
         map_page(dir, (unsigned int *) (PROCESS_START + i * FRAME_SIZE), program_txt, 1, 1, 1);
     }
 
+    /* Create stack */
     uint32_t stack_btm = (uint32_t) alloc_frame_addr();
-    unsigned int *esp = stack_btm + FRAME_SIZE;
-    push_to_stack(esp, PROCESS_START);
-    push_to_stack(esp, 0);
-    push_to_stack(esp, (unsigned int) user_start_up);
-    for(int i = 0; i < 4; i++)
-        push_to_stack(esp, 0);
-    int stack_diff = (uint32_t) esp - stack_btm;
+    unsigned int *esp = set_user_stack(stack_btm, argc, argv);
 
+    /* Map the stack to pre-defined stack address */
     map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1);
 
     uint32_t *heap = alloc_frame_addr();
     map_page(dir, PROCESS_HEAP, heap, 1, 1, 1);
 
+    int stack_diff = (uint32_t) esp - stack_btm;
     pcb->esp = PROCESS_STACK + stack_diff;
     pcb->cr3 = dir;
     pcb->cpu_ticks = 0;

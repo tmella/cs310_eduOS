@@ -41,7 +41,7 @@ void execute_cmd(char *cmd) {
         bin_node * exec = find_file(fcmd);
         if(exec) {
             print_new_line();
-            create_process_u(fcmd);
+            create_user_process(fcmd, 0, 0);
             run_process();
         } else {
             kprintf("\nUnknown command: %s", fcmd);

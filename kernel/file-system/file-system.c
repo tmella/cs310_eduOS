@@ -9,7 +9,7 @@
 #include "stdtypes.h"
 
 static bin_node user_programs[] = {
-    #include "../../user/user-files.c"
+    #include "../../user/user_files.c"
 };
 
 uint32_t file_count() {

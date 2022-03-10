@@ -8,7 +8,7 @@ void reschedule();
 void start_scheduler();
 void init_process_scheduler();
 
-process_control_block *create_process_u(char *name);
+process_control_block *create_user_process(char *name, int argc, char **argv);
 process_control_block *create_kernel_process(void (*text)());
 
 void kill_current_process();
