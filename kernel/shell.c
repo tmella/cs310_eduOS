@@ -23,11 +23,20 @@ void clear_shell() {
 
 void execute_cmd(char *cmd) {
 
-    // Extracts the first word from the input (ignores initial whitespace)
-    int cmdlen = strlen(cmd);
-    char fcmd[cmdlen];
-    first_word(cmd, fcmd);
+    char inputs[10][20];
+    int argc = 0;
+    int size;
+    do {
+        size = next_word(cmd, inputs[argc]);
+        if(size > 0) {
+            argc++;
+            cmd += size;
+            strtrim(cmd, cmd);
+        }
+    }while(size);
 
+
+    char *fcmd = inputs[0];
     if(strcmp(fcmd, "ls") == 0) {
         bin_node *allfiles = get_all_executables();
         print_string("\n");
