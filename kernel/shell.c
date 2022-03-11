@@ -10,6 +10,7 @@
 #include "../drivers/screen.h"
 
 #include "string.h"
+#include "stdtypes.h"
 
 #include "process/process_scheduler.h"
 
@@ -21,22 +22,27 @@ void clear_shell() {
     clear_screen();
 }
 
-void execute_cmd(char *cmd) {
-
-    char inputs[10][20];
+int parse_args(char *cmd, char **cmds) {
     int argc = 0;
-    int size;
-    do {
-        size = next_word(cmd, inputs[argc]);
-        if(size > 0) {
-            argc++;
-            cmd += size;
-            strtrim(cmd, cmd);
-        }
-    }while(size);
+    cmds[argc] = next_word(cmd);
+    while(cmds[argc]) {
+        cmds[++argc] = next_word(null_ptr);
+    }
+
+    return argc;
+}
+
+void execute_cmd(char *cmd) {
+    char *cmds[10];
+
+    int argc = parse_args(cmd, cmds);
+
+    /* Empty string passed */
+    if(argc == 0)
+        return;
 
 
-    char *fcmd = inputs[0];
+    char *fcmd = cmds[0];
     if(strcmp(fcmd, "ls") == 0) {
         bin_node *allfiles = get_all_executables();
         print_string("\n");
@@ -50,7 +56,7 @@ void execute_cmd(char *cmd) {
         bin_node * exec = find_file(fcmd);
         if(exec) {
             print_new_line();
-            create_user_process(fcmd, 0, 0);
+            create_user_process(fcmd, argc, cmds);
             run_process();
         } else {
             kprintf("\nUnknown command: %s", fcmd);

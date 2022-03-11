@@ -5,6 +5,8 @@
  * */
 
 #include "string.h"
+#include "stdtypes.h"
+#include "stdlib.h"
 
 char isspace(char ch) {
     return ch == '\t' || ch == ' ';
@@ -25,20 +27,40 @@ int strcmp(const char *str1, const char *str2) {
     return *(const unsigned char *) str1 - *(const unsigned char *) str2;
 }
 
-int next_word(const char *str1, char *str2) {
-    char whitespace = 1;
-    int str2counter = 0;
-    for(int i = 0; i < strlen(str1); i++) {
-        if(str1[i] == ' ') {
-            if(!whitespace)
-                break;
-        } else {
-            whitespace = 0;
-            str2[str2counter++] = str1[i];
-        }
+
+
+char *next_word(char *str1) {
+    static char* remainder;
+    if(!str1)
+        str1 = remainder;
+
+    if(!str1)
+        return null_ptr;
+    int max_it = strlen(str1);
+    for(int i = 0; i <= max_it; i++) {
+        if(*str1 == ' ')
+            str1++;
+        else if(*str1 == '\0')
+            return null_ptr;
+        else
+            break;
     }
-    str2[str2counter] = '\0';
-    return str2counter;
+
+    char *first_word=str1;
+    max_it = strlen(str1);
+    for(int j  = 0; j <=max_it; j++) {
+        if(*str1 == '\0') {
+            remainder = null_ptr;
+            return first_word;
+        } else if (*str1 == ' ') {
+            *str1 = '\0';
+            remainder = str1+1;
+            return first_word;
+        }
+        str1++;
+    }
+    /* Technically unreachable if string formatted correctly */
+    return null_ptr;
 }
 
 /* Trims whitespace from front and back*/

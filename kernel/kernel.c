@@ -19,6 +19,7 @@
 
 #include "kstdlib.h"
 #include "string.h"
+#include "stdtypes.h"
 
 void wait_for_understanding();
 

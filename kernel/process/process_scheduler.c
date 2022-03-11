@@ -15,7 +15,8 @@
 
 #include "../file-system/file-system.h"
 
-#include "../../stdlib/stdtypes.h"
+#include "stdtypes.h"
+#include "string.h"
 
 #define push_to_stack(esp, elem) (*(--esp) = elem)
 
@@ -153,16 +154,37 @@ int required_pages(int file_size) {
     return div + 1;
 }
 
-void pass_args(unsigned int * esp, int argc, char **argv) {
+unsigned int * pass_args(page_directory_t *dir, unsigned int * esp, int argc, char **argv) {
     // TODO: implement in Lab 2 task 2
+
+    if(argc > 0) {
+        char ** argvs = alloc_frame_addr();
+        char *start = argvs + sizeof(char *) * argc;
+
+        /* Copy memory from parent process Shell*/
+        for(int i = 0; i <= argc; i++) {
+            memcpy(argv[i+1], start, strlen(argv[i+1]));
+            argvs[i] = start;
+            start += strlen(argv[i+1]) +1 ;
+        }
+
+        map_page(dir, argvs, argvs, 1, 1, 1);
+
+        /* Here we push a pointer to this shared memory */
+        push_to_stack(esp, argvs);
+    }
+
+    /* Push the final number of arguments*/
+    push_to_stack(esp, argc);
+    return esp;
 }
 
-unsigned int *set_user_stack(unsigned int stack_btm, int argc, char **argv) {
+unsigned int *set_user_stack(page_directory_t *dir, unsigned int stack_btm, int argc, char **argv) {
     // Stack grows down so add Frame
     unsigned int *esp = stack_btm + FRAME_SIZE;
 
     /* Set the arguments Main will expect */
-    pass_args(esp, argc, argv);
+    esp = pass_args(dir, esp, argc, argv);
 
     push_to_stack(esp, PROCESS_START);
     push_to_stack(esp, 0);
@@ -192,7 +214,7 @@ process_control_block *create_user_process(char *name, int argc, char **argv) {
 
     /* Create stack */
     uint32_t stack_btm = (uint32_t) alloc_frame_addr();
-    unsigned int *esp = set_user_stack(stack_btm, argc, argv);
+    unsigned int *esp = set_user_stack(dir, stack_btm, argc-1, argv);
 
     /* Map the stack to pre-defined stack address */
     map_page(dir, PROCESS_STACK, stack_btm, 1, 1, 1);
