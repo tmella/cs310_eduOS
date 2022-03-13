@@ -5,6 +5,10 @@ CMakeLists.txt
 build-tools/
 bin/
 
+user/
+
+stdlib/stdlib.a
+
 *.o
 kernel.bin
 os-image.bin
