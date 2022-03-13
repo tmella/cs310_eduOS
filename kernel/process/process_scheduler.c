@@ -171,11 +171,11 @@ unsigned int * pass_args(page_directory_t *dir, unsigned int * esp, int argc, ch
         map_page(dir, argvs, argvs, 1, 1, 1);
 
         /* Here we push a pointer to this shared memory */
-        push_to_stack(esp, argvs);
+        push_to_stack(esp, 0);
     }
 
     /* Push the final number of arguments*/
-    push_to_stack(esp, argc);
+    push_to_stack(esp, 0);
     return esp;
 }
 

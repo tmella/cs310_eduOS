@@ -22,27 +22,30 @@ void clear_shell() {
     clear_screen();
 }
 
+// TODO: task 2 Lab 2 modify this method to parse all args
 int parse_args(char *cmd, char **cmds) {
-    int argc = 0;
-    cmds[argc] = next_word(cmd);
-    while(cmds[argc]) {
-        cmds[++argc] = next_word(null_ptr);
+    /* This method currently only extracts the first word
+     *
+     * Your goal is to leverage/write the strtok method to parse all values
+     * */
+    strtrim(cmd, cmd);
+    int i;
+    for(i = 0; i < strlen(cmd); i++) {
+        if(isspace(cmd[i])) {
+            cmd[i] = '\0';
+        }
     }
-
-    return argc;
+    return i;
 }
 
 void execute_cmd(char *cmd) {
-    char *cmds[10];
-
-    int argc = parse_args(cmd, cmds);
+    int argc = parse_args(cmd, 0);
 
     /* Empty string passed */
     if(argc == 0)
         return;
 
-
-    char *fcmd = cmds[0];
+    char *fcmd = cmd;
     if(strcmp(fcmd, "ls") == 0) {
         bin_node *allfiles = get_all_executables();
         print_string("\n");
@@ -53,10 +56,10 @@ void execute_cmd(char *cmd) {
     } else if(strcmp(fcmd, "clear") == 0) {
         clear_shell();
     } else {
-        bin_node * exec = find_file(fcmd);
+        bin_node *exec = find_file(fcmd);
         if(exec) {
             print_new_line();
-            create_user_process(fcmd, argc, cmds);
+            create_user_process(fcmd, 0, 0);
             run_process();
         } else {
             kprintf("\nUnknown command: %s", fcmd);
@@ -67,21 +70,21 @@ void execute_cmd(char *cmd) {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 void run_shell() {
-    kprintf_c(0x04,"\nshell> ");
+    kprintf_c(0x04, "\nshell> ");
 
     int counter = 0;
     char line_buf[128];
-    while (1) {
+    while(1) {
         char value = read_char();
         if(value == '\n') {
             execute_cmd(line_buf);
             counter = 0;
             memset(line_buf, 0, 128);
-            kprintf_c(0x04,"\nshell> ");
-        } else if (value == '\b')  {
+            kprintf_c(0x04, "\nshell> ");
+        } else if(value == '\b') {
             print_backspace();
             line_buf[--counter] = '\0';
-        }else {
+        } else {
             line_buf[counter++] = value;
             kprintf("%c", value);
         }
