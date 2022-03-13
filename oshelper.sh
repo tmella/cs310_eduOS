@@ -69,8 +69,6 @@ load_lab() {
   if git rev-parse --verify "$CURRENT_LAB$BRCH_SUF" &>/dev/null; then
     printf "\nYou already have a local version. Will switch to that branch"
     git checkout "$CURRENT_LAB$BRCH_SUF"
-
-    git fetch && git pull
   else
     git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
   fi
