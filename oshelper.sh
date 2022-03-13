@@ -2,8 +2,8 @@
 
 OS_PROJECT=https://github.com/tmella/cs310_eduOS.git
 LAB_1_BRANCH=lab1
-LAB_2_BRANCH=creating-helper-script
-LAB_3_BRANCH=creating-helper-script
+LAB_2_BRANCH=lab2
+LAB_3_BRANCH=lab3
 
 CURRENT_LAB=""
 # For now we will assume that we are on DCS systems
@@ -34,7 +34,6 @@ fi
 BRCH_SUF=_work
 
 load_lab() {
-  echo "Well the first is $2"
   case $2 in
   "lab1")
     CURRENT_LAB=$LAB_1_BRANCH
@@ -64,17 +63,16 @@ load_lab() {
     printf "\n Your changes have been stashed!! \n"
   fi
 
-  git pull --tags
+  git pull --tags -f
 
   # If branch exists locally, else checkout remote
   if git rev-parse --verify "$CURRENT_LAB$BRCH_SUF" &>/dev/null; then
     printf "\nYou already have a local version. Will switch to that branch"
     git checkout "$CURRENT_LAB$BRCH_SUF"
   else
-    git checkout -t remotes/origin/$CURRENT_LAB
+    git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
   fi
 
-  git fetch && git pull
 }
 
 compile_lab() {
