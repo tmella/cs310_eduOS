@@ -2,8 +2,8 @@
 
 OS_PROJECT=https://github.com/tmella/cs310_eduOS.git
 LAB_1_BRANCH=lab1
-LAB_2_BRANCH=creating-helper-script
-LAB_3_BRANCH=creating-helper-script
+LAB_2_BRANCH=lab2
+LAB_3_BRANCH=lab3
 
 CURRENT_LAB=""
 # For now we will assume that we are on DCS systems
