@@ -34,7 +34,6 @@ fi
 BRCH_SUF=_work
 
 load_lab() {
-  echo "Well the first is $2"
   case $2 in
   "lab1")
     CURRENT_LAB=$LAB_1_BRANCH
@@ -64,14 +63,14 @@ load_lab() {
     printf "\n Your changes have been stashed!! \n"
   fi
 
-  git pull --tags
+  git pull --tags -f
 
   # If branch exists locally, else checkout remote
   if git rev-parse --verify "$CURRENT_LAB$BRCH_SUF" &>/dev/null; then
     printf "\nYou already have a local version. Will switch to that branch"
     git checkout "$CURRENT_LAB$BRCH_SUF"
   else
-    git checkout -t remotes/origin/$CURRENT_LAB
+    git checkout -b "$CURRENT_LAB$BRCH_SUF" $CURRENT_LAB
   fi
 
   git fetch && git pull
