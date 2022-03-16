@@ -13,7 +13,10 @@ void _start(int start_ptr) {
     int argc = *((int *) argc_addr);
 
     /* Fetch address for argv */
-    char** argvs = *((int *)argc_addr + 1);
+    char** argvs;
+    if(argc > 0) {
+        argvs = *((int *)argc_addr + 1);
+    }
 
     /* Initialise the heap for this process */
     init_heap();
