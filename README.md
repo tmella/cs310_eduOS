@@ -56,6 +56,3 @@ Emulate OS on qemu (will also compile):
 make run
 ```
 
-
-## Design decisions
-TO BE ADDED ONCE FINALISED
