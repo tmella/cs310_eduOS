@@ -7,6 +7,8 @@ with can be found at [Labs homepage](https://github.com/tmella/cs310_eduOS/wiki#
 ### Labs 
 * [Lab 1: Multitasking and Scheduling
   ](https://github.com/tmella/cs310_eduOS/wiki/Lab-1:-Multitasking-and-Scheduling)
+* [Lab 2: Memory Management](https://github.com/tmella/cs310_eduOS/wiki/Lab-2:-Memory-Management)
+* [Lab 3: User programs](https://github.com/tmella/cs310_eduOS/wiki/Lab-3:-User-programs)
 
 
 ### Required resources
