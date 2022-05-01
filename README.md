@@ -47,12 +47,41 @@ _Linux installation_
 * SUSE: ``zypper install qemu``
 
 ### Build instructions
-Source code compilation:
+### Set up
+Start by cloning the OS repository: 
 ```
- make 
+git clone https://github.com/tmella/cs310_eduOS.git
+cd cs310_eduOS
 ```
-Emulate OS on qemu (will also compile):
+
+#### Running on DCS
+DCS systems will already have all the necessary dependencies to run the project. To set up all the required ENV variables, and helper tools (``oshelper``), go ahead and run the following:
+```bash
+chmod +x config.sh  && source ./config.sh 
 ```
-make run
+
+
+#### Running locally _( Linux and OSX only )_
+If you are running locally its likely you won't have the required dependencies (unless you are into OS development). The script ``dependency-installer.sh`` will take care of downloading, and building the required software, which will be added to ``build-tools/bin``. (This allows for a non-intrusive installation, just delete the directory and consider it gone). Run as follows:
+```bash
+chmod +x dependency-installer.sh && ./dependency-installer.sh
 ```
+This will install the required compiler, assembler, and GNU tools required. 
+
+***The emulator however cannot be built from source*** (unless you have specific a linux system, 35min and patience), therefore it will have to be installed traditionally with a package manager. The guide for which can be found at the [OS README](https://github.com/tmella/cs310_eduOS/blob/main/README.md)
+
+One completed the above. You can set up your environment to run the OS with:
+```bash
+chmod +x config.sh # Make executable
+source ./config.sh 
+```
+
+***
+
+Finally, you can load lab 1 with the ``oshelper`` CLI:
+```bash
+oshelper load lab1
+```
+> The script, in this case, just checkouts the branch for this lab and insures that you have no unsaved 
+> changes 
 
