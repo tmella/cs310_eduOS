@@ -105,7 +105,6 @@ void init_idle_process() {
         push_to_stack(esp, 0);
 
     idle_pcb->esp = esp;
-    // TODO this could be wrong as we need to access mem (check)
     idle_pcb->cr3 = 0x300000;
 }
 
@@ -195,7 +194,6 @@ unsigned int *set_user_stack(page_directory_t *dir, unsigned int stack_btm, int 
     return esp;
 }
 
-// TODO: perhaps make cleaner
 process_control_block *create_user_process(char *name, int argc, char **argv) {
     bin_node *file = find_file(name);
 

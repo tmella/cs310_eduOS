@@ -24,7 +24,6 @@ int getOffset(int row, int col) {
     return ((row * MAX_COLS) + col) * 2;
 }
 
-// TODO simplify
 int newLineOffset(int offset) {
     int row = offset / (2 * MAX_COLS);
     return getOffset(row + 1, side_margins);

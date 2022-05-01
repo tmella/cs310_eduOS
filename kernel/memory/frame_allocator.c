@@ -28,7 +28,6 @@ void free_page_frame(uint32_t addr) {
     free_frames++;
 }
 
-// TODO: need to add a more readable implementation
 unsigned int alloc_page_frame() {
     unsigned char mapEntry;
     for(int i = 0; i < BITMAP_SIZE ; i++) {

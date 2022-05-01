@@ -34,7 +34,7 @@ char *reverse(char *buffer, int i, int j) {
     return buffer;
 }
 
-/* THe bellow has been copied from https://www.techiedelight.com/implement-itoa-function-in-c/ for debugging ints*/
+/* The bellow function is from https://www.techiedelight.com/implement-itoa-function-in-c/ for debugging ints*/
 // Iterative function to implement `itoa()` function in C
 char *itoa(int value, char *buffer, int base) {
     // invalid input

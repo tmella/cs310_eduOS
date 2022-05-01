@@ -4,8 +4,6 @@
 
 #include "stdarg.h"
 
-/* THe bellow has been copied from https://www.techiedelight.com/implement-itoa-function-in-c/ for debugging ints*/
-
 int abs(int value);
 
 // Function to swap two numbers

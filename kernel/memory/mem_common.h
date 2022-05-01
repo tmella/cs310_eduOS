@@ -17,13 +17,9 @@
 
 #define FRAMES_NO (MEMORY_END-FRAMES_START)/FRAME_SIZE_HEX
 
-// TODO: THESE VALUES WILL NEED TO BE REMAPPED
 #define PROCESS_STACK 0x400000
 #define PROCESS_START 0x500000
 #define PROCESS_HEAP 0x600000
-
-// TODO need to decide the heap start address and size
-// TODO need to figure out what happens with the STACK and size
 
 #define MEMORY_END 0x8000000
 
