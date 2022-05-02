@@ -2,6 +2,8 @@
 # $< = first dependency
 # $^ = all dependencies
 
+# Original makefile definitions inspired by https://dev.to/frosnerd/writing-my-own-boot-loader-3mld
+
 SRC = $(wildcard kernel/*.c drivers/*.c kernel/process/*.c kernel/process/tasks/*.c kernel/memory/*.c kernel/interrupt/*.c stdlib/*.c kernel/loader/*.c kernel/file-system/*.c)
 ASM_SRC = $(wildcard kernel/process/*.asm kernel/interrupt/*.asm)
 HEADERS = $(wildcard kernel/*.h drivers/*.h kernel/loader/*.h kernel/process/*.h kernel/process/tasks/include/*.h kernel/file-system/*.h kernel/memory/*.h kernel/interrupt/*.h stdlib/*.h)
