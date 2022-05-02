@@ -12,6 +12,9 @@ with can be found at [Labs homepage](https://github.com/tmella/cs310_eduOS/wiki#
 
 
 ### Required resources
+> Step by step instructions provided bellow in section Build Instructions. The only manual installion required is Qemu
+
+
 A helper script has been created ``dependency-installer.sh`` which will install all the needed resources to compile the project. 
 All the executables will be added to a new directory ``build-tools/bin``, in the aim to not be intrusive on our system. _Only works on Mac or Linux based system_. 
 > Requires make, a C compiler. Brew for Mac users
